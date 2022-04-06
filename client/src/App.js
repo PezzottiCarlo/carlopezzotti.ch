@@ -9,6 +9,9 @@ function App() {
       <div className='section'>
         <h1>Sezione 2</h1>
       </div>
+      <div className='section'>
+        <h1>Sezione 3</h1>
+      </div>
     </div>
   );
 }
