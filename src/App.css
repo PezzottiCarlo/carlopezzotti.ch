@@ -1,11 +1,79 @@
-.App{
-  background-color: #282c34;
+.App {
+  background-color: var(--primary-color);
+  height: calc(100vh - var(--vh-offset, 0px));
+  overflow-y: scroll;
+  -ms-scroll-snap-type: y mandatory;
+  scroll-snap-type: y mandatory;
+  overflow-x: hidden;
 }
-.section{
-  color: rgba(255, 255, 255, 0.9);
+
+.section {
+  color: var(--secondary-color);
+  align-items: center;
+  display: flex;
+  flex-flow: column;
+  height: calc(100vh - var(--vh-offset,0px));
+  justify-content: center;
+  position: relative;
+  scroll-snap-align: center;
+  text-align: center;
+}
+
+.section h1 {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.inverse {
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+}
+
+.big{
+  width: 50%;
+  padding-left: 5rem;
+  padding-right: 5rem;
+}
+
+.big-text{
+  font-size:5rem !important;
+}
+
+@media only screen and (max-width: 768px) {
+  .big{
+    padding: 0;
+    width: 100%;
+  }
+  .projects{
+    max-height: 75vh;
+    overflow-y: scroll;
+  }
+  .big-text{
+    font-size:4rem !important;
+  }
+}
+
+.projects{
   display: flex;
   flex-direction: column;
-  justify-content: center;
+}
+
+.project{
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.link{
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.contact{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
   align-items: center;
-  height: 100vh;
+  padding: 2rem;
 }
