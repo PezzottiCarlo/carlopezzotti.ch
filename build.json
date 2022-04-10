@@ -1,4 +1,4 @@
 {
-    "commands":["npm run build"],
+    "commands":["npm i","npm run build"],
     "startup":["npm start"]
 }
