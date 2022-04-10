@@ -28,7 +28,7 @@ const App = () => {
         <h1 className='big-text'>{welcome} 👋</h1>
       </div>
       <div className='section'>
-        <h1>Mi chiamo <span className='inverse'>Carlo Pezzotti</span></h1>
+        <h1>Mi chiamo <br/><span className='inverse'>Carlo Pezzotti</span></h1>
         <h1>vengo dalla <span className='inverse'>Svizzera🇨🇭</span></h1>
       </div>
       <div className='section'>
