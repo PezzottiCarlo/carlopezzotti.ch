@@ -53,7 +53,7 @@ const App = () => {
         </div>
       </div>
       <div className='section'>
-        <h1>Contatti.</h1>
+        <h1>Contatti</h1>
         <div className='inverse big contact'>
           <div>
             <h1><a className='link' href='https://www.instagram.com/sgabello.blu/'><AiFillInstagram /></a></h1>
