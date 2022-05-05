@@ -12,7 +12,7 @@
   align-items: center;
   display: flex;
   flex-flow: column;
-  height: calc(100vh - var(--vh-offset,0px));
+  height: calc(100vh - var(--vh-offset, 0px));
   justify-content: center;
   position: relative;
   scroll-snap-align: center;
@@ -24,38 +24,56 @@
   margin: 0;
 }
 
+.scroll-down{
+  font-size: 5rem;
+  position: absolute;
+  bottom: 10rem;
+  animation: MoveUpDown 3s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+}
+
+@keyframes MoveUpDown {
+  0%, 100% {
+    bottom: 4rem;
+  }
+  50% {
+    bottom: 8rem;
+  }
+}
+
 .inverse {
   background-color: var(--secondary-color);
   color: var(--primary-color);
 }
 
-.big{
+.big {
   width: 50%;
   padding-left: 5rem;
   padding-right: 5rem;
 }
 
-.big-text{
-  font-size:5rem !important;
+.big-text {
+  font-size: 5rem !important;
 }
 
-.projects{
+.projects {
   display: flex;
   flex-direction: column;
+  max-height: 50vh;
+  overflow-y: scroll;
 }
 
-.project{
+.project {
   display: flex;
   flex-direction: column;
   align-items: left;
 }
 
-.link{
+.link {
   color: var(--primary-color);
   text-decoration: none;
 }
 
-.contact{
+.contact {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -64,15 +82,12 @@
 }
 
 @media only screen and (max-width: 768px) {
-  .big{
+  .big {
     padding: 0;
     width: 100%;
   }
-  .projects{
-    max-height: 50vh;
-    overflow-y: scroll;
-  }
-  .big-text{
-    font-size:4rem !important;
+
+  .big-text {
+    font-size: 4rem !important;
   }
 }

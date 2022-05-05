@@ -1,7 +1,8 @@
 import './App.css';
 import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef} from 'react';
 import { AiFillInstagram, AiFillGithub, AiFillLinkedin } from "react-icons/ai";
+import { FaAngleDoubleDown } from 'react-icons/fa';
 
 
 const App = () => {
@@ -22,10 +23,14 @@ const App = () => {
     }, 1000)
   }, [])
 
+
   return (
     <div className="App">
       <div className='section'>
         <h1 className='big-text'>{welcome} 👋</h1>
+        <div className='scroll-down'>
+          <FaAngleDoubleDown />
+        </div>
       </div>
       <div className='section'>
         <h1>Mi chiamo <br/><span className='inverse'>Carlo Pezzotti</span></h1>
