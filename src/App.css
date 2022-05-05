@@ -29,6 +29,7 @@
   position: absolute;
   bottom: 10rem;
   animation: MoveUpDown 3s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 @keyframes MoveUpDown {
