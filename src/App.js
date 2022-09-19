@@ -40,7 +40,7 @@ const App = () => {
         <h1>Principalmente uso</h1>
         <div className='inverse big'>
           <h1>Javascript</h1>
-          <h1>Node</h1>
+          <h1>C</h1>
           <h1>SQL</h1>
           <h1>Java</h1>
           <h1>C++</h1>
