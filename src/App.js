@@ -27,7 +27,7 @@ const App = () => {
   return (
     <div className="App">
       <div className='section'>
-        <h1 className='big-text'>Welcome 👋</h1>
+        <h1 className='big-text'>Salve 👋</h1>
         <div className='scroll-down'>
           <FaAngleDoubleDown />
         </div>
