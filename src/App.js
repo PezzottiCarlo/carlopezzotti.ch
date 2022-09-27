@@ -7,9 +7,8 @@ import { FaAngleDoubleDown } from 'react-icons/fa';
 
 const App = () => {
 
-  const welcomes = ["Benvenuto", "Bienvenue", "Willkommen", "Welcome"];
   const [projects, setProjects] = useState([]);
-  const [welcome, setWelcome] = useState(welcomes[0]);
+  const [languages, setLanguages] = useState([]);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -17,17 +16,18 @@ const App = () => {
       let data = await reqPrj.json();
       setProjects(data);
     }; fetchProjects();
-    const interval = setInterval(() => {
-      let index = Math.floor(Math.random() * welcomes.length);
-      setWelcome(welcomes[index]);
-    }, 1000)
+    const fetchLanguages = async () => {
+      let reqPrj = await fetch('languages');
+      let data = await reqPrj.json();
+      setLanguages(data);
+    }; fetchLanguages();
   }, [])
 
 
   return (
     <div className="App">
       <div className='section'>
-        <h1 className='big-text'>{welcome} 👋</h1>
+        <h1 className='big-text'>Welcome 👋</h1>
         <div className='scroll-down'>
           <FaAngleDoubleDown />
         </div>
@@ -39,11 +39,9 @@ const App = () => {
       <div className='section'>
         <h1>Principalmente uso</h1>
         <div className='inverse big'>
-          <h1>Javascript</h1>
-          <h1>C</h1>
-          <h1>SQL</h1>
-          <h1>Java</h1>
-          <h1>C++</h1>
+          {languages.map((language, index) => {
+            return <h1 key={index}>{language}</h1>
+          })}
         </div>
       </div>
       <div className='section'>
