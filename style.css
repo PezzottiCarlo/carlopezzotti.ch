@@ -44,7 +44,6 @@ body {
     background-attachment: fixed;
     background-size: cover;
     color: var(--text-main);
-    /* Rimuovi overflow hidden globale per permettere lo scroll mobile */
     overflow-x: hidden;
     transition: all 0.5s ease;
 }
@@ -63,7 +62,7 @@ body {
     border-radius: 10px;
 }
 
-/* --- 3. SCROLL SNAP LAYOUT (DESKTOP ONLY) --- */
+/* --- 3. SCROLL SNAP LAYOUT (DESKTOP) --- */
 .snap-container {
     height: 100vh;
     overflow-y: scroll;
@@ -98,9 +97,8 @@ section {
 
 .content-wrapper::-webkit-scrollbar {
     display: none;
+    /* Chrome/Safari */
 }
-
-/* Chrome/Safari nascondi scroll interna */
 
 @keyframes fadeInUp {
     to {
@@ -121,7 +119,6 @@ section {
     position: relative;
     overflow: hidden;
     width: 100%;
-    /* Fix width */
 }
 
 /* --- 5. TYPOGRAPHY --- */
@@ -201,11 +198,18 @@ p {
     align-items: center;
 }
 
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    align-items: center;
+}
+
 .align-top {
     align-items: start;
 }
 
-/* --- 7. THEME SWITCH --- */
+/* --- 7. UI CONTROLS (THEME & LANG) --- */
 .theme-switch {
     position: fixed;
     top: 30px;
@@ -232,8 +236,6 @@ p {
     border-color: transparent;
 }
 
-
-/* --- LANGUAGE SWITCHER --- */
 .lang-switch-container {
     position: fixed;
     bottom: 20px;
@@ -273,8 +275,7 @@ p {
     box-shadow: 0 2px 10px var(--accent-glow);
 }
 
-
-/* --- 8. COMPONENTS --- */
+/* --- 8. GENERAL COMPONENTS --- */
 .path-list {
     list-style: none;
     padding-left: 10px;
@@ -309,29 +310,66 @@ p {
     overflow: hidden;
 }
 
-/* --- 9. VINYL & ARCADE --- */
-.vinyl-section {
+/* --- 9. PASSIONI (UNIFORM LAYOUT) --- */
+/* Questa sezione gestisce Vinile, Terminale e Arcade rendendoli identici nelle dimensioni */
+
+/* Container Generici per l'allineamento testo/etichetta */
+.vinyl-section,
+.terminal-section,
+.arcade-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-.vinyl-wrapper {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 30px;
+.passion-label {
+    margin-top: 1rem;
+    font-weight: 600;
+}
+
+/* Stile Condiviso Wrapper (Dimensioni Fisse 300x320) */
+.vinyl-wrapper,
+.terminal-wrapper,
+.arcade-frame {
+    width: 100%;
+    max-width: 300px;
+    /* Larghezza fissa */
+    height: 320px;
+    /* Altezza fissa */
+    margin: 0 auto;
+
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+/* Hover Effect Comune */
+.vinyl-wrapper:hover,
+.terminal-wrapper:hover,
+.arcade-frame:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px var(--accent-glow);
+    border-color: var(--accent);
+}
+
+/* --- A. VINYL --- */
+.vinyl-wrapper {
+    background: rgba(255, 255, 255, 0.05);
     box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
 .record {
-    width: 260px;
-    height: 260px;
+    width: 240px;
+    height: 240px;
+    /* Ridimensionato per stare nel box */
     background: radial-gradient(#111 20%, #222 21%, #111 22%, #181818 95%, #333 100%);
     border-radius: 50%;
     position: relative;
@@ -339,6 +377,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .record::after {
@@ -355,30 +394,28 @@ p {
 }
 
 .record-label {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     border: 4px solid #fff;
     z-index: 5;
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
     background-color: #111;
 }
 
 .tone-arm {
     position: absolute;
-    top: -20px;
-    right: -20px;
-    width: 90px;
-    height: 140px;
+    top: -10px;
+    right: -10px;
+    width: 80px;
+    height: 120px;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 140'%3E%3Cpath d='M45 0 L40 100 L25 125' stroke='%23bbb' stroke-width='10' fill='none'/%3E%3Crect x='20' y='120' width='25' height='35' fill='%23333'/%3E%3Ccircle cx='45' cy='0' r='15' fill='%23777'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     transform-origin: 45px 0;
     transition: transform 1s;
     pointer-events: none;
     z-index: 10;
-    filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.3));
 }
 
 .vinyl-wrapper.playing .tone-arm {
@@ -400,31 +437,91 @@ p {
     }
 }
 
-.arcade-section {
-    text-align: center;
-    margin-top: 2rem;
+/* --- B. HACKING TERMINAL --- */
+.terminal-wrapper {
+    background: #0f172a;
+    align-items: stretch;
+    justify-content: flex-start;
 }
 
+.terminal-header {
+    border-radius: 24px 24px 0 0;
+    background: #1e293b;
+    padding: 12px;
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+}
+
+.t-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.t-red {
+    background: #ef4444;
+}
+
+.t-yellow {
+    background: #fbbf24;
+}
+
+.t-green {
+    background: #22c55e;
+}
+
+.terminal-body {
+    padding: 20px;
+    color: #22c55e;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 18px;
+    background: #22c55e;
+    animation: blink 1s infinite;
+    vertical-align: middle;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+/* --- C. ARCADE --- */
 .arcade-frame {
     background: #1e293b;
     border: 6px solid #334155;
-    border-radius: 24px;
-    padding: 25px;
-    width: 280px;
-    margin: 0 auto;
+    padding: 20px;
+    justify-content: space-between;
 }
 
 .arcade-screen-container {
     background: #000;
-    height: 180px;
     width: 100%;
-    margin-bottom: 20px;
+    height: 180px;
     border-radius: 8px;
     border: 3px solid #334155;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0;
 }
 
 #arcade-canvas {
@@ -436,12 +533,14 @@ p {
 .arcade-controls {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 30px;
+    width: 100%;
+    padding-bottom: 10px;
 }
 
 .btn-red {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     background: #ef4444;
     border-radius: 50%;
     box-shadow: 0 6px 0 #991b1b;
@@ -454,17 +553,16 @@ p {
     box-shadow: none;
 }
 
+
 /* --- 10. PROJECTS --- */
 .projects-scroll-container {
     display: flex;
     gap: 20px;
     overflow-x: auto;
     padding: 10px 5px 30px 5px;
-    /* Padding bottom per l'ombra hover */
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     align-items: stretch;
-    /* Le card avranno la stessa altezza */
 }
 
 .project-card {
@@ -480,7 +578,6 @@ p {
     flex-direction: column;
     justify-content: space-between;
     flex-shrink: 0;
-    /* Impedisce alle card di schiacciarsi */
 }
 
 .project-card:hover {
@@ -527,29 +624,20 @@ p {
     font-weight: 600;
 }
 
-/* --- FIX TIMELINE SCROLL & PALLINI --- */
-
 .timeline-container {
     position: relative;
-    /* Rimuoviamo il bordo dal contenitore padre */
     border-left: none;
-    /* Aggiungiamo padding per staccare i pallini dal bordo schermo */
     padding-left: 20px;
     margin-left: 5px;
     margin-top: 15px;
-
-    /* Scroll impostazioni */
     max-height: 45vh;
     overflow-y: auto;
     padding-right: 15px;
     padding-bottom: 20px;
-    /* Spazio extra in fondo per l'ultimo elemento */
-
     scrollbar-width: thin;
     scrollbar-color: var(--accent) transparent;
 }
 
-/* Scrollbar personalizzata Webkit */
 .timeline-container::-webkit-scrollbar {
     width: 5px;
 }
@@ -565,18 +653,12 @@ p {
 
 .timeline-item {
     position: relative;
-    /* La linea ora appartiene all'item */
     border-left: 3px solid var(--timeline-line);
-
-    /* Usiamo padding-bottom invece di margin per connettere le linee */
     padding-bottom: 42px;
     margin-bottom: 0;
-
-    /* Spazio tra la linea e il testo */
     padding-left: 32px;
 }
 
-/* Nascondiamo la linea per l'ultimo elemento così non scende nel vuoto */
 .timeline-item:last-child {
     border-left-color: transparent;
     padding-bottom: 0;
@@ -587,7 +669,6 @@ p {
     position: absolute;
     left: -12px;
     top: 0;
-    /* Allineato all'inizio del testo */
     width: 15px;
     height: 15px;
     background: var(--bg-color);
@@ -595,10 +676,8 @@ p {
     border-radius: 50%;
     z-index: 2;
     box-shadow: 0 0 0 4px var(--bg-color);
-    /* Maschera la linea sotto il pallino */
 }
 
-/* Effetto Hover sul pallino */
 .timeline-item:hover::before {
     background: var(--accent);
     transform: scale(1.2);
@@ -674,42 +753,34 @@ p {
 }
 
 /* =========================================
-   MEDIA QUERIES (RESPONSIVE MOBILE VERTICALE)
+   MEDIA QUERIES (RESPONSIVE MOBILE)
    ========================================= */
 
 @media (max-width: 900px) {
 
-    /* 1. DISATTIVA SCROLL SNAP SU MOBILE */
-    .lang-switch-container {
-        bottom: 10px;
-        right: 10px;
-        padding: 5px;
-        gap: 2px;
+    /* 1. GRIGLIE DIVENTANO COLONNE UNICHE */
+    .grid-2,
+    .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 3rem;
     }
 
-    .lang-btn {
-        padding: 6px 10px;
-        font-size: 0.75rem;
-    }
-
+    /* 2. LAYOUT GENERALE MOBILE */
     .snap-container {
         height: auto;
         overflow-y: visible;
         scroll-snap-type: none;
     }
 
-    /* 2. LE SEZIONI SI ADATTANO AL CONTENUTO */
     section {
         height: auto;
         min-height: 100vh;
         padding: 4rem 1rem;
-        /* Margine laterale leggermente ridotto per più spazio */
         display: flex;
         align-items: center;
         scroll-snap-align: none;
     }
 
-    /* 3. RIMUOVI SCROLL INTERNO */
     .content-wrapper {
         max-height: none;
         overflow: visible;
@@ -720,7 +791,6 @@ p {
 
     .glass-card {
         padding: 2rem 1.2rem;
-        /* Padding interno ridotto */
         border-radius: 20px;
     }
 
@@ -733,73 +803,69 @@ p {
         margin-bottom: 1.5rem;
     }
 
-    /* 4. GRIGLIE DIVENTANO COLONNE */
-    .grid-2 {
-        grid-template-columns: 1fr;
-        gap: 3rem;
+    /* 3. SWITCHERS */
+    .lang-switch-container {
+        bottom: 10px;
+        right: 10px;
+        padding: 5px;
+        gap: 2px;
     }
 
-    /* --- 5. FIX PROGETTI: LISTA VERTICALE --- */
-    .projects-scroll-container {
-        display: flex;
-        flex-direction: column;
-        /* <--- IMPILA I PROGETTI VERTICALMENTE */
-        gap: 20px;
-        /* Spazio verticale tra le card */
-        overflow-x: visible;
-        /* Rimuove lo scroll orizzontale */
-        padding-bottom: 0;
+    .lang-btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
     }
 
-    .project-card {
-        min-width: 100%;
-        /* <--- LA CARD OCCUPA TUTTA LA LARGHEZZA */
-        max-width: 100%;
-        padding: 1.5rem;
-        /* Rimuovi effetti hover complessi su mobile che possono incantarsi */
-        transform: none !important;
-    }
-
-    /* Opzionale: Riduci ombra su mobile per pulizia */
-    .project-card:hover {
-        transform: none;
-        box-shadow: none;
-    }
-
-    /* 6. FIX VINILE & ARCADE */
-    .vinyl-wrapper {
-        width: 240px;
-        height: 240px;
-    }
-
-    .record {
-        width: 210px;
-        height: 210px;
-    }
-
-    .record-label {
-        width: 70px;
-        height: 70px;
-    }
-
-    .tone-arm {
-        width: 70px;
-        height: 110px;
-        top: -15px;
-        right: -15px;
-    }
-
-    .arcade-frame {
-        width: 100%;
-        max-width: 300px;
-    }
-
-    /* 7. FIX BOTTONE TEMA */
     .theme-switch {
         top: 15px;
         right: 15px;
         width: 40px;
         height: 40px;
         font-size: 1.1rem;
+    }
+
+    /* 4. PROGETTI (Lista Verticale) */
+    .projects-scroll-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        overflow-x: visible;
+        padding-bottom: 0;
+    }
+
+    .project-card {
+        min-width: 100%;
+        max-width: 100%;
+        padding: 1.5rem;
+        transform: none !important;
+    }
+
+    .project-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* 5. PASSIONI SU MOBILE (Rimpicciolire leggermente se necessario) */
+    .vinyl-wrapper,
+    .terminal-wrapper,
+    .arcade-frame {
+        width: 100%;
+        max-width: 280px;
+        height: 280px;
+        /* Un po' più piccoli su mobile */
+    }
+
+    /* Adattamenti interni per size mobile */
+    .record {
+        width: 220px;
+        height: 220px;
+    }
+
+    .arcade-screen-container {
+        height: 150px;
+    }
+
+    .terminal-body {
+        font-size: 0.8rem;
     }
 }

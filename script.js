@@ -87,36 +87,6 @@ toggle.addEventListener('click', () => {
     toggle.innerText = isDark ? '🌙' : '☀️';
 });
 
-// --- 4. VINYL ANIMATION ---
-const vinylSection = document.getElementById('passions');
-const vinylPlayer = document.getElementById('vinylPlayer');
-const vinylObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) vinylPlayer.classList.add('playing');
-        else vinylPlayer.classList.remove('playing');
-    });
-}, { threshold: 0.3 });
-if (vinylSection) vinylObserver.observe(vinylSection);
-
-const vinylCovers = [
-    "https://static.fnac-static.com/multimedia/Images/FR/NR/48/95/d1/13735240/1520-1/tsp20210930082357/Ready-To-Die.jpg",
-    "https://i.scdn.co/image/ab67616d0000b2739efeffdf7074481de1cccb39",
-    "https://upload.wikimedia.org/wikipedia/it/5/53/Mr._Simpatia.jpg",
-    "https://i.scdn.co/image/ab67616d0000b273db216ca805faf5fe35df4ee6",
-    "https://upload.wikimedia.org/wikipedia/en/e/eb/Iron_Maiden_-_Fear_Of_The_Dark.jpg",
-    "https://i.scdn.co/image/ab67616d0000b2735b96a8c5d61be8878452f8f1",
-    "https://media.pitchfork.com/photos/59f8e52ae372437d4a40fdc1/master/pass/21%20savage%20without%20warning.jpg",
-];
-
-function setRandomVinylCover() {
-    const recordLabel = document.querySelector('.record-label');
-    if (recordLabel && vinylCovers.length > 0) {
-        const randomIndex = Math.floor(Math.random() * vinylCovers.length);
-        recordLabel.style.backgroundImage = `url('${vinylCovers[randomIndex]}')`;
-    }
-}
-setRandomVinylCover();
-
 // --- 5. GITHUB API FETCH ---
 async function loadGitHub() {
     const pCont = document.getElementById('projects-container');

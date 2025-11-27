@@ -7,6 +7,7 @@
 const translations = {
     it: {
         portfolio: "Portfolio",
+        coding: "Coding & Hacking",
         subtitle: "Developer · Student · Tech Enthusiast",
         where_live: "Dove Vivo",
         live_desc: "Tra lago e montagne, un hub perfetto tra natura e innovazione tecnologica.",
@@ -23,6 +24,7 @@ const translations = {
         lang_en: "Inglese",
         lang_de: "Tedesco",
         lang_fr: "Francese",
+        coding: "Coding & Hacking",
         no_desc: "Nessuna descrizione."
     },
     en: {
@@ -43,6 +45,7 @@ const translations = {
         lang_en: "English",
         lang_de: "German",
         lang_fr: "French",
+        coding: "Coding & Hacking",
         no_desc: "No description available."
     },
     fr: {
@@ -63,6 +66,7 @@ const translations = {
         lang_en: "Anglais",
         lang_de: "Allemand",
         lang_fr: "Français",
+        coding: "Coding & Hacking",
         no_desc: "Aucune description."
     },
     de: {
@@ -83,6 +87,7 @@ const translations = {
         lang_en: "Englisch",
         lang_de: "Deutsch",
         lang_fr: "Französisch",
+        coding: "Coding & Hacking",
         no_desc: "Keine Beschreibung."
     }
 };

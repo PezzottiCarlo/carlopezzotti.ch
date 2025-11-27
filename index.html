@@ -61,8 +61,10 @@
         <section id="passions">
             <div class="content-wrapper glass-card">
                 <h2 style="margin-bottom: 2rem;" data-lang="passions_title">Le Mie Passioni</h2>
-                <div class="grid-2">
-                    <div class="vinyl-section">
+
+                <div class="grid-3">
+
+                    <div class="terminal-section">
                         <div class="vinyl-wrapper" id="vinylPlayer">
                             <div class="record">
                                 <div class="record-reflection"></div>
@@ -73,7 +75,21 @@
                         <p class="passion-label" data-lang="music">Musica</p>
                     </div>
 
-                    <div class="arcade-section">
+                    <div class="terminal-section">
+                        <div class="terminal-wrapper">
+                            <div class="terminal-header">
+                                <div class="t-dot t-red"></div>
+                                <div class="t-dot t-yellow"></div>
+                                <div class="t-dot t-green"></div>
+                            </div>
+                            <div class="terminal-body">
+                                <span id="typewriter-text"></span>
+                            </div>
+                        </div>
+                        <p class="passion-label" data-lang="coding">Coding & Hacking</p>
+                    </div>
+
+                    <div class="terminal-section">
                         <div class="arcade-frame">
                             <div class="arcade-screen-container">
                                 <canvas id="arcade-canvas" width="64" height="64"></canvas>
@@ -85,6 +101,7 @@
                         </div>
                         <p class="passion-label" data-lang="gamer">Gamer</p>
                     </div>
+
                 </div>
             </div>
         </section>
@@ -160,8 +177,10 @@
     </div>
 
     <script src="translations.js"></script>
+    <script src="vinyl.js"></script>
     <script src="script.js"></script>
     <script src="arcade.js"></script>
+    <script src="coding.js"></script> </body>
 </body>
 
 </html>
