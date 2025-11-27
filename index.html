@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carlo Pezzotti | Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body data-theme="light">
+    <div class="theme-switch" id="themeToggle">🌙</div>
+
+    <div class="snap-container">
+        <section id="home">
+            <div class="content-wrapper">
+                <div class="glass-card text-center">
+                    <p class="intro-tag">Portfolio</p>
+                    <h1>Carlo Pezzotti</h1>
+                    <p class="subtitle">Developer · Student · Tech Enthusiast</p>
+                    <div class="flag-icon">🇨🇭</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="content-wrapper glass-card">
+                <div class="grid-2 align-top">
+                    <div class="info-box">
+                        <h2>Dove Vivo</h2>
+                        <h3>Lugano, Svizzera</h3>
+                        <p>Tra lago e montagne, un hub perfetto tra natura e innovazione tecnologica.</p>
+                        <div class="map-placeholder map-interactive">
+                            <iframe width="100%" height="100%"
+                                src="https://www.openstreetmap.org/export/embed.html?bbox=8.91,45.98,8.99,46.02&layer=mapnik&marker=46.0037,8.9511"
+                                style="border: 0;">
+                            </iframe>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h2>Il mio Percorso</h2>
+                        <ul class="path-list">
+                            <li>
+                                <strong>SAM Trevano</strong>
+                                <small>Informatica & Elettronica</small>
+                            </li>
+                            <li>
+                                <strong>SUPSI DTI</strong>
+                                <small>Bachelor Ingegneria Informatica</small>
+                            </li>
+                            <li>
+                                <strong>Thomas More University</strong>
+                                <small>Erasmus - Computer Science</small>
+                            </li>
+                            <li>
+                                <strong>Leuven University</strong>
+                                <small>Corso di integrazione sociale</small>
+                            </li>
+                            <li>
+                                <strong>SUPSI DFA</strong>
+                                <small>Formazione & Apprendimento</small>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="passions">
+            <div class="content-wrapper glass-card">
+                <h2 style="margin-bottom: 2rem;">Le Mie Passioni</h2>
+                <div class="grid-2">
+
+                    <div class="vinyl-section">
+                        <div class="vinyl-wrapper" id="vinylPlayer">
+                            <div class="record">
+                                <div class="record-reflection"></div>
+                                <div class="record-label"></div>
+                            </div>
+                            <div class="tone-arm"></div>
+                        </div>
+                        <p class="passion-label">Musica</p>
+                    </div>
+
+                    <div class="arcade-section">
+                        <div class="arcade-frame">
+                            <div class="arcade-screen-container">
+                                <canvas id="arcade-canvas" width="64" height="64"></canvas>
+                            </div>
+                            <div class="arcade-controls">
+                                <div class="btn-red" id="btn-left"></div>
+                                <div class="btn-red" id="btn-right"></div>
+                            </div>
+                        </div>
+                        <p class="passion-label">Gamer</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects">
+            <div class="content-wrapper glass-card">
+                <h2>Progetti GitHub</h2>
+                <p class="api-note">Fetching live data from <span class="code">api.github.com</span></p>
+
+                <div class="projects-scroll-container" id="projects-container">
+                    <div class="project-card-skeleton">Caricamento...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience">
+            <div class="content-wrapper glass-card">
+                <div class="grid-2 align-top">
+                    <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h2>Tech Stack</h2>
+                            <p style="margin-bottom:1rem; font-size: 0.9rem;">Linguaggi estratti dalle repo:</p>
+
+                            <div id="skills-container" class="skills-wrapper"></div>
+                        </div>
+
+                        <div style="margin-top: 3.5rem;">
+                            <h2>Lingue</h2>
+                            <div class="languages-list">
+
+                                <div class="lang-item">
+                                    <div class="lang-info">
+                                        <span class="lang-name">Italiano</span>
+                                        <span class="lang-level">Madrelingua</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="lang-item">
+                                    <div class="lang-info">
+                                        <span class="lang-name">Inglese</span>
+                                        <span class="lang-level">C1 / Advanced</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 85%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="lang-item">
+                                    <div class="lang-info">
+                                        <span class="lang-name">Tedesco</span>
+                                        <span class="lang-level">B2 / Upper-Intermediate</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 70%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="lang-item">
+                                    <div class="lang-info">
+                                        <span class="lang-name">Francese</span>
+                                        <span class="lang-level">B1 / Base</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 40%;"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>Esperienze</h2>
+                        <div class="timeline-container" id="timeline-root">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="script.js"></script>
+    <script src="arcade.js"></script>
+</body>
+
+</html>
+
+git config --global user.email "carlo.pezzotti01@gmail.com"
+  git config --global user.name "Carlo Pezzotti"
