@@ -1,5 +1,78 @@
-const GITHUB_USERNAME = 'PezzottiCarlo';
+/**
+ * MAIN LOGIC SCRIPT
+ * Gestisce le funzionalità del sito, API e interazioni.
+ * Dipende da: translations.js (caricato prima nell'HTML)
+ */
 
+const GITHUB_USERNAME = 'PezzottiCarlo';
+let currentLang = 'it'; 
+
+// --- 1. FUNZIONE CAMBIO LINGUA ---
+function setLanguage(lang) {
+    currentLang = lang;
+
+    // 1. Aggiorna testi statici (HTML)
+    document.querySelectorAll('[data-lang]').forEach(el => {
+        const key = el.getAttribute('data-lang');
+        // Prende i dati da translations.js
+        if (translations[lang] && translations[lang][key]) {
+            el.innerText = translations[lang][key];
+        }
+    });
+
+    // 2. Aggiorna Bottoni UI
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.innerText.toLowerCase() === lang) {
+            btn.classList.add('active');
+        }
+    });
+
+    // 3. Rigenera Liste Dinamiche
+    renderTimeline();
+    renderEducation();
+    
+    // NOTA: Se volessimo ricaricare i progetti GitHub (es. per tradurre la card di errore),
+    // potremmo richiamare loadGitHub(), ma per ora lasciamo statico per evitare troppe chiamate API.
+}
+
+// --- 2. RENDER TIMELINES ---
+function renderTimeline() {
+    const root = document.getElementById('timeline-root');
+    if (!root) return;
+    root.innerHTML = '';
+    
+    // Usa historyData da translations.js
+    historyData.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'timeline-item';
+        el.innerHTML = `
+            <div class="t-year">${item.start} - ${item.end}</div>
+            <div class="t-title">${item.title[currentLang]}</div>
+            <div class="t-desc">${item.desc[currentLang]}</div>
+        `;
+        root.appendChild(el);
+    });
+}
+
+function renderEducation() {
+    const root = document.getElementById('education-root');
+    if (!root) return;
+    root.innerHTML = '';
+
+    // Usa educationData da translations.js
+    educationData.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'timeline-item';
+        el.innerHTML = `
+            <div class="t-title">${item.school}</div>
+            <div class="t-desc">${item.degree[currentLang]}</div>
+        `;
+        root.appendChild(el);
+    });
+}
+
+// --- 3. THEME TOGGLE ---
 const toggle = document.getElementById('themeToggle');
 const body = document.body;
 
@@ -14,48 +87,16 @@ toggle.addEventListener('click', () => {
     toggle.innerText = isDark ? '🌙' : '☀️';
 });
 
-// --- 3.5. EDUCATION GENERATOR (Il mio Percorso) ---
-const educationData = [
-    { school: "SAM Trevano", degree: "Informatica & Elettronica" },
-    { school: "SUPSI DTI", degree: "Bachelor Ingegneria Informatica" },
-    { school: "Thomas More University", degree: "Erasmus - Computer Science" },
-    { school: "Leuven University", degree: "Corso di integrazione sociale" },
-    { school: "SUPSI DFA", degree: "Formazione & Apprendimento" }
-];
-
-const educationRoot = document.getElementById('education-root');
-
-if (educationRoot) {
-    educationRoot.innerHTML = '';
-
-    educationData.forEach(item => {
-        const el = document.createElement('div');
-        el.className = 'timeline-item';
-        el.innerHTML = `
-            <div class="t-title">${item.school}</div>
-            <div class="t-desc">${item.degree}</div>
-        `;
-        educationRoot.appendChild(el);
-    });
-}
-
-
+// --- 4. VINYL ANIMATION ---
 const vinylSection = document.getElementById('passions');
 const vinylPlayer = document.getElementById('vinylPlayer');
-
 const vinylObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            vinylPlayer.classList.add('playing');
-        } else {
-            vinylPlayer.classList.remove('playing');
-        }
+        if (entry.isIntersecting) vinylPlayer.classList.add('playing');
+        else vinylPlayer.classList.remove('playing');
     });
 }, { threshold: 0.3 });
-
-if (vinylSection) {
-    vinylObserver.observe(vinylSection);
-}
+if (vinylSection) vinylObserver.observe(vinylSection);
 
 const vinylCovers = [
     "https://static.fnac-static.com/multimedia/Images/FR/NR/48/95/d1/13735240/1520-1/tsp20210930082357/Ready-To-Die.jpg",
@@ -76,31 +117,7 @@ function setRandomVinylCover() {
 }
 setRandomVinylCover();
 
-const historyData = [
-    { start: "2016", end: "2017", title: "Adune Grouppe", desc: "Stage come sviluppatore junior in C# .NET." },
-    { start: "2020", end: "2021", title: "Soldato, Esercito Svizzero", desc: "Servizio militare, ruolo salvataggio e trasmissioni." },
-    { start: "2021", end: "2021", title: "Sergente, Esercito Svizzero", desc: "Corso di formazione e gestione team." },
-    { start: "2021", end: "2023", title: "Fattorino Pizza", desc: "Lavoro part-time durante gli studi." },
-    { start: "2021", end: "2025", title: "Sicurezza Stadio Lugano", desc: "Gestione sicurezza eventi sportivi." },
-    { start: "2025", end: "2025", title: "Ricercatore Junior", desc: "Progetto dati energie rinnovabili." },
-    { start: "2025", end: "Presente", title: "Freelance Dev", desc: "Sviluppo soluzioni web personalizzate." }
-];
-
-const timelineRoot = document.getElementById('timeline-root');
-if (timelineRoot) {
-    timelineRoot.innerHTML = '';
-    historyData.forEach(item => {
-        const el = document.createElement('div');
-        el.className = 'timeline-item';
-        el.innerHTML = `
-            <div class="t-year">${item.start} - ${item.end}</div>
-            <div class="t-title">${item.title}</div>
-            <div class="t-desc">${item.desc}</div>
-        `;
-        timelineRoot.appendChild(el);
-    });
-}
-
+// --- 5. GITHUB API FETCH ---
 async function loadGitHub() {
     const pCont = document.getElementById('projects-container');
     const sCont = document.getElementById('skills-container');
@@ -119,8 +136,8 @@ async function loadGitHub() {
         repos.forEach(repo => {
             const card = document.createElement('div');
             card.className = 'project-card';
-
-            const desc = repo.description ? repo.description : 'Nessuna descrizione disponibile.';
+            
+            const desc = repo.description ? repo.description : translations[currentLang].no_desc;
             const lastPush = new Date(repo.pushed_at).toLocaleDateString();
 
             card.innerHTML = `
@@ -136,7 +153,7 @@ async function loadGitHub() {
                     <span style="font-weight:bold;">★ ${repo.stargazers_count}</span>
                 </div>
             `;
-
+            
             card.onclick = () => window.open(repo.html_url, '_blank');
             pCont.appendChild(card);
 
@@ -154,8 +171,11 @@ async function loadGitHub() {
 
     } catch (e) {
         console.error("Github Error:", e);
-        pCont.innerHTML = '<div style="padding:20px; color:#ef4444;">Errore caricamento GitHub. Riprova più tardi.</div>';
+        pCont.innerHTML = '<div style="padding:20px; color:#ef4444;">Errore GitHub.</div>';
     }
 }
 
+// --- AVVIO DELL'APP ---
+// Imposta la lingua iniziale (che userà i dati appena caricati da translations.js)
+setLanguage('it'); 
 loadGitHub();

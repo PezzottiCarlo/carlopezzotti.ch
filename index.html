@@ -11,15 +11,24 @@
 </head>
 
 <body data-theme="light">
+
     <div class="theme-switch" id="themeToggle">🌙</div>
 
+    <div class="lang-switch-container">
+        <button class="lang-btn active" onclick="setLanguage('it')">IT</button>
+        <button class="lang-btn" onclick="setLanguage('fr')">FR</button>
+        <button class="lang-btn" onclick="setLanguage('de')">DE</button>
+        <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+    </div>
+
     <div class="snap-container">
+
         <section id="home">
             <div class="content-wrapper">
                 <div class="glass-card text-center">
-                    <p class="intro-tag">Portfolio</p>
+                    <p class="intro-tag" data-lang="portfolio">Portfolio</p>
                     <h1>Carlo Pezzotti</h1>
-                    <p class="subtitle">Developer · Student · Tech Enthusiast</p>
+                    <p class="subtitle" data-lang="subtitle">Developer · Student · Tech Enthusiast</p>
                     <div class="flag-icon">🇨🇭</div>
                 </div>
             </div>
@@ -28,12 +37,11 @@
         <section id="about">
             <div class="content-wrapper glass-card">
                 <div class="grid-2 align-top">
-                    <div class="info-box" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <h2>Dove Vivo</h2>
-                            <h3>Lugano, Svizzera</h3>
-                            <p>Tra lago e montagne, un hub perfetto tra natura e innovazione tecnologica.</p>
-                        </div>
+                    <div class="info-box">
+                        <h2 data-lang="where_live">Dove Vivo</h2>
+                        <h3>Lugano, Switzerland</h3>
+                        <p data-lang="live_desc">Tra lago e montagne, un hub perfetto tra natura e innovazione
+                            tecnologica.</p>
                         <div class="map-placeholder map-interactive">
                             <iframe width="100%" height="100%"
                                 src="https://www.openstreetmap.org/export/embed.html?bbox=8.91,45.98,8.99,46.02&layer=mapnik&marker=46.0037,8.9511"
@@ -43,10 +51,8 @@
                     </div>
 
                     <div class="info-box">
-                        <h2>Il mio Percorso</h2>
-
-                        <div class="timeline-container" id="education-root">
-                        </div>
+                        <h2 data-lang="education_title">Il mio Percorso</h2>
+                        <div class="timeline-container" id="education-root"></div>
                     </div>
                 </div>
             </div>
@@ -54,9 +60,8 @@
 
         <section id="passions">
             <div class="content-wrapper glass-card">
-                <h2 style="margin-bottom: 2rem;">Le Mie Passioni</h2>
+                <h2 style="margin-bottom: 2rem;" data-lang="passions_title">Le Mie Passioni</h2>
                 <div class="grid-2">
-
                     <div class="vinyl-section">
                         <div class="vinyl-wrapper" id="vinylPlayer">
                             <div class="record">
@@ -65,7 +70,7 @@
                             </div>
                             <div class="tone-arm"></div>
                         </div>
-                        <p class="passion-label">Musica</p>
+                        <p class="passion-label" data-lang="music">Musica</p>
                     </div>
 
                     <div class="arcade-section">
@@ -78,7 +83,7 @@
                                 <div class="btn-red" id="btn-right"></div>
                             </div>
                         </div>
-                        <p class="passion-label">Gamer</p>
+                        <p class="passion-label" data-lang="gamer">Gamer</p>
                     </div>
                 </div>
             </div>
@@ -86,11 +91,11 @@
 
         <section id="projects">
             <div class="content-wrapper glass-card">
-                <h2>Progetti GitHub</h2>
-                <p class="api-note">Fetching live data from <span class="code">api.github.com</span></p>
-
+                <h2 data-lang="github_title">Progetti GitHub</h2>
+                <p class="api-note"><span data-lang="fetching">Fetching live data from</span> <span
+                        class="code">api.github.com</span></p>
                 <div class="projects-scroll-container" id="projects-container">
-                    <div class="project-card-skeleton">Caricamento...</div>
+                    <div class="project-card-skeleton">Loading...</div>
                 </div>
             </div>
         </section>
@@ -101,62 +106,52 @@
                     <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
                             <h2>Tech Stack</h2>
-                            <p style="margin-bottom:1rem; font-size: 0.9rem;">Linguaggi estratti dalle repo:</p>
-
+                            <p style="margin-bottom:1rem; font-size: 0.9rem;" data-lang="extracted_repo">Linguaggi
+                                estratti dalle repo:</p>
                             <div id="skills-container" class="skills-wrapper"></div>
                         </div>
 
                         <div style="margin-top: 3.5rem;">
-                            <h2>Lingue</h2>
+                            <h2 data-lang="languages_title">Lingue</h2>
                             <div class="languages-list">
-
                                 <div class="lang-item">
-                                    <div class="lang-info">
-                                        <span class="lang-name">Italiano</span>
-                                        <span class="lang-level">Madrelingua</span>
+                                    <div class="lang-info"><span class="lang-name"
+                                            data-lang="lang_it">Italiano</span><span class="lang-level">Native</span>
                                     </div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" style="width: 100%;"></div>
                                     </div>
                                 </div>
-
                                 <div class="lang-item">
-                                    <div class="lang-info">
-                                        <span class="lang-name">Inglese</span>
-                                        <span class="lang-level">C1 / Advanced</span>
-                                    </div>
+                                    <div class="lang-info"><span class="lang-name"
+                                            data-lang="lang_en">Inglese</span><span class="lang-level">C1 /
+                                            Advanced</span></div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" style="width: 85%;"></div>
                                     </div>
                                 </div>
-
                                 <div class="lang-item">
-                                    <div class="lang-info">
-                                        <span class="lang-name">Tedesco</span>
-                                        <span class="lang-level">B2 / Upper-Intermediate</span>
-                                    </div>
+                                    <div class="lang-info"><span class="lang-name"
+                                            data-lang="lang_de">Tedesco</span><span class="lang-level">B2 /
+                                            Upper-Intermediate</span></div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" style="width: 70%;"></div>
                                     </div>
                                 </div>
-
                                 <div class="lang-item">
-                                    <div class="lang-info">
-                                        <span class="lang-name">Francese</span>
-                                        <span class="lang-level">B1 / Base</span>
-                                    </div>
+                                    <div class="lang-info"><span class="lang-name"
+                                            data-lang="lang_fr">Francese</span><span class="lang-level">B1 /
+                                            Basic</span></div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" style="width: 40%;"></div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                     <div>
-                        <h2>Esperienze</h2>
-                        <div class="timeline-container" id="timeline-root">
-                        </div>
+                        <h2 data-lang="experience_title">Esperienze</h2>
+                        <div class="timeline-container" id="timeline-root"></div>
                     </div>
                 </div>
             </div>
@@ -164,6 +159,7 @@
 
     </div>
 
+    <script src="translations.js"></script>
     <script src="script.js"></script>
     <script src="arcade.js"></script>
 </body>

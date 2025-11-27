@@ -232,6 +232,48 @@ p {
     border-color: transparent;
 }
 
+
+/* --- LANGUAGE SWITCHER --- */
+.lang-switch-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 8px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    padding: 8px;
+    border-radius: 50px;
+    border: var(--glass-border);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    font-family: var(--font-main);
+}
+
+.lang-btn:hover {
+    color: var(--accent);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.lang-btn.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 2px 10px var(--accent-glow);
+}
+
+
 /* --- 8. COMPONENTS --- */
 .path-list {
     list-style: none;
@@ -490,38 +532,48 @@ p {
 .timeline-container {
     position: relative;
     /* Rimuoviamo il bordo dal contenitore padre */
-    border-left: none; 
+    border-left: none;
     /* Aggiungiamo padding per staccare i pallini dal bordo schermo */
-    padding-left: 20px; 
+    padding-left: 20px;
     margin-left: 5px;
     margin-top: 15px;
 
     /* Scroll impostazioni */
-    max-height: 45vh;      
-    overflow-y: auto;      
+    max-height: 45vh;
+    overflow-y: auto;
     padding-right: 15px;
-    padding-bottom: 20px; /* Spazio extra in fondo per l'ultimo elemento */
-    
-    scrollbar-width: thin; 
+    padding-bottom: 20px;
+    /* Spazio extra in fondo per l'ultimo elemento */
+
+    scrollbar-width: thin;
     scrollbar-color: var(--accent) transparent;
 }
 
 /* Scrollbar personalizzata Webkit */
-.timeline-container::-webkit-scrollbar { width: 5px; }
-.timeline-container::-webkit-scrollbar-track { background: transparent; }
-.timeline-container::-webkit-scrollbar-thumb { background-color: var(--accent); border-radius: 10px; }
+.timeline-container::-webkit-scrollbar {
+    width: 5px;
+}
+
+.timeline-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.timeline-container::-webkit-scrollbar-thumb {
+    background-color: var(--accent);
+    border-radius: 10px;
+}
 
 .timeline-item {
     position: relative;
     /* La linea ora appartiene all'item */
     border-left: 3px solid var(--timeline-line);
-    
+
     /* Usiamo padding-bottom invece di margin per connettere le linee */
-    padding-bottom: 42px; 
+    padding-bottom: 42px;
     margin-bottom: 0;
-    
+
     /* Spazio tra la linea e il testo */
-    padding-left: 32px; 
+    padding-left: 32px;
 }
 
 /* Nascondiamo la linea per l'ultimo elemento così non scende nel vuoto */
@@ -533,15 +585,17 @@ p {
 .timeline-item::before {
     content: '';
     position: absolute;
-    left: -12px; 
-    top: 0; /* Allineato all'inizio del testo */
+    left: -12px;
+    top: 0;
+    /* Allineato all'inizio del testo */
     width: 15px;
     height: 15px;
     background: var(--bg-color);
     border: 3px solid var(--accent);
     border-radius: 50%;
     z-index: 2;
-    box-shadow: 0 0 0 4px var(--bg-color); /* Maschera la linea sotto il pallino */
+    box-shadow: 0 0 0 4px var(--bg-color);
+    /* Maschera la linea sotto il pallino */
 }
 
 /* Effetto Hover sul pallino */
@@ -618,12 +672,26 @@ p {
     border-radius: 10px;
     opacity: 0.8;
 }
+
 /* =========================================
    MEDIA QUERIES (RESPONSIVE MOBILE VERTICALE)
    ========================================= */
 
 @media (max-width: 900px) {
+
     /* 1. DISATTIVA SCROLL SNAP SU MOBILE */
+    .lang-switch-container {
+        bottom: 10px;
+        right: 10px;
+        padding: 5px;
+        gap: 2px;
+    }
+
+    .lang-btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
     .snap-container {
         height: auto;
         overflow-y: visible;
@@ -634,7 +702,8 @@ p {
     section {
         height: auto;
         min-height: 100vh;
-        padding: 4rem 1rem; /* Margine laterale leggermente ridotto per più spazio */
+        padding: 4rem 1rem;
+        /* Margine laterale leggermente ridotto per più spazio */
         display: flex;
         align-items: center;
         scroll-snap-align: none;
@@ -650,12 +719,19 @@ p {
     }
 
     .glass-card {
-        padding: 2rem 1.2rem; /* Padding interno ridotto */
+        padding: 2rem 1.2rem;
+        /* Padding interno ridotto */
         border-radius: 20px;
     }
 
-    h1 { font-size: 2.8rem; }
-    h2 { font-size: 1.8rem; margin-bottom: 1.5rem; }
+    h1 {
+        font-size: 2.8rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
 
     /* 4. GRIGLIE DIVENTANO COLONNE */
     .grid-2 {
@@ -666,20 +742,24 @@ p {
     /* --- 5. FIX PROGETTI: LISTA VERTICALE --- */
     .projects-scroll-container {
         display: flex;
-        flex-direction: column; /* <--- IMPILA I PROGETTI VERTICALMENTE */
-        gap: 20px;              /* Spazio verticale tra le card */
-        overflow-x: visible;    /* Rimuove lo scroll orizzontale */
+        flex-direction: column;
+        /* <--- IMPILA I PROGETTI VERTICALMENTE */
+        gap: 20px;
+        /* Spazio verticale tra le card */
+        overflow-x: visible;
+        /* Rimuove lo scroll orizzontale */
         padding-bottom: 0;
     }
 
     .project-card {
-        min-width: 100%;        /* <--- LA CARD OCCUPA TUTTA LA LARGHEZZA */
+        min-width: 100%;
+        /* <--- LA CARD OCCUPA TUTTA LA LARGHEZZA */
         max-width: 100%;
         padding: 1.5rem;
         /* Rimuovi effetti hover complessi su mobile che possono incantarsi */
-        transform: none !important; 
+        transform: none !important;
     }
-    
+
     /* Opzionale: Riduci ombra su mobile per pulizia */
     .project-card:hover {
         transform: none;
@@ -687,15 +767,39 @@ p {
     }
 
     /* 6. FIX VINILE & ARCADE */
-    .vinyl-wrapper { width: 240px; height: 240px; }
-    .record { width: 210px; height: 210px; }
-    .record-label { width: 70px; height: 70px; }
-    .tone-arm { width: 70px; height: 110px; top: -15px; right: -15px; }
-    .arcade-frame { width: 100%; max-width: 300px; }
+    .vinyl-wrapper {
+        width: 240px;
+        height: 240px;
+    }
+
+    .record {
+        width: 210px;
+        height: 210px;
+    }
+
+    .record-label {
+        width: 70px;
+        height: 70px;
+    }
+
+    .tone-arm {
+        width: 70px;
+        height: 110px;
+        top: -15px;
+        right: -15px;
+    }
+
+    .arcade-frame {
+        width: 100%;
+        max-width: 300px;
+    }
 
     /* 7. FIX BOTTONE TEMA */
     .theme-switch {
-        top: 15px; right: 15px;
-        width: 40px; height: 40px; font-size: 1.1rem;
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
     }
 }
