@@ -485,35 +485,70 @@ p {
     font-weight: 600;
 }
 
+/* --- FIX TIMELINE SCROLL & PALLINI --- */
+
 .timeline-container {
     position: relative;
-    border-left: 3px solid var(--timeline-line);
-    margin-left: 10px;
-    padding-left: 25px;
-    margin-top: 10px;
+    /* Rimuoviamo il bordo dal contenitore padre */
+    border-left: none; 
+    /* Aggiungiamo padding per staccare i pallini dal bordo schermo */
+    padding-left: 20px; 
+    margin-left: 5px;
+    margin-top: 15px;
+
+    /* Scroll impostazioni */
+    max-height: 45vh;      
+    overflow-y: auto;      
+    padding-right: 15px;
+    padding-bottom: 20px; /* Spazio extra in fondo per l'ultimo elemento */
+    
+    scrollbar-width: thin; 
+    scrollbar-color: var(--accent) transparent;
 }
+
+/* Scrollbar personalizzata Webkit */
+.timeline-container::-webkit-scrollbar { width: 5px; }
+.timeline-container::-webkit-scrollbar-track { background: transparent; }
+.timeline-container::-webkit-scrollbar-thumb { background-color: var(--accent); border-radius: 10px; }
 
 .timeline-item {
     position: relative;
-    margin-bottom: 30px;
+    /* La linea ora appartiene all'item */
+    border-left: 3px solid var(--timeline-line);
+    
+    /* Usiamo padding-bottom invece di margin per connettere le linee */
+    padding-bottom: 42px; 
+    margin-bottom: 0;
+    
+    /* Spazio tra la linea e il testo */
+    padding-left: 32px; 
 }
 
+/* Nascondiamo la linea per l'ultimo elemento così non scende nel vuoto */
 .timeline-item:last-child {
-    margin-bottom: 0;
+    border-left-color: transparent;
+    padding-bottom: 0;
 }
 
 .timeline-item::before {
     content: '';
     position: absolute;
-    left: -34px;
-    top: 5px;
+    left: -12px; 
+    top: 0; /* Allineato all'inizio del testo */
     width: 15px;
     height: 15px;
     background: var(--bg-color);
     border: 3px solid var(--accent);
     border-radius: 50%;
     z-index: 2;
-    box-shadow: 0 0 0 4px var(--bg-color);
+    box-shadow: 0 0 0 4px var(--bg-color); /* Maschera la linea sotto il pallino */
+}
+
+/* Effetto Hover sul pallino */
+.timeline-item:hover::before {
+    background: var(--accent);
+    transform: scale(1.2);
+    transition: all 0.3s ease;
 }
 
 .t-year {

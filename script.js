@@ -14,6 +14,32 @@ toggle.addEventListener('click', () => {
     toggle.innerText = isDark ? '🌙' : '☀️';
 });
 
+// --- 3.5. EDUCATION GENERATOR (Il mio Percorso) ---
+const educationData = [
+    { school: "SAM Trevano", degree: "Informatica & Elettronica" },
+    { school: "SUPSI DTI", degree: "Bachelor Ingegneria Informatica" },
+    { school: "Thomas More University", degree: "Erasmus - Computer Science" },
+    { school: "Leuven University", degree: "Corso di integrazione sociale" },
+    { school: "SUPSI DFA", degree: "Formazione & Apprendimento" }
+];
+
+const educationRoot = document.getElementById('education-root');
+
+if (educationRoot) {
+    educationRoot.innerHTML = '';
+
+    educationData.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'timeline-item';
+        el.innerHTML = `
+            <div class="t-title">${item.school}</div>
+            <div class="t-desc">${item.degree}</div>
+        `;
+        educationRoot.appendChild(el);
+    });
+}
+
+
 const vinylSection = document.getElementById('passions');
 const vinylPlayer = document.getElementById('vinylPlayer');
 
