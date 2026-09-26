@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "carlopezzotti-34e0a"
+  },
+  "targets": {
+    "carlopezzotti-34e0a": {
+      "hosting": {
+        "www": [
+          "carlopezzotti-34e0a"
+        ],
+        "so": [
+          "carlopezzotti-so"
+        ]
+      }
+    }
   }
 }

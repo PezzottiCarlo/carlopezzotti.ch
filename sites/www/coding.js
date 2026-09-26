@@ -1,145 +1,152 @@
 /**
- * CODING.JS
- * Simula un terminale hacker attivo con digitazione realistica.
+ * TERMINALE
+ * Digita una sessione finta riga per riga. Va in pausa quando la
+ * sezione esce dallo schermo e non riparte da capo inutilmente.
  */
+(function () {
+    'use strict';
 
-const terminalContainer = document.querySelector('.terminal-body');
-const terminalOutput = document.getElementById('typewriter-text');
+    const body = document.querySelector('.terminal-body');
+    const out = document.getElementById('typewriter-text');
+    if (!body || !out) return;
 
-// Configurazione
-const TYPING_SPEED_MIN = 30;  // ms
-const TYPING_SPEED_MAX = 90;  // ms
-const PAUSE_BETWEEN_LINES = 600; // ms
-const RESTART_DELAY = 3000;   // ms prima di ricominciare
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-// La sequenza di comandi "Hacker/Dev"
-// Sostituisci la vecchia const sequence con questa:
+    const TYPE_MIN = 28;
+    const TYPE_MAX = 80;
+    const LINE_PAUSE = 550;
+    const RESTART_PAUSE = 4000;
 
-const sequence = [
-    { text: "user@portfolio:~$ npm install --save-dev sanity", type: "input", color: "#fff" },
-    { text: "[ERROR] 404 'Sanity' not found.", type: "output", color: "#ef4444" }, // Rosso
-    { text: "> Trying coffee fallback...", type: "output", color: "#fbbf24" }, // Giallo
-    
-    { text: "user@portfolio:~$ sudo download_more_ram.sh", type: "input", color: "#fff" },
-    { text: "[SUCCESS] 128GB RAM downloaded wirelessly.", type: "output", color: "#22c55e" }, // Verde
-    
-    { text: "user@portfolio:~$ git push --force production", type: "input", color: "#fff" },
-    { text: "[CRITICAL] 🔥 YOU DELETED THE DATABASE 🔥", type: "output", color: "#ef4444", bold: true },
-    { text: "[PANIC] Boss is looking... Act busy.", type: "output", color: "#fbbf24" },
-    
-    { text: "user@portfolio:~$ google 'how to center a div'", type: "input", color: "#fff" },
-    { text: "> Searching StackOverflow...", type: "output", color: "#60a5fa" }, // Blu
-    { text: "> Ctrl+C / Ctrl+V sequence initiated.", type: "output", color: "#6b7280" },
-    
-    { text: "user@portfolio:~$ hack_nasa_with_html.exe", type: "input", color: "#fff" },
-    { text: "[ACCESS DENIED] Use Python, script kiddie.", type: "output", color: "#ef4444" },
-    
-    { text: "user@portfolio:~$ echo 'It works on my machine'", type: "input", color: "#fff" },
-    { text: "Deploying 🚀 (Good luck).", type: "output", color: "#22c55e", bold: true },
-    
-    { text: "_", type: "cursor" } // Placeholder finale
-];
+    /* Colori coerenti con il fosforo del terminale */
+    const CO = {
+        prompt: '#d8d6cf',
+        ok: '#7ec97a',
+        warn: '#d8a33c',
+        err: '#e0705f',
+        info: '#79a6d2',
+        dim: '#6f7a6d'
+    };
 
-// Funzione per dormire (pausa)
-const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    const sequence = [
+        { text: 'carlo@lugano:~$ npm install --save-dev sanity', type: 'in' },
+        { text: '[ERROR] 404 "sanity" not found.', color: CO.err },
+        { text: '> falling back to coffee', color: CO.warn },
 
-// Funzione per digitare un singolo carattere
-async function typeCharacter(char, span) {
-    span.textContent += char;
-    // Scrolla sempre in basso
-    if (terminalContainer) terminalContainer.scrollTop = terminalContainer.scrollHeight;
-    
-    // Velocità random per realismo umano
-    const randomSpeed = Math.floor(Math.random() * (TYPING_SPEED_MAX - TYPING_SPEED_MIN + 1)) + TYPING_SPEED_MIN;
-    await wait(randomSpeed);
-}
+        { text: 'carlo@lugano:~$ sudo download_more_ram.sh', type: 'in' },
+        { text: '[OK] 128GB RAM downloaded wirelessly.', color: CO.ok },
 
-// Funzione principale che esegue una riga
-async function processLine(lineData) {
-    if (!terminalOutput) return;
+        { text: 'carlo@lugano:~$ git push --force production', type: 'in' },
+        { text: '[CRITICAL] the database is gone.', color: CO.err, bold: true },
+        { text: '[PANIC] look busy.', color: CO.warn },
 
-    // Crea un nuovo contenitore per la riga
-    const lineDiv = document.createElement('div');
-    lineDiv.style.color = lineData.color || '#22c55e';
-    lineDiv.style.fontFamily = "'Courier New', monospace";
-    lineDiv.style.marginBottom = "4px";
-    lineDiv.style.wordBreak = "break-all";
-    
-    if (lineData.bold) lineDiv.style.fontWeight = "bold";
+        { text: 'carlo@lugano:~$ google "how to center a div"', type: 'in' },
+        { text: '> 41 400 000 results', color: CO.info },
+        { text: '> copy, paste, pray', color: CO.dim },
 
-    // Rimuoviamo il cursore precedente se esiste
-    const prevCursor = document.getElementById('active-cursor');
-    if (prevCursor) prevCursor.remove();
+        { text: 'carlo@lugano:~$ ./hack_nasa.exe', type: 'in' },
+        { text: '[DENIED] nice try.', color: CO.err },
 
-    terminalOutput.appendChild(lineDiv);
+        { text: 'carlo@lugano:~$ echo "it works on my machine"', type: 'in' },
+        { text: 'shipping anyway.', color: CO.ok, bold: true }
+    ];
 
-    // Se è un input (l'utente scrive), digitiamo carattere per carattere
-    if (lineData.type === "input") {
-        // Aggiungi cursore temporaneo alla riga
-        const cursorSpan = document.createElement('span');
-        cursorSpan.id = "active-cursor";
-        cursorSpan.className = "cursor"; // Usa la classe CSS esistente
-        cursorSpan.style.display = "inline-block"; // Fix visivo
-        
-        // Testo digitato
-        const textSpan = document.createElement('span');
-        lineDiv.appendChild(textSpan);
-        lineDiv.appendChild(cursorSpan);
+    const wait = (ms) => new Promise(r => setTimeout(r, ms));
+    const scroll = () => { body.scrollTop = body.scrollHeight; };
 
-        for (let char of lineData.text) {
-            await typeCharacter(char, textSpan);
-        }
-    } 
-    // Se è output di sistema, appare istantaneamente (o con ritardo minimo)
-    else if (lineData.type === "output") {
-        lineDiv.textContent = lineData.text;
-        await wait(100); // Piccola pausa "di calcolo"
+    let running = false;
+    let visible = false;
+    let done = false;
+
+    function newLine(data) {
+        const line = document.createElement('div');
+        line.className = 'term-line';
+        line.style.color = data.type === 'in' ? CO.prompt : (data.color || CO.ok);
+        if (data.bold) line.style.fontWeight = '500';
+        out.appendChild(line);
+        return line;
     }
 
-    // Scroll finale
-    if (terminalContainer) terminalContainer.scrollTop = terminalContainer.scrollHeight;
-}
+    function cursor() {
+        const c = document.createElement('span');
+        c.className = 'cursor';
+        return c;
+    }
 
-// Loop principale
-async function runTerminalLoop() {
-    if (!terminalOutput) return;
+    function dropCursor() {
+        const old = out.querySelector('.cursor');
+        if (old) old.remove();
+    }
 
-    while (true) {
-        // 1. Pulisci terminale
-        terminalOutput.innerHTML = '';
-        
-        // 2. Esegui sequenza
-        for (const line of sequence) {
-            if (line.type === 'cursor') continue;
-            await processLine(line);
-            await wait(PAUSE_BETWEEN_LINES);
+    async function typeLine(data) {
+        dropCursor();
+        const line = newLine(data);
+
+        if (data.type !== 'in') {
+            line.textContent = data.text;
+            scroll();
+            await wait(120);
+            return;
         }
 
-        // 3. Aggiungi cursore lampeggiante finale in attesa
-        const finalCursor = document.createElement('span');
-        finalCursor.className = "cursor";
-        terminalOutput.appendChild(finalCursor);
+        const text = document.createElement('span');
+        const car = cursor();
+        line.append(text, car);
 
-        // 4. Aspetta prima di ricominciare
-        await wait(RESTART_DELAY);
+        for (const ch of data.text) {
+            if (!visible) { text.textContent = data.text; break; }
+            text.textContent += ch;
+            scroll();
+            await wait(TYPE_MIN + Math.random() * (TYPE_MAX - TYPE_MIN));
+        }
+        scroll();
     }
-}
 
-// Avvio quando il DOM è pronto
-document.addEventListener('DOMContentLoaded', () => {
-    // Osserva quando la sezione diventa visibile per far partire l'animazione
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // Controlla se sta già girando per evitare doppi avvii (opzionale)
-                if (terminalOutput.innerHTML === "") {
-                    runTerminalLoop();
-                }
+    /* Senza animazioni: la sessione compare tutta insieme, una volta. */
+    function renderStatic() {
+        out.textContent = '';
+        sequence.forEach(data => { newLine(data).textContent = data.text; });
+        out.appendChild(cursor());
+        scroll();
+        done = true;
+    }
+
+    async function loop() {
+        if (running) return;
+        running = true;
+
+        while (visible) {
+            out.textContent = '';
+            for (const data of sequence) {
+                if (!visible) break;
+                await typeLine(data);
+                await wait(LINE_PAUSE);
             }
-        });
-    }, { threshold: 0.3 });
+            dropCursor();
+            out.appendChild(cursor());
+            if (!visible) break;
+            await wait(RESTART_PAUSE);
+        }
+
+        running = false;
+    }
 
     const section = document.querySelector('.terminal-section');
-    if (section) observer.observe(section);
-    else runTerminalLoop(); // Fallback
-});
+
+    if (!section || !('IntersectionObserver' in window)) {
+        calm.matches ? renderStatic() : (visible = true, loop());
+        return;
+    }
+
+    new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            visible = entry.isIntersecting;
+
+            if (!visible) return;
+            if (calm.matches) {
+                if (!done) renderStatic();
+            } else {
+                loop();
+            }
+        });
+    }, { threshold: 0.25 }).observe(section);
+})();

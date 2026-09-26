@@ -4,183 +4,330 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carlo Pezzotti | Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <title>Carlo Pezzotti — Sviluppatore full-stack a Lugano</title>
+    <meta name="description"
+        content="Carlo Pezzotti, sviluppatore full-stack e studente di ingegneria informatica a Lugano. Progetti, percorso e contatti.">
+    <meta name="author" content="Carlo Pezzotti">
+    <link rel="canonical" href="https://carlopezzotti.ch/">
+
+    <meta name="theme-color" content="#e9e7e2" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://carlopezzotti.ch/">
+    <meta property="og:title" content="Carlo Pezzotti — Sviluppatore full-stack a Lugano">
+    <meta property="og:description"
+        content="Costruisco software per il web, dal database al pixel. Progetti, percorso e contatti.">
+    <meta property="og:locale" content="it_CH">
+    <meta name="twitter:card" content="summary">
+
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=Press+Start+2P&display=swap">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=Press+Start+2P&display=swap">
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body data-theme="light">
+<body>
+    <a class="skip-link" href="#main" data-i18n="skip_link">Vai al contenuto</a>
 
-    <div class="theme-switch" id="themeToggle">🌙</div>
+    <!-- ======================================================
+         CONTROLLI FISSI: tema + lingua
+         ====================================================== -->
+    <div class="panel-controls">
+        <button class="ctl ctl--theme" id="themeToggle" type="button" aria-pressed="false"
+            aria-label="Passa al tema scuro">
+            <span class="ctl__glyph" aria-hidden="true"></span>
+        </button>
 
-    <div class="lang-switch-container">
-        <button class="lang-btn active" onclick="setLanguage('it')">IT</button>
-        <button class="lang-btn" onclick="setLanguage('fr')">FR</button>
-        <button class="lang-btn" onclick="setLanguage('de')">DE</button>
-        <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+        <div class="ctl-group" role="group" id="langGroup" aria-label="Lingua del sito">
+            <button class="ctl ctl--lang is-on" type="button" data-setlang="it" lang="it" aria-pressed="true">IT</button>
+            <button class="ctl ctl--lang" type="button" data-setlang="fr" lang="fr" aria-pressed="false">FR</button>
+            <button class="ctl ctl--lang" type="button" data-setlang="de" lang="de" aria-pressed="false">DE</button>
+            <button class="ctl ctl--lang" type="button" data-setlang="en" lang="en" aria-pressed="false">EN</button>
+        </div>
     </div>
 
-    <div class="snap-container">
+    <!-- ======================================================
+         SCALA DI SINTONIA: navigazione + posizione nella pagina
+         ====================================================== -->
+    <nav class="dial" id="dial" aria-label="Sezioni del sito">
+        <ol class="dial__list">
+            <li><a href="#home" data-i18n="nav_home">Inizio</a></li>
+            <li><a href="#about" data-i18n="nav_about">Profilo</a></li>
+            <li><a href="#path" data-i18n="nav_path">Percorso</a></li>
+            <li><a href="#workbench" data-i18n="nav_work">Banco di lavoro</a></li>
+            <li><a href="#projects" data-i18n="nav_projects">Progetti</a></li>
+            <li><a href="#contact" data-i18n="nav_contact">Contatti</a></li>
+        </ol>
+    </nav>
 
-        <section id="home">
-            <div class="content-wrapper">
-                <div class="glass-card text-center">
-                    <p class="intro-tag" data-lang="portfolio">Portfolio</p>
-                    <h1>Carlo Pezzotti</h1>
-                    <p class="subtitle" data-lang="subtitle">Developer · Student · Tech Enthusiast</p>
-                    <div class="flag-icon">🇨🇭</div>
+    <main id="main">
+
+        <!-- ================== INIZIO ================== -->
+        <section class="unit unit--hero" id="home" aria-label="Carlo Pezzotti">
+            <div class="wrap">
+
+                <div class="readout" id="readout">
+                    <div class="readout__cell">
+                        <span class="readout__label" data-i18n="readout_place">Posizione</span>
+                        <b id="r-place">Lugano CH-6900</b>
+                        <small class="mono" id="r-coords">46.00°N 8.95°E</small>
+                    </div>
+                    <div class="readout__cell">
+                        <span class="readout__label" data-i18n="readout_time">Ora locale</span>
+                        <b class="mono digits" id="r-time">--:--</b>
+                        <small class="mono" id="r-zone">CET</small>
+                    </div>
+                    <div class="readout__cell" id="r-temp-cell" hidden>
+                        <span class="readout__label" data-i18n="readout_temp">Temperatura</span>
+                        <b class="mono digits" id="r-temp">--</b>
+                        <small class="mono" id="r-sky"></small>
+                    </div>
+                </div>
+
+                <h1 class="nameplate">
+                    <span class="nameplate__line">Carlo</span>
+                    <span class="nameplate__line">Pezzotti</span>
+                </h1>
+
+                <p class="role" data-i18n="role">Sviluppatore full-stack e studente di ingegneria informatica</p>
+                <p class="lead" data-i18n="lead">Costruisco software per il web, dal database al pixel. Studio a Lugano
+                    e lavoro come freelance.</p>
+
+                <div class="hero__actions">
+                    <a class="btn btn--solid" href="#contact" data-i18n="cta_contact">Scrivimi</a>
+                    <a class="btn" id="heroCode" href="https://github.com/PezzottiCarlo" target="_blank"
+                        rel="noopener" data-i18n="cta_code">Guarda il codice</a>
+                    <p class="lamp">
+                        <span class="lamp__led" aria-hidden="true"></span>
+                        <span data-i18n="available">Disponibile per progetti</span>
+                    </p>
                 </div>
             </div>
         </section>
 
-        <section id="about">
-            <div class="content-wrapper glass-card">
-                <div class="grid-2 align-top">
-                    <div class="info-box">
-                        <h2 data-lang="where_live">Dove Vivo</h2>
-                        <h3>Lugano, Switzerland</h3>
-                        <p data-lang="live_desc">Tra lago e montagne, un hub perfetto tra natura e innovazione
-                            tecnologica.</p>
-                        <div class="map-placeholder map-interactive">
-                            <iframe width="100%" height="100%"
-                                src="https://www.openstreetmap.org/export/embed.html?bbox=8.91,45.98,8.99,46.02&layer=mapnik&marker=46.0037,8.9511"
-                                style="border: 0;">
-                            </iframe>
-                        </div>
+        <!-- ================== PROFILO ================== -->
+        <section class="unit" id="about" aria-labelledby="about-h">
+            <div class="wrap">
+                <div class="rule">
+                    <h2 id="about-h" data-i18n="about_title">Profilo</h2>
+                </div>
+
+                <div class="cols cols--bio">
+                    <div class="prose">
+                        <p data-i18n="bio_1">Vivo a Lugano, tra il lago e le montagne. Abbastanza vicino a Milano e
+                            Zurigo per lavorare con entrambe, abbastanza lontano per avere silenzio quando serve.</p>
+                        <p data-i18n="bio_2">Ho iniziato con l'elettronica e il C# a scuola, poi mi sono spostato sul
+                            web. Oggi lavoro su applicazioni full-stack, e la parte che mi piace di più resta capire
+                            come funziona una cosa prima di riscriverla meglio.</p>
+
+                        <dl class="spec">
+                            <div class="spec__row">
+                                <dt data-i18n="spec_base">Base</dt>
+                                <dd>Lugano, Svizzera</dd>
+                            </div>
+                            <div class="spec__row">
+                                <dt data-i18n="spec_tz">Fuso orario</dt>
+                                <dd class="mono">Europe/Zurich</dd>
+                            </div>
+                            <div class="spec__row">
+                                <dt data-i18n="spec_studies">Studi</dt>
+                                <dd>SUPSI DTI</dd>
+                            </div>
+                            <div class="spec__row">
+                                <dt data-i18n="spec_status">Stato</dt>
+                                <dd data-i18n="spec_status_v">Studente e freelance</dd>
+                            </div>
+                            <div class="spec__row">
+                                <dt data-i18n="spec_working_langs">Lingue di lavoro</dt>
+                                <dd class="mono">IT / EN / DE / FR</dd>
+                            </div>
+                        </dl>
                     </div>
 
-                    <div class="info-box">
-                        <h2 data-lang="education_title">Il mio Percorso</h2>
-                        <div class="timeline-container" id="education-root"></div>
+                    <div class="subunit">
+                        <h3 data-i18n="langs_title">Lingue</h3>
+                        <ul class="cefr" id="cefr-root"></ul>
+                        <p class="note" data-i18n="langs_note">Livelli secondo il quadro europeo QCER.</p>
+
+                        <figure class="place">
+                            <iframe title="Mappa di Lugano" id="mapFrame" loading="lazy" width="100%" height="100%"
+                                src="https://www.openstreetmap.org/export/embed.html?bbox=8.91,45.98,8.99,46.02&layer=mapnik&marker=46.0037,8.9511"></iframe>
+                        </figure>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="passions">
-            <div class="content-wrapper glass-card">
-                <h2 style="margin-bottom: 2rem;" data-lang="passions_title">Le Mie Passioni</h2>
+        <!-- ================== PERCORSO ================== -->
+        <section class="unit" id="path" aria-labelledby="path-h">
+            <div class="wrap">
+                <div class="rule">
+                    <h2 id="path-h" data-i18n="path_title">Percorso</h2>
+                </div>
 
-                <div class="grid-3">
+                <div class="cols cols--path">
+                    <div class="subunit">
+                        <h3 data-i18n="exp_title">Esperienza</h3>
+                        <ol class="log" id="log-root"></ol>
+                    </div>
 
-                    <div class="terminal-section">
+                    <div class="subunit">
+                        <h3 data-i18n="edu_title">Formazione</h3>
+                        <ul class="schools" id="edu-root"></ul>
+
+                        <h3 class="mt" data-i18n="stack_title">Tecnologie</h3>
+                        <ul class="chips" id="stack-root"></ul>
+                        <p class="note" data-i18n="stack_note">Linguaggi rilevati nelle repository pubbliche.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================== BANCO DI LAVORO ================== -->
+        <section class="unit" id="workbench" aria-labelledby="work-h">
+            <div class="wrap">
+                <div class="rule">
+                    <h2 id="work-h" data-i18n="work_title">Banco di lavoro</h2>
+                </div>
+                <p class="lead lead--tight" data-i18n="work_lead">Tre cose che mi tengono occupato fuori dal lavoro.
+                    Funzionano davvero: provale.</p>
+
+                <div class="bench">
+
+                    <!-- Giradischi -->
+                    <figure class="rig rig--deck">
                         <div class="vinyl-wrapper" id="vinylPlayer">
+                            <div class="deck__plinth" aria-hidden="true"></div>
                             <div class="record">
                                 <div class="record-reflection"></div>
                                 <div class="record-label"></div>
                             </div>
-                            <div class="tone-arm"></div>
+                            <div class="tone-arm" id="toneArm" role="button" tabindex="0"
+                                aria-label="Alza o abbassa il braccio"></div>
+                            <span class="deck__strobe" aria-hidden="true"></span>
                         </div>
-                        <p class="passion-label" data-lang="music">Musica</p>
-                    </div>
+                        <figcaption>
+                            <b data-i18n="inst_vinyl">Giradischi</b>
+                            <span data-i18n="inst_vinyl_hint">Trascina il disco per scratchare, clicca il braccio per
+                                fermarlo.</span>
+                        </figcaption>
+                    </figure>
 
-                    <div class="terminal-section">
+                    <!-- Terminale -->
+                    <figure class="rig terminal-section">
                         <div class="terminal-wrapper">
-                            <div class="terminal-header">
-                                <div class="t-dot t-red"></div>
-                                <div class="t-dot t-yellow"></div>
-                                <div class="t-dot t-green"></div>
+                            <div class="terminal-header" aria-hidden="true">
+                                <span class="t-dot t-red"></span>
+                                <span class="t-dot t-yellow"></span>
+                                <span class="t-dot t-green"></span>
+                                <span class="terminal-title mono">carlo@lugano</span>
                             </div>
                             <div class="terminal-body">
                                 <span id="typewriter-text"></span>
                             </div>
                         </div>
-                        <p class="passion-label" data-lang="coding">Coding & Hacking</p>
-                    </div>
+                        <figcaption>
+                            <b data-i18n="inst_terminal">Terminale</b>
+                            <span data-i18n="inst_terminal_hint">Una giornata di lavoro, più o meno.</span>
+                        </figcaption>
+                    </figure>
 
-                    <div class="terminal-section">
+                    <!-- Cabinato -->
+                    <figure class="rig">
                         <div class="arcade-frame">
                             <div class="arcade-screen-container">
-                                <canvas id="arcade-canvas" width="64" height="64"></canvas>
+                                <canvas id="arcade-canvas" width="128" height="128"
+                                    aria-label="Mini cabinato: Arkanoid e Mario"></canvas>
                             </div>
                             <div class="arcade-controls">
-                                <div class="btn-red" id="btn-left"></div>
-                                <div class="btn-red" id="btn-right"></div>
+                                <button class="btn-red" id="btn-left" type="button"
+                                    aria-label="Pulsante sinistro, avvia Arkanoid"></button>
+                                <button class="btn-red" id="btn-right" type="button"
+                                    aria-label="Pulsante destro, avvia Mario"></button>
                             </div>
                         </div>
-                        <p class="passion-label" data-lang="gamer">Gamer</p>
-                    </div>
+                        <figcaption>
+                            <b data-i18n="inst_arcade">Cabinato</b>
+                            <span data-i18n="inst_arcade_hint">Sinistra per Arkanoid, destra per Mario.</span>
+                        </figcaption>
+                    </figure>
 
                 </div>
             </div>
         </section>
 
-        <section id="projects">
-            <div class="content-wrapper glass-card">
-                <h2 data-lang="github_title">Progetti GitHub</h2>
-                <p class="api-note"><span data-lang="fetching">Fetching live data from</span> <span
-                        class="code">api.github.com</span></p>
-                <div class="projects-scroll-container" id="projects-container">
-                    <div class="project-card-skeleton">Loading...</div>
+        <!-- ================== PROGETTI ================== -->
+        <section class="unit" id="projects" aria-labelledby="projects-h">
+            <div class="wrap">
+                <div class="rule">
+                    <h2 id="projects-h" data-i18n="projects_title">Progetti</h2>
                 </div>
-            </div>
-        </section>
 
-        <section id="experience">
-            <div class="content-wrapper glass-card">
-                <div class="grid-2 align-top">
-                    <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="projects__top">
+                    <p class="lead lead--tight" data-i18n="projects_lead">Repository pubbliche, lette da GitHub al
+                        caricamento della pagina.</p>
+                    <dl class="tally" id="tally" hidden>
                         <div>
-                            <h2>Tech Stack</h2>
-                            <p style="margin-bottom:1rem; font-size: 0.9rem;" data-lang="extracted_repo">Linguaggi
-                                estratti dalle repo:</p>
-                            <div id="skills-container" class="skills-wrapper"></div>
+                            <dd class="mono digits" id="t-repos">0</dd>
+                            <dt data-i18n="stat_repos">repository</dt>
                         </div>
-
-                        <div style="margin-top: 3.5rem;">
-                            <h2 data-lang="languages_title">Lingue</h2>
-                            <div class="languages-list">
-                                <div class="lang-item">
-                                    <div class="lang-info"><span class="lang-name"
-                                            data-lang="lang_it">Italiano</span><span class="lang-level">Native</span>
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 100%;"></div>
-                                    </div>
-                                </div>
-                                <div class="lang-item">
-                                    <div class="lang-info"><span class="lang-name"
-                                            data-lang="lang_en">Inglese</span><span class="lang-level">C1 /
-                                            Advanced</span></div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 85%;"></div>
-                                    </div>
-                                </div>
-                                <div class="lang-item">
-                                    <div class="lang-info"><span class="lang-name"
-                                            data-lang="lang_de">Tedesco</span><span class="lang-level">B2 /
-                                            Upper-Intermediate</span></div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 70%;"></div>
-                                    </div>
-                                </div>
-                                <div class="lang-item">
-                                    <div class="lang-info"><span class="lang-name"
-                                            data-lang="lang_fr">Francese</span><span class="lang-level">B1 /
-                                            Basic</span></div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 40%;"></div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div>
+                            <dd class="mono digits" id="t-stars">0</dd>
+                            <dt data-i18n="stat_stars">stelle</dt>
                         </div>
-                    </div>
-                    <div>
-                        <h2 data-lang="experience_title">Esperienze</h2>
-                        <div class="timeline-container" id="timeline-root"></div>
-                    </div>
+                        <div>
+                            <dd class="mono digits" id="t-langs">0</dd>
+                            <dt data-i18n="stat_langs">linguaggi</dt>
+                        </div>
+                    </dl>
                 </div>
+
+                <div class="filters" id="filters" role="group" aria-label="Filtra per linguaggio" hidden></div>
+
+                <ul class="repos" id="repos-root" aria-live="polite" aria-busy="true">
+                    <li class="repo repo--pending" data-i18n="loading">Lettura da GitHub in corso.</li>
+                </ul>
+
+                <a class="more" id="viewAll" href="https://github.com/PezzottiCarlo?tab=repositories" target="_blank"
+                    rel="noopener" data-i18n="view_all">Tutte le repository su GitHub</a>
             </div>
         </section>
 
-    </div>
+        <!-- ================== CONTATTI ================== -->
+        <section class="unit unit--contact" id="contact" aria-labelledby="contact-h">
+            <div class="wrap">
+                <div class="rule">
+                    <h2 id="contact-h" data-i18n="contact_title">Contatti</h2>
+                </div>
+
+                <p class="lead" data-i18n="contact_lead">Il modo più rapido è la mail. Rispondo in italiano, inglese,
+                    tedesco o francese.</p>
+
+                <ul class="ports" id="ports"></ul>
+            </div>
+        </section>
+
+        <footer class="foot">
+            <div class="wrap">
+                <p data-i18n="footer_note">Scritto a mano in HTML, CSS e JavaScript. Nessun framework.</p>
+                <p class="mono">Carlo Pezzotti, <span id="year">2026</span></p>
+            </div>
+        </footer>
+
+    </main>
 
     <script src="translations.js"></script>
-    <script src="vinyl.js"></script>
     <script src="script.js"></script>
+    <script src="vinyl.js"></script>
     <script src="arcade.js"></script>
-    <script src="coding.js"></script> </body>
+    <script src="coding.js"></script>
 </body>
 
 </html>

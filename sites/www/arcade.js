@@ -4,10 +4,6 @@ const ctx = canvas.getContext('2d');
 const RES = 128;
 canvas.width = RES;
 canvas.height = RES;
-canvas.style.width = '100%';
-canvas.style.height = '100%';
-canvas.style.objectFit = 'contain';
-canvas.style.imageRendering = 'pixelated';
 ctx.imageSmoothingEnabled = false;
 
 const btnLeftArcade = document.getElementById('btn-left');
@@ -507,8 +503,7 @@ function pressStart(btn) {
 
     const btnEl = btn === 'LEFT' ? btnLeftArcade : btnRightArcade;
     if (btnEl) {
-        btnEl.style.transform = "translateY(4px)";
-        btnEl.style.boxShadow = "none";
+        btnEl.classList.add('is-down');
     }
 
     if (gameState === 'MENU') {
@@ -521,8 +516,7 @@ function pressEnd(btn) {
     inputState.holding = false;
     const btnEl = btn === 'LEFT' ? btnLeftArcade : btnRightArcade;
     if (btnEl) {
-        btnEl.style.transform = "translateY(0)";
-        btnEl.style.boxShadow = "0 6px 0 #991b1b";
+        btnEl.classList.remove('is-down');
     }
 }
 
@@ -539,5 +533,18 @@ if (btnLeftArcade && btnRightArcade) {
     btnRightArcade.addEventListener('touchstart', (e) => { e.preventDefault(); pressStart('RIGHT'); });
     btnRightArcade.addEventListener('touchend', (e) => { e.preventDefault(); pressEnd('RIGHT'); });
 }
+
+[[btnLeftArcade, 'LEFT'], [btnRightArcade, 'RIGHT']].forEach(([el, side]) => {
+    if (!el) return;
+    el.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        if (!e.repeat) pressStart(side);
+    });
+    el.addEventListener('keyup', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        pressEnd(side);
+    });
+});
 
 setTimeout(showMenu, 200);

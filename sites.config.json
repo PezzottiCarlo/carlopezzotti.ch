@@ -1,0 +1,45 @@
+{
+  "domain": "carlopezzotti.ch",
+  "defaultProject": "carlopezzotti-34e0a",
+  "cloudflare": { "proxied": false },
+  "hosting": {
+    "ignore": ["**/.*", "**/node_modules/**", "_*.html"],
+    "rewrites": [{ "source": "**", "destination": "/index.html" }],
+    "headers": [
+      {
+        "source": "**/*.@(js|css|svg)",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
+      },
+      {
+        "source": "/index.html",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
+      }
+    ]
+  },
+  "sites": [
+    {
+      "target": "",
+      "folder": "sites/www",
+      "siteId": "carlopezzotti-34e0a",
+      "domains": ["carlopezzotti.ch"]
+    },
+    {
+      "target": "www",
+      "folder": "sites/www",
+      "siteId": "carlopezzotti-34e0a",
+      "domains": ["www.carlopezzotti.ch"]
+    },
+    {
+      "target": "web",
+      "folder": "sites/www",
+      "siteId": "carlopezzotti-34e0a",
+      "domains": ["web.carlopezzotti.ch"]
+    },
+    {
+      "target": "so",
+      "folder": "sites/so",
+      "siteId": "carlopezzotti-so",
+      "domains": ["so.carlopezzotti.ch"]
+    }
+  ]
+}

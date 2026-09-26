@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ceresio OS | Carlo Pezzotti</title>
+  <meta name="description" content="Il curriculum di Carlo Pezzotti dentro un sistema operativo a 8 bit. Sviluppatore full-stack e studente di ingegneria informatica a Lugano.">
+  <meta name="author" content="Carlo Pezzotti">
+  <meta name="theme-color" content="#000000">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://so.carlopezzotti.ch/">
+  <meta property="og:title" content="Ceresio OS | Carlo Pezzotti">
+  <meta property="og:description" content="Un sistema operativo a 8 bit che racconta il curriculum di Carlo Pezzotti. Con giochi, un terminale e parecchi segreti.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <style>
+    html, body { margin: 0; height: 100%; background: #000; overflow: hidden; overscroll-behavior: none; }
+    canvas { display: block; cursor: none; outline: none; touch-action: none; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+    #kbd { position: fixed; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0; font-size: 16px; }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    noscript p { color: #fbf6e9; font: 16px/1.5 monospace; padding: 24px; max-width: 60ch; }
+    noscript a { color: #8fd0ea; }
+  </style>
+</head>
+<body>
+  <canvas id="screen" tabindex="0" aria-label="Ceresio OS: il curriculum di Carlo Pezzotti come sistema operativo a 8 bit. Una versione testuale segue qui sotto."></canvas>
+  <input id="kbd" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-hidden="true" tabindex="-1">
+
+  <main class="sr">
+    <h1>Carlo Pezzotti</h1>
+    <p>Sviluppatore full-stack e studente di ingegneria informatica a Lugano. Costruisco software per il web, dal database al pixel.</p>
+    <h2>Esperienza</h2>
+    <ul>
+      <li>Febbraio-maggio 2026: supplente di matematica alla scuola media di Mendrisio.</li>
+      <li>2025, oggi: sviluppatore freelance. Applicazioni e siti web su misura.</li>
+      <li>2025: ricercatore junior, progetto sui dati delle energie rinnovabili.</li>
+      <li>2021-2025: sicurezza allo stadio.</li>
+      <li>2021-2023: fattorino in pizzeria, part-time durante gli studi.</li>
+      <li>2021: sergente, Esercito svizzero.</li>
+      <li>2020-2021: soldato, Esercito svizzero, salvataggio e trasmissioni.</li>
+      <li>2016-2017: stage come sviluppatore junior C# .NET, Adune Grouppe.</li>
+    </ul>
+    <h2>Formazione</h2>
+    <ul>
+      <li>SUPSI DTI, Lugano: bachelor in ingegneria informatica.</li>
+      <li>Thomas More, Geel: Erasmus in informatica.</li>
+      <li>KU Leuven: corso di integrazione sociale.</li>
+      <li>SUPSI DFA, Locarno: formazione e apprendimento.</li>
+      <li>SAM Trevano, Canobbio: informatica ed elettronica.</li>
+    </ul>
+    <h2>Lingue</h2>
+    <p>Italiano madrelingua, inglese C1, tedesco B2, francese B1.</p>
+    <h2>Contatti</h2>
+    <p>Email: carlo.pezzotti01@gmail.com. GitHub: <a href="https://github.com/PezzottiCarlo">PezzottiCarlo</a>. Sito classico: <a href="https://www.carlopezzotti.ch">www.carlopezzotti.ch</a>.</p>
+  </main>
+
+  <noscript>
+    <p>Ceresio OS ha bisogno di JavaScript. Il curriculum è anche su <a href="https://www.carlopezzotti.ch">www.carlopezzotti.ch</a>.</p>
+  </noscript>
+
+  <script src="js/core.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/boot.js"></script>
+</body>
+</html>

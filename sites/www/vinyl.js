@@ -1,187 +1,188 @@
-document.addEventListener('DOMContentLoaded', () => {
+/**
+ * GIRADISCHI
+ * Piatto con inerzia reale: il motore porta il disco a 33 giri,
+ * il trascinamento fa scratch, l'attrito lo ferma.
+ * Il braccio comanda play e stop, a mano o entrando nella sezione.
+ */
+(function () {
+    'use strict';
+
     const wrapper = document.getElementById('vinylPlayer');
+    if (!wrapper) return;
+
     const record = wrapper.querySelector('.record');
     const toneArm = wrapper.querySelector('.tone-arm');
     const recordLabel = wrapper.querySelector('.record-label');
-    const vinylSection = document.getElementById('passions');
-    
-    // --- CONFIGURAZIONE FISICA ---
-    const RPM = 33.3; 
-    const ROTATION_SPEED = (RPM * 360) / (60 * 60); // Circa 3.33 gradi per frame a 60fps
-    const FRICTION = 0.96; // Attrito quando il motore è spento
-    const TORQUE = 0.05;   // Forza del motore per tornare a velocità normale
-    const SCRATCH_SENSITIVITY = 1.0;
-    const ARM_ANIMATION_DURATION = 1000; // ms - Deve corrispondere alla transition CSS
+    const section = document.getElementById('workbench');
 
-    // --- COPERTINE RANDOM ---
-    const vinylCovers = [
-        "https://static.fnac-static.com/multimedia/Images/FR/NR/48/95/d1/13735240/1520-1/tsp20210930082357/Ready-To-Die.jpg",
-        "https://i.scdn.co/image/ab67616d0000b2739efeffdf7074481de1cccb39",
-        "https://upload.wikimedia.org/wikipedia/it/5/53/Mr._Simpatia.jpg",
-        "https://i.scdn.co/image/ab67616d0000b273db216ca805faf5fe35df4ee6",
-        "https://upload.wikimedia.org/wikipedia/en/e/eb/Iron_Maiden_-_Fear_Of_The_Dark.jpg",
-        "https://i.scdn.co/image/ab67616d0000b2735b96a8c5d61be8878452f8f1",
-        "https://media.pitchfork.com/photos/59f8e52ae372437d4a40fdc1/master/pass/21%20savage%20without%20warning.jpg",
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    /* --- Fisica --- */
+    const RPM = 33.3;
+    const SPEED = (RPM * 360) / (60 * 60); /* gradi per frame a 60fps */
+    const FRICTION = 0.96;                 /* motore spento */
+    const TORQUE = 0.05;                   /* richiamo verso i 33 giri */
+    const ARM_DROP_MS = 900;               /* pari alla transition CSS */
+
+    /* --- Copertine: caricate prima di essere applicate, cosi' un
+       link rotto lascia l'etichetta nera invece di un buco. --- */
+    const covers = [
+        'https://i.scdn.co/image/ab67616d0000b2739efeffdf7074481de1cccb39',
+        'https://upload.wikimedia.org/wikipedia/it/5/53/Mr._Simpatia.jpg',
+        'https://i.scdn.co/image/ab67616d0000b273db216ca805faf5fe35df4ee6',
+        'https://upload.wikimedia.org/wikipedia/en/e/eb/Iron_Maiden_-_Fear_Of_The_Dark.jpg',
+        'https://i.scdn.co/image/ab67616d0000b2735b96a8c5d61be8878452f8f1'
     ];
 
-    function setRandomVinylCover() {
-        if (recordLabel && vinylCovers.length > 0) {
-            const randomIndex = Math.floor(Math.random() * vinylCovers.length);
-            recordLabel.style.backgroundImage = `url('${vinylCovers[randomIndex]}')`;
-        }
-    }
-    setRandomVinylCover();
+    (function pickCover() {
+        if (!recordLabel || !covers.length) return;
+        const src = covers[Math.floor(Math.random() * covers.length)];
+        const probe = new Image();
+        probe.onload = () => { recordLabel.style.backgroundImage = 'url("' + src + '")'; };
+        probe.src = src;
+    })();
 
-    // --- STATO DEL SISTEMA ---
-    let state = {
-        isPlaying: false,  // Indica se l'utente/observer vuole che suoni (braccio giù)
-        isMotorOn: false,  // Indica se il motore sta effettivamente spingendo (dopo che il braccio è arrivato)
-        isDragging: false,
-        currentAngle: 0,
-        previousAngle: 0,
+    /* --- Stato --- */
+    const state = {
+        wantsPlay: false,   /* braccio abbassato */
+        motorOn: false,     /* motore che spinge davvero */
+        dragging: false,
+        angle: 0,
+        prevAngle: 0,
         velocity: 0,
-        lastMouseAngle: 0,
-        lastTimestamp: 0
+        lastPointerAngle: 0,
+        visible: false
     };
 
-    let motorTimeout; // Variabile per gestire il ritardo dell'avvio
+    let motorTimer = null;
+    let frame = null;
 
-    // Disabilita l'animazione CSS
-    record.style.animation = 'none';
+    record.style.animation = 'none'; /* la rotazione la governa il JS */
 
-    // --- FUNZIONI DI CALCOLO ---
-    function getInputAngle(clientX, clientY) {
-        const rect = record.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        return Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI);
+    /* --- Geometria del puntatore --- */
+    function pointerAngle(x, y) {
+        const r = record.getBoundingClientRect();
+        return Math.atan2(y - (r.top + r.height / 2), x - (r.left + r.width / 2)) * (180 / Math.PI);
     }
 
-    function getAngleDelta(current, prev) {
-        let delta = current - prev;
-        if (delta > 180) delta -= 360;
-        if (delta < -180) delta += 360;
-        return delta;
+    function shortestDelta(current, prev) {
+        let d = current - prev;
+        if (d > 180) d -= 360;
+        if (d < -180) d += 360;
+        return d;
     }
 
-    // --- GAME LOOP (FISICA) ---
-    function update(timestamp) {
-        if (!state.lastTimestamp) state.lastTimestamp = timestamp;
+    /* --- Ciclo di animazione: gira solo quando serve davvero --- */
+    function needsFrames() {
+        return state.dragging || state.motorOn || Math.abs(state.velocity) > 0.01;
+    }
 
-        if (state.isDragging) {
-            // Calcolo velocità durante il DRAG
-            state.velocity = state.currentAngle - state.previousAngle;
+    function update() {
+        if (state.dragging) {
+            state.velocity = state.angle - state.prevAngle;
+        } else if (state.motorOn) {
+            state.velocity += (SPEED - state.velocity) * TORQUE;
+            state.angle += state.velocity;
         } else {
-            // FISICA DEL RILASCIO
-            // Usiamo isMotorOn invece di isPlaying per la fisica
-            if (state.isMotorOn) {
-                // Motore Acceso: Cerca di raggiungere 33 giri
-                const targetSpeed = ROTATION_SPEED;
-                state.velocity += (targetSpeed - state.velocity) * TORQUE;
-            } else {
-                // Motore Spento: Attrito
-                state.velocity *= FRICTION;
-                if (Math.abs(state.velocity) < 0.01) state.velocity = 0;
-            }
-            
-            state.currentAngle += state.velocity;
+            state.velocity *= FRICTION;
+            if (Math.abs(state.velocity) < 0.01) state.velocity = 0;
+            state.angle += state.velocity;
         }
 
-        record.style.transform = `rotate(${state.currentAngle}deg)`;
-        state.previousAngle = state.currentAngle;
-        state.lastTimestamp = timestamp;
+        record.style.transform = 'rotate(' + state.angle + 'deg)';
+        state.prevAngle = state.angle;
 
-        requestAnimationFrame(update);
+        frame = needsFrames() ? requestAnimationFrame(update) : null;
     }
 
-    requestAnimationFrame(update);
+    function wake() {
+        if (frame === null) frame = requestAnimationFrame(update);
+    }
 
-    // --- GESTORE PLAY/PAUSE CENTRALIZZATO ---
-    function setPlayState(shouldPlay) {
-        if (state.isPlaying === shouldPlay) return; // Nessun cambiamento, ignora
+    /* --- Play / stop --- */
+    function setPlay(on) {
+        if (state.wantsPlay === on) return;
+        state.wantsPlay = on;
+        toneArm.setAttribute('aria-pressed', String(on));
 
-        state.isPlaying = shouldPlay;
+        clearTimeout(motorTimer);
 
-        if (shouldPlay) {
-            // 1. Avvia l'animazione visiva del braccio
+        if (on) {
             wrapper.classList.add('playing');
-
-            // 2. Aspetta che il braccio si abbassi prima di accendere il motore
-            clearTimeout(motorTimeout);
-            motorTimeout = setTimeout(() => {
-                // Controllo di sicurezza: se nel frattempo abbiamo fatto stop, non partire
-                if (state.isPlaying) {
-                    state.isMotorOn = true;
+            /* Il motore parte quando il braccio ha finito di scendere */
+            motorTimer = setTimeout(() => {
+                if (state.wantsPlay) {
+                    state.motorOn = true;
+                    wake();
                 }
-            }, ARM_ANIMATION_DURATION);
-
+            }, calm.matches ? 0 : ARM_DROP_MS);
         } else {
-            // 1. Alza il braccio
             wrapper.classList.remove('playing');
-
-            // 2. Spegni subito il motore (l'inerzia farà il resto)
-            state.isMotorOn = false;
-            clearTimeout(motorTimeout);
+            state.motorOn = false;
+            wake(); /* lascia scorrere l'inerzia fino a fermarsi */
         }
     }
 
-    // --- LOGICA AUTOMAZIONE (Intersection Observer) ---
-    if (vinylSection) {
-        const vinylObserver = new IntersectionObserver((entries) => {
+    /* --- Avvio automatico entrando nella sezione --- */
+    if (section && 'IntersectionObserver' in window) {
+        new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                // Usa la funzione centralizzata
-                setPlayState(entry.isIntersecting);
+                state.visible = entry.isIntersecting;
+                /* Con "movimento ridotto" non parte da sola: decide l'utente. */
+                if (calm.matches) {
+                    if (!entry.isIntersecting) setPlay(false);
+                } else {
+                    setPlay(entry.isIntersecting);
+                }
             });
-        }, { threshold: 0.3 });
-        
-        vinylObserver.observe(vinylSection);
+        }, { threshold: 0.3 }).observe(section);
     }
 
-    // --- EVENT LISTENERS (INTERAZIONE) ---
+    /* --- Braccio: click e tastiera --- */
+    toneArm.setAttribute('aria-pressed', 'false');
 
-    // 1. Click Manuale sul braccio
     toneArm.addEventListener('click', (e) => {
         e.stopPropagation();
-        setPlayState(!state.isPlaying);
+        setPlay(!state.wantsPlay);
     });
 
-    // 2. Scratching (Mouse & Touch)
-    const startDrag = (e) => {
+    toneArm.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            setPlay(!state.wantsPlay);
+        }
+    });
+
+    /* --- Scratch --- */
+    function startDrag(e) {
+        state.dragging = true;
+        record.style.cursor = 'grabbing';
+        const p = e.touches ? e.touches[0] : e;
+        state.lastPointerAngle = pointerAngle(p.clientX, p.clientY);
+        wake();
+    }
+
+    function moveDrag(e) {
+        if (!state.dragging) return;
         if (e.cancelable) e.preventDefault();
-        state.isDragging = true;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        state.lastMouseAngle = getInputAngle(clientX, clientY);
-    };
+        const p = e.touches ? e.touches[0] : e;
+        const now = pointerAngle(p.clientX, p.clientY);
+        state.angle += shortestDelta(now, state.lastPointerAngle);
+        state.lastPointerAngle = now;
+    }
 
-    const moveDrag = (e) => {
-        if (!state.isDragging) return;
-        if (e.cancelable) e.preventDefault();
+    function endDrag() {
+        if (!state.dragging) return;
+        state.dragging = false;
+        record.style.cursor = 'grab';
+        wake();
+    }
 
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-        const currentMouseAngle = getInputAngle(clientX, clientY);
-        const delta = getAngleDelta(currentMouseAngle, state.lastMouseAngle);
-        
-        state.currentAngle += delta * SCRATCH_SENSITIVITY;
-        state.lastMouseAngle = currentMouseAngle;
-    };
-
-    const endDrag = () => {
-        state.isDragging = false;
-    };
-
-    // Binding eventi
     record.addEventListener('mousedown', startDrag);
     window.addEventListener('mousemove', moveDrag);
     window.addEventListener('mouseup', endDrag);
 
-    record.addEventListener('touchstart', startDrag, { passive: false });
+    record.addEventListener('touchstart', startDrag, { passive: true });
     window.addEventListener('touchmove', moveDrag, { passive: false });
     window.addEventListener('touchend', endDrag);
-
-    record.style.cursor = 'grab';
-    record.addEventListener('mousedown', () => record.style.cursor = 'grabbing');
-    record.addEventListener('mouseup', () => record.style.cursor = 'grab');
-});
+})();
