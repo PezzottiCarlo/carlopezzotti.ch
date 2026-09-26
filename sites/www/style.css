@@ -617,6 +617,153 @@ h3 {
     box-shadow: 0 0 0 1px var(--lamp-ink), 0 0 10px 1px var(--lamp-glow);
 }
 
+/* --- 6B. USCITA VERSO CERESIO OS ---------------------------- */
+/* Un piccolo monitor collegato all'apparecchio: e' un oggetto,
+   quindi ha profondita' come gli strumenti del banco di lavoro. */
+.osjack {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 1.75rem);
+    max-width: 44rem;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding: .85rem clamp(.85rem, 2vw, 1.4rem) .85rem .85rem;
+    border: 1px solid var(--hair);
+    border-radius: 6px;
+    background: var(--panel);
+    box-shadow: var(--shadow-object);
+    color: var(--ink);
+    text-decoration: none;
+    transition: border-color .16s, transform .16s, box-shadow .16s;
+}
+
+.osjack:hover {
+    border-color: var(--ink-3);
+    transform: translateY(-2px);
+}
+
+.osjack:active {
+    transform: translateY(0);
+}
+
+.osjack:focus-visible {
+    outline: 2px solid var(--lamp);
+    outline-offset: 3px;
+}
+
+.osjack__monitor {
+    position: relative;
+    display: block;
+    width: clamp(9.5rem, 22vw, 13.5rem);
+    aspect-ratio: 16 / 9;
+    padding: 6px 6px 13px;
+    border-radius: 5px;
+    background: #262521;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), inset 0 -2px 0 rgba(0, 0, 0, .35);
+    box-sizing: content-box;
+}
+
+.osjack__screen {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+    background: #141a33;
+    image-rendering: pixelated;
+    transition: filter .16s;
+}
+
+/* Righe del tubo catodico sopra l'immagine */
+.osjack__monitor::after {
+    content: '';
+    position: absolute;
+    inset: 6px 6px 13px;
+    border-radius: 2px;
+    background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0, 0, 0, .16) 2px 3px);
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, .45);
+    pointer-events: none;
+}
+
+.osjack__led {
+    position: absolute;
+    right: 9px;
+    bottom: 4px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #6fce5a;
+    box-shadow: 0 0 6px 1px rgba(111, 206, 90, .55);
+}
+
+.osjack:hover .osjack__screen {
+    filter: brightness(1.12) saturate(1.1);
+}
+
+.osjack__body {
+    display: block;
+    min-width: 0;
+}
+
+.osjack__title {
+    display: block;
+    font-family: var(--font-pixel);
+    font-size: clamp(.8rem, .7rem + .4vw, 1rem);
+    line-height: 1.4;
+    letter-spacing: 0;
+}
+
+.osjack__text {
+    display: block;
+    margin-top: .55rem;
+    max-width: 46ch;
+    font-size: var(--t-sm);
+    line-height: 1.55;
+    color: var(--ink-2);
+}
+
+.osjack__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .3rem .6rem;
+    margin-top: .85rem;
+    font-size: var(--t-sm);
+    font-variation-settings: 'wdth' 100, 'wght' 650;
+    transition: color .16s;
+}
+
+.osjack:hover .osjack__cta {
+    color: var(--lamp-ink);
+}
+
+.osjack__url {
+    font-family: var(--font-mono);
+    font-size: var(--t-xs);
+    font-variation-settings: normal;
+    color: var(--ink-3);
+}
+
+/* Simbolo di accensione disegnato in CSS */
+.osjack__power {
+    position: relative;
+    width: 11px;
+    height: 11px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+}
+
+.osjack__power::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -4px;
+    width: 2px;
+    height: 7px;
+    margin-left: -1px;
+    background: currentColor;
+}
+
 /* --- 7. PROFILO -------------------------------------------- */
 .spec {
     margin-top: clamp(1.75rem, 4vw, 2.5rem);
@@ -1459,6 +1606,10 @@ h3 {
     animation-delay: .78s;
 }
 
+.boot .osjack {
+    animation: settle .7s both cubic-bezier(.16, 1, .3, 1) .9s;
+}
+
 .boot .lamp__led {
     animation: strike .5s both linear .95s;
 }
@@ -1589,6 +1740,17 @@ h3 {
     .terminal-wrapper,
     .arcade-frame {
         height: 270px;
+    }
+}
+
+@media (max-width: 520px) {
+    .osjack {
+        grid-template-columns: minmax(0, 1fr);
+        padding: .75rem;
+    }
+
+    .osjack__monitor {
+        width: auto;
     }
 }
 
