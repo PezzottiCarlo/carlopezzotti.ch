@@ -226,9 +226,15 @@ async function ensureCustomDomain(s, d) {
   return cd;
 }
 
+// Record da aggiungere (in "desired") e da togliere (in "discovered", per esempio
+// un vecchio hosting-site= di un altro progetto che crea un conflitto di proprietà).
 function desiredRecords(cd) {
-  const sets = [...(cd?.requiredDnsUpdates?.desired ?? []), ...(cd?.cert?.verification?.dns?.desired ?? [])];
-  return sets.flatMap((set) => set.records ?? []).filter((r) => r.requiredAction && r.requiredAction !== "NONE");
+  const upd = [cd?.requiredDnsUpdates, cd?.cert?.verification?.dns];
+  const sets = upd.flatMap((u) => [...(u?.desired ?? []), ...(u?.discovered ?? [])]);
+  const seen = new Set();
+  return sets.flatMap((set) => set.records ?? [])
+    .filter((r) => r.requiredAction && r.requiredAction !== "NONE")
+    .filter((r) => { const k = r.requiredAction + r.type + r.domainName + r.rdata; if (seen.has(k)) return false; seen.add(k); return true; });
 }
 
 // ---------------------------------------------------------------- Cloudflare
@@ -254,7 +260,10 @@ async function cfZone() {
   return (zoneId = zones[0].id);
 }
 
-const clean = (v) => String(v).trim().replace(/\.$/, "").replace(/^"|"$/g, "").toLowerCase();
+const strip = (v) => String(v).trim().replace(/\.$/, "").replace(/^"|"$/g, "");
+const clean = (v) => strip(v).toLowerCase();
+// I valori TXT (token di verifica) distinguono maiuscole e minuscole: vanno confrontati esatti.
+const cleanVal = (type, v) => (type === "TXT" ? strip(v) : clean(v));
 
 async function syncDns(records) {
   const zone = await cfZone();
@@ -262,9 +271,9 @@ async function syncDns(records) {
 
   for (const rec of records) {
     const name = clean(rec.domainName);
-    const content = clean(rec.rdata);
+    const content = cleanVal(rec.type, rec.rdata);
     const existing = await cf("GET", `/zones/${zone}/dns_records?name=${name}&per_page=100`);
-    const same = existing.filter((e) => e.type === rec.type && clean(e.content) === content);
+    const same = existing.filter((e) => e.type === rec.type && cleanVal(e.type, e.content) === content);
 
     if (rec.requiredAction === "REMOVE") {
       for (const e of same) {
@@ -277,6 +286,14 @@ async function syncDns(records) {
     if (same.length) {
       log(`  ✓ DNS ${rec.type} ${name} → ${content}`);
       continue;
+    }
+
+    // Copie dello stesso token con le maiuscole sbagliate (versioni precedenti dello script).
+    if (rec.type === "TXT") {
+      for (const e of existing.filter((e) => e.type === "TXT" && clean(e.content) === content.toLowerCase())) {
+        act(`DNS: rimuovo TXT ${name} → ${e.content} (maiuscole sbagliate)`);
+        if (!DRY) await cf("DELETE", `/zones/${zone}/dns_records/${e.id}`);
+      }
     }
 
     // Un CNAME non può convivere con altri record sullo stesso nome, e viceversa.

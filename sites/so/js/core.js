@@ -59,8 +59,10 @@ const scr = OS.scr = { W: 320, H: 200, S: 2, ox: 0, oy: 0, devW: 0, devH: 0, rat
 let crt = null;
 OS.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+const vv = window.visualViewport;
 function resize() {
-  const iw = window.innerWidth, ih = window.innerHeight;
+  // Con la tastiera aperta lo schermo si accorcia invece di finirci sotto.
+  const iw = window.innerWidth, ih = Math.round(vv ? Math.min(vv.height, window.innerHeight) : window.innerHeight);
   const dpr = window.devicePixelRatio || 1;
   // Pixel "logico" da almeno 1.5 px CSS sui telefoni, 2-4 px sui monitor.
   const k = Math.max(1.5, Math.floor(Math.min(iw / 400, ih / 250)));
@@ -74,6 +76,7 @@ function resize() {
   scr.oy = Math.floor((devH - scr.H * S) / 2);
   disp.width = devW; disp.height = devH;
   disp.style.width = iw + 'px'; disp.style.height = ih + 'px';
+  disp.style.top = (vv ? vv.offsetTop : 0) + 'px';
   buf.width = scr.W; buf.height = scr.H;
   g.imageSmoothingEnabled = false; dctx.imageSmoothingEnabled = false;
   buildCrt();
@@ -356,7 +359,8 @@ function toLocal(e) {
 function poke() { inp.last = performance.now(); OS.emit('activity'); }
 disp.addEventListener('pointerdown', (e) => {
   e.preventDefault();
-  disp.focus({ preventScroll: true });
+  // Il tocco non deve rubare il focus al campo della tastiera virtuale.
+  if (e.pointerType === 'mouse') disp.focus({ preventScroll: true });
   [inp.x, inp.y] = toLocal(e);
   inp.touch = e.pointerType !== 'mouse';
   if (e.button === 2) { inp.rpressed = true; poke(); return; }
@@ -378,7 +382,17 @@ const up = (e) => {
   [inp.x, inp.y] = toLocal(e);
   inp.down = false; inp.released = true; poke();
 };
-disp.addEventListener('pointerup', up);
+disp.addEventListener('pointerup', (e) => {
+  up(e);
+  // I browser mobili aprono la tastiera solo se il focus arriva dentro il gesto:
+  // qui, non nel ciclo di disegno. Il window manager dice se quel punto la vuole.
+  if (e.pointerType !== 'mouse' && OS.keyboardWanted) {
+    const [x, y] = toLocal(e);
+    if (OS.keyboardWanted(x, y)) OS.keyboard(true, true);
+  }
+});
+// Niente click sintetico dopo il tocco: sposterebbe il focus e chiuderebbe la tastiera.
+disp.addEventListener('touchend', (e) => { if (e.cancelable) e.preventDefault(); }, { passive: false });
 disp.addEventListener('pointercancel', up);
 disp.addEventListener('contextmenu', (e) => e.preventDefault());
 disp.addEventListener('wheel', (e) => { e.preventDefault(); inp.wheel += Math.sign(e.deltaY); poke(); }, { passive: false });
@@ -397,18 +411,40 @@ window.addEventListener('blur', () => { inp.held = {}; inp.down = false; });
 
 // Tastiera virtuale su telefono: un input nascosto riceve i caratteri.
 const kbd = document.getElementById('kbd');
-OS.keyboard = (on) => {
+// Il campo parte con uno spazio sentinella, così "cancella" produce sempre un evento.
+// Si confronta il testo prima/dopo invece di svuotarlo a ogni lettera: la scrittura
+// predittiva di Android (composizione) altrimenti si rompe.
+let kbdLast = ' ', composing = false;
+const kbdReset = () => { if (kbd) { kbd.value = ' '; kbdLast = ' '; } };
+OS.keyboardOpen = () => !!kbd && document.activeElement === kbd;
+// Tastiera visibile: il viewport visibile è molto più basso della finestra.
+const kbdVisible = () => !!vv && vv.height < window.innerHeight - 120;
+// force: chiamato dentro un gesto dell'utente. Se il campo ha già il focus ma la
+// tastiera non si vede (focus dato fuori dal gesto), lo si ridà per farla comparire.
+OS.keyboard = (on, force) => {
   if (!kbd) return;
-  if (on) { kbd.value = ' '; kbd.focus({ preventScroll: true }); } else kbd.blur();
+  if (on) {
+    const has = document.activeElement === kbd;
+    if (has && !(force && !kbdVisible())) return;
+    if (has) kbd.blur();
+    kbdReset();
+    kbd.focus({ preventScroll: true });
+  } else if (document.activeElement === kbd) kbd.blur();
 };
 if (kbd) {
-  kbd.addEventListener('input', (e) => {
+  kbd.addEventListener('compositionstart', () => { composing = true; });
+  kbd.addEventListener('compositionend', () => { composing = false; });
+  kbd.addEventListener('input', () => {
     const v = kbd.value;
-    if (e.inputType === 'deleteContentBackward' || v.length === 0) inp.keys.push({ key: 'Backspace' });
-    else for (const ch of v.slice(1)) inp.keys.push({ key: ch === '\n' ? 'Enter' : ch });
-    kbd.value = ' ';
+    let i = 0;
+    while (i < kbdLast.length && i < v.length && kbdLast[i] === v[i]) i++;
+    for (let k = kbdLast.length; k > i; k--) inp.keys.push({ key: 'Backspace' });
+    for (const ch of v.slice(i)) inp.keys.push({ key: ch === '\n' ? 'Enter' : ch });
+    kbdLast = v;
+    if (!v.length || (!composing && v.length > 48)) kbdReset();
     poke();
   });
+  kbd.addEventListener('keydown', (e) => { if (e.key === 'Enter') setTimeout(kbdReset, 0); });
 }
 
 function endFrame() {
@@ -480,6 +516,15 @@ function loop(now) {
 OS.setScene = (s) => { OS.scene = s; s.enter?.(); };
 
 window.addEventListener('resize', resize);
+let lastVH = 0;
+if (vv) {
+  // Solo i cambi di altezza (tastiera): lo zoom a pizzico non deve ridisegnare tutto.
+  vv.addEventListener('resize', () => {
+    if (Math.abs(vv.height - lastVH) > 40) { lastVH = vv.height; resize(); }
+    disp.style.top = vv.offsetTop + 'px';
+  });
+  vv.addEventListener('scroll', () => { disp.style.top = vv.offsetTop + 'px'; });
+}
 resize();
 requestAnimationFrame(loop);
 

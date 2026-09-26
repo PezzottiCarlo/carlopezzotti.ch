@@ -14,8 +14,9 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <style>
     html, body { margin: 0; height: 100%; background: #000; overflow: hidden; overscroll-behavior: none; }
-    canvas { display: block; cursor: none; outline: none; touch-action: none; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
-    #kbd { position: fixed; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0; font-size: 16px; }
+    canvas { position: fixed; left: 0; top: 0; display: block; cursor: none; outline: none; touch-action: none; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+    /* Campo invisibile che riceve la tastiera del telefono. 16px evita lo zoom automatico di iOS. */
+    #kbd { position: fixed; left: 0; top: 0; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0; font-size: 16px; caret-color: transparent; }
     .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
     noscript p { color: #fbf6e9; font: 16px/1.5 monospace; padding: 24px; max-width: 60ch; }
     noscript a { color: #8fd0ea; }

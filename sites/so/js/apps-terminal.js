@@ -424,12 +424,31 @@ OS.app('terminal', {
     return {
       draw(g, r, io) {
         t.tick(1 / 60);
-        const cols = Math.max(10, Math.floor((r.w - 6) / OS.CW)), rows = Math.max(2, Math.floor((r.h - 4) / OS.CH));
-        if (io.pressed) OS.keyboard(io.touch);
-        if (t.mode?.kind === 'vim') return drawVim(t, r, io, cols, rows);
-        if (t.mode?.kind === 'sl') return drawSl(t, r, cols, rows);
+        // Sul telefono: barra con i tasti che la tastiera virtuale non ha.
+        const touchUI = OS.inp.touch || matchMedia('(pointer: coarse)').matches;
+        const barH = touchUI ? 17 : 0;
+        const cols = Math.max(10, Math.floor((r.w - 6) / OS.CW)), rows = Math.max(2, Math.floor((r.h - 4 - barH) / OS.CH));
+        const extra = [];
+        if (touchUI) {
+          OS.rect(r.x, r.y + r.h - barH, r.w, barH, P.ink);
+          let bx = 2;
+          for (const [label, key] of [['Tab', { key: 'Tab' }], ['↑', { key: 'ArrowUp' }], ['↓', { key: 'ArrowDown' }], ['^C', { key: 'c', ctrl: true }], ['Esc', { key: 'Escape' }], ['clear', { key: 'l', ctrl: true }]]) {
+            const w = OS.ui.buttonW(label) + 2;
+            if (bx + w > r.w) break;
+            if (OS.ui.button(io, bx, r.h - barH + 2, label)) extra.push(key);
+            bx += w + 2;
+          }
+          // Scorrimento col dito sopra la barra.
+          if (io.pressed && io.y < r.h - barH) t.drag = { y0: io.y, back0: t.back };
+          if (t.drag && io.down) t.back = Math.max(0, t.drag.back0 + Math.round((io.y - t.drag.y0) / OS.CH));
+          if (!io.down) t.drag = null;
+        }
+        const keys = [...io.keys, ...extra];
+        const sub = { ...io, keys, h: r.h - barH };
+        if (t.mode?.kind === 'vim') return drawVim(t, { ...r, h: r.h - barH }, sub, cols, rows);
+        if (t.mode?.kind === 'sl') return drawSl(t, { ...r, h: r.h - barH }, cols, rows);
         const busy = t.queue.length > 0;
-        for (const k of io.keys) {
+        for (const k of keys) {
           if (k.ctrl && k.key.toLowerCase() === 'c') { t.queue = []; t.push({ segs: [[pretty(t.cwd) + ' $ ', 'gold'], [t.input + '^C', 'snow']] }); t.input = ''; continue; }
           if (k.ctrl && k.key.toLowerCase() === 'l') { t.lines = []; continue; }
           if (busy) continue;

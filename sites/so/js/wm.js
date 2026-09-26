@@ -462,7 +462,7 @@ function menuFor(id, at) {
   if (id === 'help') return [
     { label: L('Leggimi', 'Read me'), act: () => OS.open('readme') },
     { label: L('Segreti e trofei', 'Secrets and trophies'), act: () => OS.open('trophies') },
-    { label: L('Apri il terminale', 'Open the terminal'), act: () => OS.open('terminal') },
+    { label: L('Apri il terminale', 'Open the terminal'), kbd: true, act: () => OS.open('terminal') },
     { sep: true },
     { label: L('Scrivi a Carlo', 'Write to Carlo'), act: () => OS.open('contact') }
   ];
@@ -487,8 +487,8 @@ function menuFor(id, at) {
   if (id === 'desk') {
     const todN = { auto: L('ora reale', 'real time'), dawn: L('alba', 'dawn'), day: L('giorno', 'day'), dusk: L('tramonto', 'dusk'), night: L('notte', 'night') };
     return [
-      { label: L('Nuova cartella', 'New folder'), act: () => newOnDesk('dir', at?.x, at?.y) },
-      { label: L('Nuovo documento', 'New document'), act: () => newOnDesk('file', at?.x, at?.y) },
+      { label: L('Nuova cartella', 'New folder'), kbd: true, act: () => newOnDesk('dir', at?.x, at?.y) },
+      { label: L('Nuovo documento', 'New document'), kbd: true, act: () => newOnDesk('file', at?.x, at?.y) },
       { sep: true },
       { label: L('Riordina le icone', 'Tidy up icons'), act: () => { DESK.forEach((d) => { d.moved = false; if (d.ufs) { const n = OS.fs.get(d.ufs); if (n) n.x = n.y = null; } }); OS.fs?.save(); layoutIcons(); } },
       { sep: true },
@@ -501,10 +501,10 @@ function menuFor(id, at) {
   return [];
 }
 function iconMenu(d) {
-  if (!d.ufs) return [{ label: L('Apri', 'Open'), act: () => openIcon(d) }];
+  if (!d.ufs) return [{ label: L('Apri', 'Open'), kbd: d.app === 'terminal', act: () => openIcon(d) }];
   return [
-    { label: L('Apri', 'Open'), act: () => openIcon(d) },
-    { label: L('Rinomina', 'Rename'), act: () => startRename(d) },
+    { label: L('Apri', 'Open'), kbd: OS.fs.get(d.ufs)?.type === 'file', act: () => openIcon(d) },
+    { label: L('Rinomina', 'Rename'), kbd: true, act: () => startRename(d) },
     { sep: true },
     { label: L('Sposta nel cestino', 'Move to trash'), act: () => OS.fs.remove(d.ufs) }
   ];
@@ -547,8 +547,10 @@ function hitTest(x, y, skipIcon) {
     let part = 'body';
     if (y < gm.y + TB) {
       part = 'title';
-      if (x >= gm.x + 2 && x < gm.x + 12) part = 'close';
-      else if (x >= gm.x + gm.w - 12 && x < gm.x + gm.w - 2) part = 'max';
+      // Col dito le caselle della barra sono più larghe di come appaiono.
+      const bw = OS.inp.touch ? 22 : 12;
+      if (x >= gm.x && x < gm.x + bw) part = 'close';
+      else if (x >= gm.x + gm.w - bw && x < gm.x + gm.w) part = 'max';
     } else if (!w.max) {
       const l = x < gm.x + EDGE, r = x >= gm.x + gm.w - EDGE, b = y >= gm.y + gm.h - EDGE;
       const grip = x >= gm.x + gm.w - 8 && y >= gm.y + gm.h - 8;
@@ -803,6 +805,25 @@ function onRelease(t) {
   if (p.kind === 'desk' && drag?.type === 'desk' && !drag.moved) OS.wallpaper.click(inp.x, inp.y);
 }
 function toggleMax(w) { w.max = !w.max; if (!w.max) clampWin(w); OS.sfx.select(); }
+
+// Chiamata da core.js dentro il gesto di tocco: il punto (x, y) deve aprire la tastiera?
+OS.keyboardWanted = (x, y) => {
+  if (OS.scene !== desktop) return false;
+  if (menu) { const i = menuItemAt(x, y); return i >= 0 && !!menu.items[i].kbd; }
+  const t = hitTest(x, y);
+  if (rename) return t.kind === 'icon' && t.icon.ufs === rename.id;
+  if (t.kind === 'win') {
+    if (t.win.def.wantsKeyboard) return t.part === 'body' || OS.keyboardOpen();
+    return t.part === 'body' && !!t.win.inst.kbdAt?.(x, y);
+  }
+  if (t.kind === 'icon') {
+    const d = t.icon;
+    if (d.app === 'terminal') return true;
+    const n = d.ufs && OS.fs.get(d.ufs);
+    return !!(n && n.type === 'file');
+  }
+  return false;
+};
 
 OS.startDesktop = () => {
   OS.setScene(desktop);

@@ -158,17 +158,26 @@ OS.app('ufolder', {
       startRename(n);
     };
     const itemMenu = (n) => [
-      { label: L('Apri', 'Open'), act: () => FS.open(n.id) },
-      { label: L('Rinomina', 'Rename'), act: () => startRename(n) },
+      { label: L('Apri', 'Open'), kbd: n.type === 'file', act: () => FS.open(n.id) },
+      { label: L('Rinomina', 'Rename'), kbd: true, act: () => startRename(n) },
       { sep: true },
       { label: L('Sposta nel cestino', 'Move to trash'), act: () => FS.remove(n.id) }
     ];
     const bgMenu = () => [
-      { label: L('Nuova cartella', 'New folder'), act: () => add('dir') },
-      { label: L('Nuovo documento', 'New document'), act: () => add('file') }
+      { label: L('Nuova cartella', 'New folder'), kbd: true, act: () => add('dir') },
+      { label: L('Nuovo documento', 'New document'), kbd: true, act: () => add('file') }
     ];
     return {
+      // Tastiera sul telefono: durante una rinomina, sui pulsanti "+" e sui documenti.
+      kbdAt(x, y) {
+        const r = st.r;
+        if (!r) return false;
+        if (st.ren) return true;
+        if (y - r.y < BAR) return x - r.x > 20;
+        return st.items.some((it) => it.file && x >= it.x && y >= it.y && x < it.x + CELL && y < it.y + ROW - 4);
+      },
       draw(g, r, io) {
+        st.r = r; st.items = [];
         const me = FS.get(id);
         if (!me || FS.inTrash(id)) { OS.closeWin(win); return; }
         win.title = me.name;
@@ -210,6 +219,7 @@ OS.app('ufolder', {
             OS.text(lbl, r.x + x + ((CELL - lw) >> 1), r.y + y + 19, sel ? P.snow : P.ink);
           }
           if (y >= area.y - 10 && io.hit(x, Math.max(area.y, y), CELL, ROW - 4)) hitItem = n;
+          st.items.push({ x: r.x + x, y: r.y + y, file: n.type === 'file' });
         });
         OS.unclip();
         st.scroll = OS.ui.scrollbar(io, r.w - 8, area.y, area.h, st.scroll, contentH, area.h, st);

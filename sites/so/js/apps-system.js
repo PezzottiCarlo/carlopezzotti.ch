@@ -24,9 +24,12 @@ OS.app('folder', {
   title: (arg) => FOLDERS[arg]?.title || 'Cartella', icon: 'folder', w: 244, h: (arg) => { const n = FOLDERS[arg]?.items.length || 0; return n > 6 ? 158 : n > 3 ? 122 : 84; }, minW: 90, minH: 60,
   make(win, arg) {
     const f = FOLDERS[arg];
-    let sel = -1;
+    let sel = -1, rects = [];
     return {
+      // Terminale e Blocco note aprono la tastiera del telefono.
+      kbdAt: (x, y) => rects.some((q) => q.kbd && x >= q.x && y >= q.y && x < q.x + q.w && y < q.y + q.h),
       draw(g, r, io) {
+        rects = [];
         OS.rect(r.x, r.y, r.w, 11, P.mist);
         OS.text(f.items.length + L(' elementi', ' items'), r.x + 4, r.y + 1, P.slate);
         OS.rect(r.x, r.y + 11, r.w, 1, P.stone);
@@ -34,6 +37,7 @@ OS.app('folder', {
         f.items.forEach((it, i) => {
           const x = 4 + (i % per) * cw, y = 16 + Math.floor(i / per) * chh;
           const hov = io.hit(x, y, cw, chh - 2);
+          rects.push({ x: r.x + x, y: r.y + y, w: cw, h: chh - 2, kbd: it.app === 'terminal' || it.icon === 'note' });
           OS.spr(sel === i ? it.icon + ':sel' : it.icon, r.x + x + (cw >> 1) - 8, r.y + y);
           const lbl = tx(it.label);
           const lw = OS.textW(lbl);
