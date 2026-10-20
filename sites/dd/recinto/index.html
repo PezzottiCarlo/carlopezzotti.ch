@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Il recinto delle pecore</title>
+<meta name="description" content="Lo stesso recinto chiude sempre lo stesso prato? Costruisci prati su una quadrettatura, sfida le frasi sbagliate e scopri che area e perimetro sono due misure diverse.">
+<meta name="dd:tags" content="prima media, area, perimetro, geometria">
+<meta name="dd:date" content="2026-10-20">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/_shared/dd.css">
+<style>
+:root{ --grass:#8fd18b; --grass-d:#4f9e4a; --earth:#f6f2e6; --earth-l:#e6dfc8; --wood:#8a5a2b; --wood-d:#5c3a1a; }
+.app{min-height:100vh;min-height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding:10px 16px 14px}
+.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.topbar .brand{flex:1 1 300px;min-width:0}
+@media (max-height:760px){.brand p{display:none}}
+.levels{display:flex;gap:6px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
+.lvl{font-weight:700;font-size:.86rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:7px 11px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s,transform .12s}
+.lvl:hover:not(:disabled){background:var(--primary-soft)}
+.lvl:active:not(:disabled){transform:scale(.96)}
+.lvl.active{background:var(--primary);color:#fff}
+.lvl:disabled{color:#6b7090;cursor:not-allowed;background:#f3f4f9}
+.lvl .done{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:.7rem}
+.lvl.active .done{background:rgba(255,255,255,.25);color:#fff}
+.top-tools{display:flex;align-items:center;gap:12px}
+.switch-row{display:flex;align-items:center;gap:8px;font-weight:650;font-size:.9rem}
+.icon-btn{width:42px;height:42px;padding:0;font-size:1.25rem}
+.switch{position:relative;width:54px;height:30px;border-radius:999px;border:2px solid #8a91b1;background:#e5e8f4;cursor:pointer;flex:none;transition:background .25s,border-color .25s;padding:0}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .25s var(--wobble)}
+.switch[aria-checked="true"]{background:var(--primary);border-color:var(--primary)}
+.switch[aria-checked="true"]::after{transform:translateX(24px)}
+.switch .st{position:absolute;font:800 .58rem var(--font);top:50%;transform:translateY(-50%);color:#454b6b}
+.switch .st.on{left:6px;color:#fff;display:none}.switch .st.off{right:5px}
+.switch[aria-checked="true"] .st.on{display:block}.switch[aria-checked="true"] .st.off{display:none}
+
+.layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,26vw,380px);gap:14px}
+.stage-card{display:flex;flex-direction:column;gap:12px;padding:14px;min-height:0;overflow:auto}
+.mission{flex:none;display:flex;gap:12px;align-items:baseline}
+.mission h2{display:inline;margin:0 6px 0 0;font-size:1.05rem}
+.mission p{display:inline;margin:0;color:var(--muted);font-size:.92rem}
+.task{flex:none;border-radius:16px;padding:12px 16px;background:#f2fbf1;border:2px solid #b9e3b5;font-size:1.08rem;font-weight:650;line-height:1.4}
+.task b{color:var(--grass-d)}
+
+.fields{flex:1;min-height:0;display:grid;grid-template-columns:repeat(var(--n,1),minmax(0,1fr));gap:14px;align-items:start}
+.field{display:flex;flex-direction:column;gap:8px;min-width:0}
+.field h3{margin:0;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.field-svg{width:100%;height:auto;display:block;touch-action:none;-webkit-user-select:none;user-select:none;border-radius:14px;background:#fbf8ef;border:2px solid var(--earth-l);cursor:crosshair}
+.field.locked .field-svg{cursor:default}
+.cell{fill:var(--earth);stroke:var(--earth-l);stroke-width:1}
+.cell.on{fill:var(--grass);stroke:#7cc177}
+.cell.ghost{fill:#cfeccb}
+.fence{fill:none;stroke:var(--wood);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.post{fill:var(--wood-d)}
+.sheep{font-size:24px;dominant-baseline:central;text-anchor:middle;pointer-events:none}
+.sheep.pop{animation:spop .4s var(--wobble) both}
+@keyframes spop{from{transform:scale(0)}}
+.sheep{transform-box:fill-box;transform-origin:center}
+.readout{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-weight:800;font-size:.95rem;background:#fff;border:2px solid var(--line)}
+.chip.grass{border-color:#b9e3b5;background:#f2fbf1;color:#2f6d2b}
+.chip.wood{border-color:#e2c9a8;background:#fbf4ea;color:var(--wood-d)}
+.chip.warn{border-color:var(--err-line);background:var(--err-soft);color:var(--err)}
+.roll{display:flex;align-items:center;gap:10px;font-weight:750;font-size:.9rem;color:var(--wood-d)}
+.roll .track{flex:1;height:12px;border-radius:999px;background:#efe6d6;overflow:hidden;min-width:80px}
+.roll .fill{height:100%;background:var(--wood);border-radius:999px;transition:width .25s}
+.roll.over .fill{background:var(--err)}
+.outside{font-size:1.3rem;letter-spacing:2px}
+
+/* ---------- Pannello ---------- */
+.panel{min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.feedback{min-height:84px}
+.tools{display:flex;flex-direction:column;gap:12px}
+.tool{border:2px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
+.tool h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px}
+.tool .sub{margin:0;font-size:.84rem;color:var(--muted)}
+.tool p{margin:0}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row .btn{flex:1}
+.goal{font-size:1.4rem;letter-spacing:3px;color:#f2a516}
+.hist{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.9rem}
+.hist th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:4px 6px}
+.hist td{padding:5px 6px;border-top:1px solid #eef0f8;font-weight:700}
+.claim{font-size:1.08rem;font-weight:700;line-height:1.4;background:#fff8e6;border:2px dashed #e9c46a;border-radius:14px;padding:12px 14px}
+.claim small{display:block;font-size:.78rem;color:#9a6a00;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.claims{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.claims li{font-size:.84rem;padding:6px 9px;border-radius:10px;background:#f7f8fd;border:1px solid #e6e9f5;display:flex;gap:8px}
+.claims li.ok{background:var(--ok-soft);border-color:var(--ok-line)}
+.claims li.lost{background:var(--err-soft);border-color:var(--err-line)}
+.claims li.cur{border-color:var(--primary)}
+.claims .st{flex:none;font-weight:800}
+
+details.diario{border:2px solid var(--line);border-radius:14px;padding:0 12px}
+details.diario summary{cursor:pointer;font-weight:750;font-size:.95rem;padding:10px 0;display:flex;align-items:center;gap:8px;list-style:none}
+details.diario summary::-webkit-details-marker{display:none}
+details.diario summary::before{content:"▸";transition:transform .2s;color:var(--primary)}
+details.diario[open] summary::before{transform:rotate(90deg)}
+details.diario .count{margin-left:auto;background:var(--primary-soft);color:var(--primary-dark);border-radius:999px;padding:1px 9px;font-size:.78rem}
+.log{list-style:none;margin:0 0 10px;padding:0;max-height:min(30vh,240px);overflow:auto;display:flex;flex-direction:column;gap:5px}
+.log li{font-size:.82rem;padding:5px 9px;border-radius:9px;background:#f7f8fd;border:1px solid #e6e9f5}
+.log-empty{color:var(--muted);font-size:.84rem;margin:0 0 10px}
+
+dialog{max-width:min(560px,94vw)}
+.dlg-body .reflect{background:#f7f8fd;border-radius:12px;padding:10px 12px;color:var(--ink);text-align:left;font-size:.92rem}
+.dlg-list{list-style:none;padding:0;margin:8px 0;display:flex;flex-direction:column;gap:6px;text-align:left}
+.dlg-list li{background:#f7f8fd;border-radius:10px;padding:7px 10px;font-weight:650}
+.idcard{text-align:left;border:2px solid var(--primary);border-radius:16px;padding:12px 14px;margin:10px 0;background:#fbfbff}
+.idcard ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:.92rem;color:var(--ink)}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70;width:100vw;height:100vh}
+
+@media (min-width:921px) and (min-height:700px){
+  body{height:100vh;height:100dvh;overflow:hidden}
+  .app{height:100vh;height:100dvh}
+  .fields.one{justify-items:center}
+  .fields.one .field{width:100%;max-width:calc((100dvh - 350px) * 1.31)}
+}
+@media (max-width:920px){
+  .layout{grid-template-columns:1fr}
+  .panel{overflow:visible}
+}
+@media (max-width:620px){
+  .app{padding:8px 10px 12px}
+  .mission{flex-wrap:wrap}
+  .levels{width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .levels::-webkit-scrollbar{display:none}
+  .lvl{flex:none;white-space:nowrap}
+  .top-tools{width:100%;justify-content:space-between}
+  .fields{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <a class="dd-back" href="/" aria-label="Tutti gli esperimenti dd" title="Tutti gli esperimenti"><span class="arr" aria-hidden="true">←</span>dd</a>
+      <div class="logo" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 34 34" fill="none">
+          <rect x="7" y="9" width="12" height="16" fill="#8fd18b"/><rect x="19" y="15" width="8" height="10" fill="#8fd18b"/>
+          <path d="M7 9h12v6h8v10H7z" stroke="#ffd166" stroke-width="2.6" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Il recinto delle pecore</h1>
+        <p>Più recinto vuol dire più prato? Mica sempre…</p>
+      </div>
+    </div>
+    <nav class="levels" id="levels" aria-label="Livelli"></nav>
+    <div class="top-tools">
+      <div class="switch-row">
+        <span id="symLbl">Simboli</span>
+        <button class="switch" id="symToggle" type="button" role="switch" aria-checked="false" aria-labelledby="symLbl"><span class="st on" aria-hidden="true">SÌ</span><span class="st off" aria-hidden="true">NO</span></button>
+      </div>
+      <button class="btn ghost-btn icon-btn" type="button" id="btnReset" title="Ricomincia il livello" aria-label="Ricomincia il livello">↺</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="card stage-card" aria-labelledby="missionTitle">
+      <div class="mission">
+        <span class="dd-badge" id="missionBadge">Livello 1</span>
+        <div><h2 id="missionTitle"></h2><p id="missionText"></p></div>
+      </div>
+      <div class="task" id="task" aria-live="polite"></div>
+      <div class="fields" id="fields"></div>
+    </section>
+
+    <aside class="card panel" aria-label="Strumenti">
+      <div class="feedback info" id="feedback">
+        <span class="fb-ico" aria-hidden="true" id="fbIco">i</span>
+        <div><strong id="fbTitle">Osserva</strong><p id="fbText"></p></div>
+      </div>
+      <div class="tools" id="tool"></div>
+      <details class="diario" id="diario">
+        <summary>Diario <span class="count" id="logCount">0</span></summary>
+        <p class="log-empty" id="logEmpty">Ancora niente.</p>
+        <ol class="log" id="log"></ol>
+      </details>
+    </aside>
+  </main>
+</div>
+
+<dialog id="winDlg" aria-labelledby="winTitle" aria-describedby="winText">
+  <div class="dlg-body">
+    <div class="trophy" aria-hidden="true">
+      <svg width="42" height="42" viewBox="0 0 46 46"><path d="M23 4l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5L23 32.7l-11.3 5.9 2.2-12.5-9.1-8.9 12.6-1.8z" fill="#fff" stroke="#b9790c" stroke-width="2" stroke-linejoin="round"/></svg>
+    </div>
+    <h2 id="winTitle"></h2>
+    <p class="big" id="winText"></p>
+    <div id="winExtra"></div>
+    <p class="reflect" id="winReflect"></p>
+    <div class="dlg-actions">
+      <button class="btn ghost-btn" type="button" id="dlgStay">Resta qui</button>
+      <button class="btn" type="button" id="dlgNext">Livello successivo →</button>
+    </div>
+  </div>
+</dialog>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="sr-only" aria-live="polite" id="sr"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* Il recinto delle pecore: area e perimetro su una quadrettatura.
+   Un quadretto di prato = 1 pecora; un lato di quadretto = 1 m di recinto.
+   Il milieu mette alla prova la concezione "stesso recinto, stesso prato". */
+
+const $ = s => document.querySelector(s);
+const params = new URLSearchParams(location.search);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+
+const el = {
+  levels:$('#levels'), mBadge:$('#missionBadge'), mTitle:$('#missionTitle'), mText:$('#missionText'), task:$('#task'), fields:$('#fields'),
+  fb:$('#feedback'), fbIco:$('#fbIco'), fbTitle:$('#fbTitle'), fbText:$('#fbText'), tool:$('#tool'),
+  log:$('#log'), logCount:$('#logCount'), logEmpty:$('#logEmpty'), sym:$('#symToggle'), sr:$('#sr'),
+  dlg:$('#winDlg'), winTitle:$('#winTitle'), winText:$('#winText'), winExtra:$('#winExtra'), winReflect:$('#winReflect'), dlgNext:$('#dlgNext')
+};
+const S = {
+  idx:0, gen:0, L:{}, onNext:null,
+  sym: store.get('recinto.sym', false),
+  unlocked: params.has('tutti') ? 4 : Math.max(1, Math.min(4, store.get('recinto.unlocked', 1) | 0))
+};
+const W_AREA = () => S.sym ? 'Area' : 'Prato';
+const W_PER = () => S.sym ? 'Perimetro' : 'Recinto';
+
+function feedback(type, title, html){
+  el.fb.className = 'feedback ' + type;
+  el.fbIco.textContent = { info:'i', ok:'✓', tilt:'!', error:'✕', win:'★' }[type];
+  el.fbTitle.textContent = title;
+  el.fbText.innerHTML = html;
+  el.sr.textContent = title + '. ' + el.fbText.textContent;
+}
+function log(text){
+  const li = document.createElement('li'); li.innerHTML = text; el.log.appendChild(li);
+  el.logCount.textContent = el.log.children.length; el.logEmpty.hidden = true; el.log.scrollTop = el.log.scrollHeight;
+}
+function clearLog(){ el.log.innerHTML = ''; el.logCount.textContent = '0'; el.logEmpty.hidden = false; }
+
+/* ---------------- Geometria dei prati ---------------- */
+const key = (c, r) => c + ',' + r;
+const unkey = k => k.split(',').map(Number);
+function measureShape(cells){
+  let per = 0;
+  for (const k of cells){
+    const [c, r] = unkey(k);
+    for (const [dc, dr] of [[1,0],[-1,0],[0,1],[0,-1]]) if (!cells.has(key(c + dc, r + dr))) per++;
+  }
+  return { area:cells.size, per };
+}
+function connected(cells){
+  if (cells.size <= 1) return true;
+  const start = cells.values().next().value, seen = new Set([start]), q = [start];
+  while (q.length){
+    const [c, r] = unkey(q.pop());
+    for (const [dc, dr] of [[1,0],[-1,0],[0,1],[0,-1]]){ const k = key(c + dc, r + dr); if (cells.has(k) && !seen.has(k)){ seen.add(k); q.push(k); } }
+  }
+  return seen.size === cells.size;
+}
+const minPer = a => 2 * Math.ceil(2 * Math.sqrt(a));
+const maxPer = a => 2 * a + 2;
+const possible = (a, p) => p % 2 === 0 && p >= minPer(a) && p <= maxPer(a);
+
+/* Costruisce un prato con area a e recinto p dentro una griglia cols×rows: un blocco compatto
+   largo w più una "coda" dritta. Serve al milieu per mostrare un controesempio. */
+function buildShape(a, p, cols, rows){
+  for (let w = 1; w <= Math.min(cols, a); w++){
+    for (let k = a; k >= 0; k--){
+      const cells = new Set();
+      for (let i = 0; i < k; i++) cells.add(key(i % w, Math.floor(i / w)));
+      if (Math.ceil(k / w) > rows) continue;
+      let c = k ? w : 0, r = 0, ok = true;
+      for (let i = 0; i < a - k; i++){
+        if (c >= cols){ c = cols - 1; r++; }
+        if (r >= rows || cells.has(key(c, r))){ ok = false; break; }
+        cells.add(key(c, r));
+        if (r === 0) c++; else r++;
+      }
+      if (!ok || cells.size !== a || !connected(cells)) continue;
+      if (measureShape(cells).per === p) return cells;
+    }
+  }
+  // ripiego: crescita casuale
+  for (let t = 0; t < 3000; t++){
+    const list = [key(rnd(0, cols - 1), rnd(0, rows - 1))], cells = new Set(list), stringy = Math.random() * .9;
+    for (let step = 0; cells.size < a && step < 400; step++){
+      // "stringy" alto: cresce dalla punta (prati lunghi); basso: da un quadretto qualsiasi (prati raccolti)
+      const from = Math.random() < stringy ? list[list.length - 1 - Math.floor(Math.random() * Math.min(3, list.length))] : pick(list);
+      const [c, r] = unkey(from), [dc, dr] = pick([[1,0],[-1,0],[0,1],[0,-1]]), nc = c + dc, nr = r + dr, k = key(nc, nr);
+      if (nc >= 0 && nc < cols && nr >= 0 && nr < rows && !cells.has(k)){ cells.add(k); list.push(k); }
+    }
+    if (cells.size === a && measureShape(cells).per === p) return cells;
+  }
+  return null;
+}
+const rect = (c0, r0, w, h) => { const s = new Set(); for (let r = r0; r < r0 + h; r++) for (let c = c0; c < c0 + w; c++) s.add(key(c, r)); return s; };
+
+/* ---------------- Il campo (SVG disegnabile) ---------------- */
+const CELL = 40, PAD = 14;
+function makeField(host, { cols, rows, label, onChange }){
+  const W = cols * CELL + 2 * PAD, H = rows * CELL + 2 * PAD;
+  host.innerHTML = `${label ? `<h3>${label}</h3>` : ''}<svg class="field-svg" viewBox="0 0 ${W} ${H}" role="application" aria-label="Quadrettatura: tocca o trascina per colorare il prato">
+    <g class="cells"></g><g class="fenceg"></g><g class="sheepg"></g></svg><div class="readout"></div>`;
+  const svg = host.querySelector('svg'), gCells = svg.querySelector('.cells'), gFence = svg.querySelector('.fenceg'), gSheep = svg.querySelector('.sheepg');
+  const readout = host.querySelector('.readout');
+  let cells = new Set(), locked = false, mode = null, last = null, extra = '';
+  let h = '';
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) h += `<rect class="cell" data-k="${key(c, r)}" x="${PAD + c * CELL}" y="${PAD + r * CELL}" width="${CELL}" height="${CELL}"/>`;
+  gCells.innerHTML = h;
+  const rects = new Map([...gCells.children].map(n => [n.dataset.k, n]));
+
+  function paint(){
+    rects.forEach((n, k) => n.classList.toggle('on', cells.has(k)));
+    let d = '';
+    const posts = new Set();
+    for (const k of cells){
+      const [c, r] = unkey(k), x = PAD + c * CELL, y = PAD + r * CELL;
+      const seg = (x1, y1, x2, y2) => { d += `M${x1} ${y1}L${x2} ${y2}`; posts.add(x1 + ',' + y1); posts.add(x2 + ',' + y2); };
+      if (!cells.has(key(c, r - 1))) seg(x, y, x + CELL, y);
+      if (!cells.has(key(c, r + 1))) seg(x, y + CELL, x + CELL, y + CELL);
+      if (!cells.has(key(c - 1, r))) seg(x, y, x, y + CELL);
+      if (!cells.has(key(c + 1, r))) seg(x + CELL, y, x + CELL, y + CELL);
+    }
+    gFence.innerHTML = (d ? `<path class="fence" d="${d}"/>` : '') + [...posts].map(p => { const [x, y] = p.split(','); return `<circle class="post" cx="${x}" cy="${y}" r="3.6"/>`; }).join('');
+    const m = measureShape(cells);
+    readout.innerHTML = `<span class="chip grass">🌱 ${W_AREA()}: ${plural(m.area, 'quadretto', 'quadretti')}</span><span class="chip wood">🪵 ${W_PER()}: ${m.per} m</span>${extra}`
+      + (cells.size && !connected(cells) ? '<span class="chip warn">⚠ due pezzi</span>' : '');
+  }
+  function cellAt(e){
+    const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY;
+    const q = p.matrixTransform(svg.getScreenCTM().inverse());
+    const c = Math.floor((q.x - PAD) / CELL), r = Math.floor((q.y - PAD) / CELL);
+    return c >= 0 && c < cols && r >= 0 && r < rows ? key(c, r) : null;
+  }
+  function apply(k){
+    if (!k || k === last) return;
+    last = k;
+    const had = cells.has(k);
+    if (mode === 'paint' && !had) cells.add(k); else if (mode === 'erase' && had) cells.delete(k); else return;
+    gSheep.innerHTML = '';
+    paint(); onChange?.();
+  }
+  svg.addEventListener('pointerdown', e => {
+    if (locked) return;
+    const k = cellAt(e); if (!k) return;
+    e.preventDefault(); svg.setPointerCapture(e.pointerId);
+    mode = cells.has(k) ? 'erase' : 'paint'; last = null; apply(k);
+  });
+  svg.addEventListener('pointermove', e => { if (mode) apply(cellAt(e)); });
+  const end = () => { mode = null; last = null; };
+  svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end);
+  paint();
+
+  return {
+    get cells(){ return cells; },
+    get m(){ return measureShape(cells); },
+    get ok(){ return cells.size > 0 && connected(cells); },
+    set(s){ cells = new Set(s); gSheep.innerHTML = ''; paint(); onChange?.(); },
+    clear(){ this.set([]); },
+    lock(b){ locked = b; host.classList.toggle('locked', b); },
+    note(html){ extra = html || ''; paint(); },
+    repaint: paint,
+    sheep(n){ // le pecore occupano i quadretti, una per quadretto
+      const list = [...cells].map(unkey).sort((a, b) => a[1] - b[1] || a[0] - b[0]).slice(0, n);
+      gSheep.innerHTML = list.map(([c, r], i) => `<text class="sheep${reduceMotion ? '' : ' pop'}" x="${PAD + c * CELL + CELL / 2}" y="${PAD + r * CELL + CELL / 2}" style="animation-delay:${Math.min(i * 30, 900)}ms">🐑</text>`).join('');
+      return Math.max(0, n - cells.size);
+    }
+  };
+}
+
+/* ---------------- Livelli ---------------- */
+function fieldsLayout(n){
+  el.fields.style.setProperty('--n', n);
+  el.fields.classList.toggle('one', n === 1);
+  el.fields.innerHTML = Array.from({ length:n }, (_, i) => `<div class="field" id="f${i}"></div>`).join('');
+  return [...el.fields.children];
+}
+function goal(n, of){ return `<section class="tool"><h3>🏁 Completati</h3><p class="goal" aria-label="${n} di ${of}">${'★'.repeat(n)}${'☆'.repeat(of - n)}</p></section>`; }
+function histHTML(rows){
+  if (!rows.length) return '';
+  return `<section class="tool"><h3>📋 I tuoi prati</h3><table class="hist"><thead><tr><th>#</th><th>${W_PER()}</th><th>${W_AREA()}</th></tr></thead><tbody>${rows.map((z, i) => `<tr><td>${i + 1}</td><td>${z.per} m</td><td>${plural(z.area, 'quadretto', 'quadretti')}</td></tr>`).join('')}</tbody></table></section>`;
+}
+function shapeIssue(f){
+  if (!f.cells.size) return 'Il prato è vuoto: colora qualche quadretto.';
+  if (!connected(f.cells)) return 'Il prato deve essere tutto in un pezzo: le pecore non saltano da un recinto all’altro.';
+  return null;
+}
+
+/* Livelli 1 e 2: missioni su una griglia, con le pecore come conseguenza. */
+function missionLevel(cfg){
+  return {
+    nav:cfg.nav, title:cfg.title, mission:cfg.mission,
+    enter(){
+      Object.assign(S.L, { round:0, hist:[] });
+      const [host] = fieldsLayout(1);
+      S.L.f = makeField(host, { cols:12, rows:9, onChange: () => this.live() });
+      this.load();
+    },
+    load(){
+      const L = S.L, R = cfg.rounds[L.round];
+      L.phase = 'build';
+      el.task.innerHTML = `<b>Missione ${L.round + 1} di ${cfg.rounds.length}.</b> ${R.text}`;
+      L.f.lock(false); this.live(); this.render();
+      feedback('info', 'Osserva', L.round === 0 ? 'Tocca i quadretti per farli diventare prato (o trascina il dito). Tocca un quadretto verde per toglierlo. Il recinto si costruisce da solo intorno al prato.' : 'Nuova missione: puoi modificare il prato che hai già.');
+    },
+    live(){
+      const L = S.L;
+      if (!L.f) return;
+      if (cfg.roll){
+        const p = L.f.m.per, over = p > cfg.roll;
+        L.f.note(`<span class="roll${over ? ' over' : ''}" style="flex-basis:100%">Rotolo ${cfg.roll} m <span class="track"><span class="fill" style="width:${Math.min(100, p / cfg.roll * 100)}%"></span></span>${over ? `mancano ${p - cfg.roll} m!` : `restano ${cfg.roll - p} m`}</span>`);
+      }
+    },
+    render(){
+      const L = S.L, build = L.phase === 'build';
+      el.tool.innerHTML = goal(L.round + (L.phase === 'won' ? 1 : 0), cfg.rounds.length)
+        + `<section class="tool"><h3>🐑 Il pastore controlla</h3><div class="row">${build ? '<button class="btn" type="button" data-act="check">Fai entrare le pecore</button><button class="btn ghost-btn" type="button" data-act="clear">Svuota</button>' : (L.round < cfg.rounds.length - 1 ? '<button class="btn" type="button" data-act="next">Prossima missione →</button>' : '')}</div></section>`
+        + histHTML(L.hist);
+    },
+    on: {
+      clear(){ S.L.f.clear(); },
+      check(){
+        const L = S.L, f = L.f, R = cfg.rounds[L.round], issue = shapeIssue(f);
+        if (issue) return feedback('tilt', 'Attento', issue);
+        const { area, per } = f.m;
+        const out = R.sheep ? f.sheep(R.sheep) : (f.sheep(area), 0);
+        const msg = R.check(area, per);
+        log(`Missione ${L.round + 1}: recinto ${per} m, prato ${area} ${msg ? '✗' : '✓'}`);
+        if (msg) return feedback('error', 'Non ancora', msg + (out ? ` <span class="outside">${'🐑'.repeat(Math.min(out, 12))}</span> ${plural(out, 'pecora resta', 'pecore restano')} fuori.` : ''));
+        L.hist.push({ area, per });
+        L.phase = 'won'; f.lock(true);
+        if (L.round < cfg.rounds.length - 1){ this.render(); return feedback('ok', 'Missione compiuta!', R.ok(area, per)); }
+        this.render();
+        feedback('win', 'Tutte le missioni compiute!', R.ok(area, per));
+        markDone(S.idx);
+        showDialog(cfg.done.title, cfg.done.text, histHTML(L.hist).replace('<section class="tool">', '<div>').replace('</section>', '</div>'), cfg.done.reflect, 'Livello successivo →', () => startLevel(S.idx + 1));
+      },
+      next(){ S.L.round++; this.load(); }
+    }
+  };
+}
+const L1 = missionLevel({
+  nav:'1. Il rotolo', title:'Il rotolo da 20 metri', roll:20,
+  mission:'Il pastore ha un rotolo di recinto lungo 20 metri. Ogni quadretto di prato ospita una pecora; ogni lato di quadretto è un metro di recinto.',
+  rounds:[
+    { text:'Recinta un prato usando <b>tutto il rotolo</b>: esattamente 20 m di recinto.', sheep:0,
+      check:(a, p) => p === 20 ? null : p < 20 ? `Il recinto è lungo ${p} m: avanzano ${20 - p} m di rotolo.` : `Il recinto è lungo ${p} m, ma il rotolo è di 20 m.`,
+      ok:(a) => `20 m di recinto e ${a} quadretti di prato.` },
+    { text:'Arrivano <b>20 pecore</b>. Sempre con 20 m di recinto, fai un prato abbastanza grande per tutte.', sheep:20,
+      check:(a, p) => p !== 20 ? `Il recinto è lungo ${p} m: deve essere di 20 m.` : a < 20 ? `Il prato ha ${a} quadretti.` : null,
+      ok:(a) => `Tutte le pecore dentro! Stesso rotolo di prima, ma ora il prato ha ${a} quadretti.` },
+    { text:'Le pecore ora sono <b>25</b>! Il rotolo è sempre quello da 20 m.', sheep:25,
+      check:(a, p) => p !== 20 ? `Il recinto è lungo ${p} m: deve essere di 20 m.` : a < 25 ? `Il prato ha ${a} quadretti.` : null,
+      ok:() => 'Venticinque pecore con soli 20 m di recinto: che forma ha il tuo prato?' },
+    { text:'Il pastore vuole tenere l’erba per l’inverno: usa <b>tutti i 20 m</b> ma recinta <b>al massimo 9 quadretti</b>.', sheep:0,
+      check:(a, p) => p !== 20 ? `Il recinto è lungo ${p} m: deve essere di 20 m.` : a > 9 ? `Il prato ha ${a} quadretti: troppi, al massimo 9.` : null,
+      ok:(a) => `Con lo stesso rotolo hai chiuso solo ${a} quadretti.` }
+  ],
+  done:{ title:'Il rotolo non mente… o sì?', text:'Con lo stesso recinto hai costruito prati molto diversi:',
+    reflect:'Lo stesso rotolo da 20 m ha chiuso prati di grandezza diversa. Quali forme danno il prato più grande? E quali il più piccolo?' }
+});
+const L2 = missionLevel({
+  nav:'2. Dodici pecore', title:'Dodici pecore',
+  mission:'Ora il pastore ha esattamente 12 pecore: il prato deve avere 12 quadretti, né uno di più né uno di meno. Il recinto però puoi sceglierlo tu.',
+  rounds:[
+    { text:'Il recinto costa caro: un prato di <b>12 quadretti</b> con <b>meno di 16 m</b> di recinto.', sheep:12,
+      check:(a, p) => a !== 12 ? `Il prato ha ${a} quadretti: ne servono esattamente 12, uno per pecora.` : p >= 16 ? `Il recinto è lungo ${p} m: troppo, deve essere meno di 16 m.` : null,
+      ok:(a, p) => `12 pecore con soli ${p} m di recinto.` },
+    { text:'Un vicino regala al pastore tanto recinto: <b>12 quadretti</b> con <b>almeno 24 m</b> di recinto.', sheep:12,
+      check:(a, p) => a !== 12 ? `Il prato ha ${a} quadretti: ne servono esattamente 12.` : p < 24 ? `Il recinto è lungo ${p} m: deve essere almeno 24 m.` : null,
+      ok:(a, p) => `Stesse 12 pecore, ma ${p} m di recinto!` },
+    { text:'<b>12 quadretti</b> e <b>esattamente 20 m</b> di recinto.', sheep:12,
+      check:(a, p) => a !== 12 ? `Il prato ha ${a} quadretti: ne servono esattamente 12.` : p !== 20 ? `Il recinto è lungo ${p} m: deve essere di 20 m.` : null,
+      ok:() => 'Perfetto: 12 quadretti e 20 m di recinto.' }
+  ],
+  done:{ title:'Dodici pecore, tanti recinti', text:'Lo stesso prato di 12 quadretti con recinti diversi:',
+    reflect:'Stessa quantità di prato, ma recinti lunghi in modo diverso. Che forma ha il prato con il recinto più corto? E quello con il recinto più lungo?' }
+});
+
+/* ================================================================
+   LIVELLO 3 — Vero o falso? Controesempi contro le frasi sbagliate.
+   ================================================================ */
+const CLAIMS = [
+  { text:'Due prati con lo stesso recinto hanno anche lo stesso numero di quadretti.', truth:false,
+    need:'Costruisci due prati con lo stesso recinto ma con un numero diverso di quadretti.',
+    check:(A, B) => A.per !== B.per ? `I due recinti non sono uguali (${A.per} m e ${B.per} m).` : A.area === B.area ? 'I due prati hanno anche lo stesso numero di quadretti: qui la frase funziona.' : null,
+    cex:() => [rect(0, 0, 4, 4), rect(0, 0, 7, 1)] },
+  { text:'Il prato con il recinto più lungo è sempre anche il più grande.', truth:false,
+    need:'Costruisci due prati: quello con il recinto più lungo deve avere meno quadretti.',
+    check:(A, B) => A.per === B.per ? 'I due recinti sono lunghi uguali.' : ((A.per > B.per) === (A.area > B.area) && A.area !== B.area) ? 'Qui il prato con il recinto più lungo è proprio il più grande: la frase funziona.' : A.area === B.area ? 'I due prati hanno lo stesso numero di quadretti.' : null,
+    cex:() => [rect(0, 0, 8, 1), rect(0, 0, 3, 3)] },
+  { text:'Il recinto di un prato a quadretti è sempre lungo un numero pari di metri.', truth:true,
+    need:'Per smentirla ti serve un prato con il recinto lungo un numero dispari di metri.',
+    check:(A, B) => { const odd = [A, B].find(z => z.per % 2); return odd ? null : `I recinti sono lunghi ${A.per} m e ${B.per} m: numeri pari.`; },
+    cex:() => null },
+  { text:'Due prati con lo stesso numero di quadretti hanno anche lo stesso recinto.', truth:false,
+    need:'Costruisci due prati con gli stessi quadretti ma recinti diversi.',
+    check:(A, B) => A.area !== B.area ? `I prati hanno ${A.area} e ${B.area} quadretti: non sono uguali.` : A.per === B.per ? 'Anche i recinti sono uguali: qui la frase funziona.' : null,
+    cex:() => [rect(0, 0, 6, 2), rect(0, 0, 4, 3)] },
+  { text:'Se aggiungi un quadretto a un prato, il recinto diventa sempre più lungo.', truth:false,
+    need:'Il prato B deve essere uguale al prato A con un quadretto in più, ma con un recinto non più lungo.',
+    check:(A, B, a, b) => (b.size !== a.size + 1 || ![...a].every(k => b.has(k))) ? 'B deve essere uguale ad A, più un solo quadretto.' : B.per > A.per ? `Qui il recinto si è allungato: da ${A.per} m a ${B.per} m.` : null,
+    cex:() => { const a = rect(0, 0, 2, 2); a.delete(key(1, 1)); return [a, rect(0, 0, 2, 2)]; } },
+  { text:'Con 12 m di recinto non si possono chiudere più di 9 quadretti.', truth:true,
+    need:'Per smentirla ti serve un prato con 12 m di recinto e più di 9 quadretti.',
+    check:(A, B) => [A, B].some(z => z.per === 12 && z.area > 9) ? null : 'Nessuno dei due prati ha 12 m di recinto e più di 9 quadretti.',
+    cex:() => null }
+];
+const L3 = {
+  nav:'3. Vero o falso?', title:'Vero o falso?',
+  mission:'Il signor Bastian Contrario dice tante cose sui prati. Alcune sono vere, altre no. Se una frase è falsa, dimostralo con un controesempio: costruisci i prati A e B che la smentiscono.',
+  enter(){
+    Object.assign(S.L, { i:0, res:[] });
+    const [ha, hb] = fieldsLayout(2);
+    S.L.A = makeField(ha, { cols:8, rows:6, label:'Prato A' });
+    S.L.B = makeField(hb, { cols:8, rows:6, label:'Prato B' });
+    L3.load();
+  },
+  load(){
+    const L = S.L, C = CLAIMS[L.i];
+    L.phase = 'think'; L.A.lock(false); L.B.lock(false);
+    el.task.innerHTML = `<b>Frase ${L.i + 1} di ${CLAIMS.length}.</b> Bastian Contrario dice: «${C.text}»`;
+    L3.render();
+    feedback('info', 'Vera o falsa?', 'Se pensi che sia falsa, costruisci un controesempio nei prati A e B. Se pensi che sia vera, dillo: Bastian proverà a smentirti.');
+  },
+  render(){
+    const L = S.L, C = CLAIMS[L.i], think = L.phase === 'think';
+    el.tool.innerHTML = `<section class="tool"><h3>🗣️ La frase</h3><p class="claim"><small>Bastian Contrario dice</small>«${C.text}»</p>
+      ${think ? `<div class="row"><button class="btn" type="button" data-act="falsa">È falsa: ecco il controesempio</button><button class="btn ghost-btn" type="button" data-act="vera">È vera</button></div>
+      <button class="btn ghost-btn" type="button" data-act="clear">Svuota i prati</button>`
+        : (L.i < CLAIMS.length - 1 ? '<button class="btn" type="button" data-act="next">Prossima frase →</button>' : '')}</section>
+      <section class="tool"><h3>📋 Le frasi</h3><ul class="claims">${CLAIMS.map((z, i) => {
+        const r = L.res[i];
+        return `<li class="${r ? (r.ok ? 'ok' : 'lost') : i === L.i ? 'cur' : ''}"><span class="st">${r ? (r.ok ? '✓' : '✕') : i === L.i ? '▸' : '·'}</span><span>${r ? `<b>${z.truth ? 'Vera' : 'Falsa'}</b> — ` : ''}${i <= L.i ? esc(z.text) : '…'}</span></li>`;
+      }).join('')}</ul></section>`;
+  },
+  settle(ok, title, html){
+    const L = S.L;
+    L.res[L.i] = { ok };
+    L.phase = 'done'; L.A.lock(true); L.B.lock(true);
+    log(`Frase ${L.i + 1}: ${ok ? '✓' : '✕'}`);
+    L3.render();
+    feedback(ok ? 'ok' : 'error', title, html);
+    if (L.i === CLAIMS.length - 1){
+      markDone(2);
+      const right = L.res.filter(r => r.ok).length;
+      setTimeout(() => showDialog('Bastian è stato smascherato!', `Hai giudicato bene ${right} frasi su ${CLAIMS.length}.`,
+        `<ul class="dlg-list">${CLAIMS.map(z => `<li>${z.truth ? '✓ Vera' : '✕ Falsa'}: «${esc(z.text)}»</li>`).join('')}</ul>`,
+        'Per smentire una frase basta <b>un solo</b> controesempio. Per essere sicuri che una frase è vera, invece, non basta provarla qualche volta: bisogna capire <b>perché</b> funziona sempre. Sai spiegare perché il recinto è sempre pari?',
+        'Livello successivo →', () => startLevel(3)), 600);
+    }
+  },
+  on: {
+    clear(){ S.L.A.clear(); S.L.B.clear(); },
+    falsa(){
+      const L = S.L, C = CLAIMS[L.i];
+      for (const [f, n] of [[L.A, 'A'], [L.B, 'B']]){ const issue = shapeIssue(f); if (issue) return feedback('tilt', `Prato ${n}`, issue); }
+      const msg = C.check(L.A.m, L.B.m, L.A.cells, L.B.cells);
+      if (msg) return feedback('tilt', 'Non è un controesempio', `${msg} ${C.need}`);
+      L3.settle(true, 'Frase smentita!', `Il tuo controesempio funziona: prato A ${L.A.m.per} m e ${plural(L.A.m.area, 'quadretto', 'quadretti')}, prato B ${L.B.m.per} m e ${plural(L.B.m.area, 'quadretto', 'quadretti')}.`);
+    },
+    vera(){
+      const L = S.L, C = CLAIMS[L.i];
+      if (C.truth) return L3.settle(true, 'Bastian non trova controesempi', 'Ci ha provato in tutti i modi, ma la frase regge: è vera.');
+      const [a, b] = C.cex();
+      L.A.set(a); L.B.set(b);
+      L3.settle(false, 'Bastian ti smentisce!', `Guarda i suoi prati: A ha ${L.A.m.per} m di recinto e ${plural(L.A.m.area, 'quadretto', 'quadretti')}, B ha ${L.B.m.per} m e ${plural(L.B.m.area, 'quadretto', 'quadretti')}. La frase era falsa.`);
+    },
+    next(){ S.L.i++; S.L.A.clear(); S.L.B.clear(); L3.load(); }
+  }
+};
+
+/* ================================================================
+   SFIDA — si può fare o no?
+   ================================================================ */
+const L4 = {
+  nav:'⚡ Sfida', title:'Si può fare?', GOAL:5,
+  mission:'Il pastore chiede prati con un certo numero di quadretti e un certo recinto. A volte si può, a volte no. Costruiscilo, oppure dichiara che è impossibile: il milieu controllerà.',
+  enter(){
+    Object.assign(S.L, { done:0, errors:0 });
+    const [host] = fieldsLayout(1);
+    S.L.f = makeField(host, { cols:12, rows:9 });
+    L4.newTask();
+  },
+  gen(){
+    for (;;){
+      const a = rnd(4, 14);
+      if (Math.random() < .55){
+        const evens = []; for (let p = minPer(a); p <= maxPer(a); p += 2) evens.push(p);
+        const p = pick(evens), sol = buildShape(a, p, 12, 9);
+        if (sol) return { a, p, sol };
+      } else {
+        const opts = [minPer(a) + 1, maxPer(a) - 1, maxPer(a) + 2, maxPer(a) + 4];
+        if (minPer(a) - 2 >= 4) opts.push(minPer(a) - 2);
+        const p = pick(opts);
+        if (!possible(a, p)) return { a, p, sol:null };
+      }
+    }
+  },
+  newTask(){
+    const L = S.L;
+    Object.assign(L, L4.gen(), { phase:'build' });
+    L.f.clear(); L.f.lock(false);
+    el.task.innerHTML = `Il pastore vuole un prato di <b>${plural(L.a, 'quadretto', 'quadretti')}</b> con <b>${L.p} m</b> di recinto.`;
+    L4.render();
+    feedback('info', 'Si può fare?', 'Costruisci il prato e controllalo, oppure dichiara che è impossibile.');
+  },
+  render(){
+    const L = S.L, build = L.phase === 'build';
+    el.tool.innerHTML = goal(L.done, L4.GOAL) + `<section class="tool"><h3>🧐 Il tuo verdetto</h3>
+      ${build ? '<div class="row"><button class="btn" type="button" data-act="check">Ecco il prato</button><button class="btn ghost-btn" type="button" data-act="impossible">È impossibile!</button></div><button class="btn ghost-btn" type="button" data-act="clear">Svuota</button>'
+        : (L.done < L4.GOAL ? '<button class="btn" type="button" data-act="next">Prossima richiesta →</button>' : '')}</section>`;
+  },
+  why(a, p){
+    if (p % 2) return `Un recinto fatto di lati di quadretti è sempre lungo un numero pari di metri, e ${p} è dispari.`;
+    if (p < minPer(a)) return `Con ${a} quadretti il recinto più corto possibile è di ${minPer(a)} m.`;
+    return `Con ${a} quadretti il recinto più lungo possibile è di ${maxPer(a)} m.`;
+  },
+  win(title, html){
+    const L = S.L;
+    L.done++; L.phase = 'done'; L.f.lock(true);
+    L4.render();
+    if (L.done < L4.GOAL) return feedback('win', title, html);
+    feedback('win', title, html);
+    markDone(3);
+    showDialog('Pastore esperto!', `Cinque richieste risolte${L.errors ? `, con ${plural(L.errors, 'errore', 'errori')}` : ' senza errori'}.`,
+      `<div class="idcard"><ul>
+        <li>L’<b>area</b> dice quanto prato c’è (quanti quadretti); il <b>perimetro</b> dice quanto è lungo il recinto (quanti lati di quadretto). Sono due misure <b>diverse</b>.</li>
+        <li>Lo stesso perimetro può chiudere aree diverse, e la stessa area può avere perimetri diversi.</li>
+        <li>Con lo stesso recinto, il prato più grande ha una forma raccolta, vicina al <b>quadrato</b>; i prati lunghi e stretti sono i più piccoli.</li>
+        <li>Su una quadrettatura il perimetro è sempre un numero <b>pari</b>.</li></ul></div>`,
+      '', 'Altre cinque richieste →', () => startLevel(3));
+  },
+  on: {
+    clear(){ S.L.f.clear(); },
+    check(){
+      const L = S.L, issue = shapeIssue(L.f);
+      if (issue) return feedback('tilt', 'Attento', issue);
+      const { area, per } = L.f.m;
+      log(`${L.a} quadretti / ${L.p} m: costruito ${area} / ${per} m`);
+      if (area === L.a && per === L.p){ L.f.sheep(area); return L4.win('Si poteva fare!', `${plural(area, 'quadretto', 'quadretti')} e ${per} m di recinto: proprio quello che voleva il pastore.`); }
+      L.errors++;
+      feedback('error', 'Non è quello richiesto', `Il tuo prato ha ${plural(area, 'quadretto', 'quadretti')} e ${per} m di recinto; il pastore voleva ${L.a} quadretti e ${L.p} m.`);
+    },
+    impossible(){
+      const L = S.L;
+      log(`${L.a} quadretti / ${L.p} m: dichiarato impossibile`);
+      if (!L.sol) return L4.win('Davvero impossibile!', `Nemmeno il milieu ci riesce. ${L4.why(L.a, L.p)}`);
+      L.errors++;
+      L.f.set(L.sol); L.f.lock(true); L.phase = 'shown';
+      L.f.sheep(L.a);
+      L4.render();
+      feedback('error', 'Invece si può!', `Il milieu ha costruito un prato di ${plural(L.a, 'quadretto', 'quadretti')} con ${L.p} m di recinto. Guardalo bene.`);
+    },
+    next(){ L4.newTask(); }
+  }
+};
+
+const LEVELS = [L1, L2, L3, L4];
+let cur = L1;
+
+function renderLevels(){
+  const done = store.get('recinto.done', []);
+  el.levels.innerHTML = LEVELS.map((L, i) => {
+    const locked = i + 1 > S.unlocked;
+    return `<button class="lvl${i === S.idx ? ' active' : ''}" type="button" data-i="${i}" ${locked ? `disabled aria-label="${L.nav} (bloccato)"` : ''} ${i === S.idx ? 'aria-current="true"' : ''}>${locked ? '🔒 ' : ''}${L.nav}${done.includes(i) ? '<span class="done" aria-hidden="true">✓</span>' : ''}</button>`;
+  }).join('');
+}
+function markDone(i){
+  const done = store.get('recinto.done', []);
+  if (!done.includes(i)){ done.push(i); store.set('recinto.done', done); }
+  if (i + 2 > S.unlocked && i < 3){ S.unlocked = i + 2; if (!params.has('tutti')) store.set('recinto.unlocked', S.unlocked); }
+  renderLevels();
+}
+function startLevel(i){
+  if (i + 1 > S.unlocked) return;
+  if (el.dlg.open) el.dlg.close();
+  S.idx = i; S.gen++; S.L = {};
+  cur = LEVELS[i];
+  el.mBadge.textContent = i === 3 ? 'Sfida' : `Livello ${i + 1}`;
+  el.mTitle.textContent = cur.title; el.mText.textContent = cur.mission;
+  clearLog(); renderLevels();
+  cur.enter();
+}
+function showDialog(title, text, extra, reflect, nextLabel, onNext){
+  el.winTitle.textContent = title; el.winText.innerHTML = text;
+  el.winExtra.innerHTML = extra || ''; el.winReflect.innerHTML = reflect || ''; el.winReflect.hidden = !reflect;
+  el.dlgNext.textContent = nextLabel; S.onNext = onNext;
+  el.dlg.showModal();
+  if (!reduceMotion) fx.confetti();
+}
+
+const fx = (() => {
+  const c = $('#fx'), ctx = c.getContext('2d'); let parts = [], raf = 0, W = 0, H = 0;
+  function size(){ const d = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  function tick(){
+    ctx.clearRect(0, 0, W, H);
+    parts = parts.filter(p => p.life > 0);
+    for (const p of parts){
+      p.vy += .18; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = Math.min(1, p.life / 30); ctx.fillStyle = p.col;
+      ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
+    }
+    raf = parts.length ? requestAnimationFrame(tick) : 0;
+  }
+  function confetti(){
+    size();
+    const cols = ['#4338ca', '#6b3fd1', '#ffd166', '#f0a24a', '#2bb39f', '#e5675b'];
+    for (let i = 0; i < 140; i++) parts.push({ x: W / 2 + (Math.random() - .5) * W * .4, y: H * .35, vx: (Math.random() - .5) * 14, vy: -Math.random() * 12 - 4,
+      r: Math.random() * 6, vr: (Math.random() - .5) * .3, s: 7 + Math.random() * 7, life: 90 + Math.random() * 60, col: cols[i % cols.length] });
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+  addEventListener('resize', () => { if (raf) size(); });
+  return { confetti };
+})();
+
+el.tool.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && !b.disabled) cur.on[b.dataset.act]?.call(cur, b); });
+el.levels.addEventListener('click', e => { const b = e.target.closest('.lvl'); if (b && !b.disabled) startLevel(+b.dataset.i); });
+$('#btnReset').addEventListener('click', () => startLevel(S.idx));
+function setSym(on){
+  S.sym = on; el.sym.setAttribute('aria-checked', String(on)); store.set('recinto.sym', on);
+  for (const k of ['f', 'A', 'B']) S.L[k]?.repaint();
+  cur.render?.();
+}
+el.sym.addEventListener('click', () => setSym(!S.sym));
+$('#dlgStay').addEventListener('click', () => el.dlg.close());
+el.dlgNext.addEventListener('click', () => { el.dlg.close(); S.onNext?.(); });
+document.addEventListener('pointerdown', e => {
+  const host = e.target.closest('.btn');
+  if (!host || host.disabled || reduceMotion) return;
+  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
+  const sp = document.createElement('span');
+  sp.className = 'rip';
+  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
+  host.appendChild(sp);
+  setTimeout(() => sp.remove(), 600);
+});
+
+if (params.has('debug')) window.__recinto = { S, startLevel, buildShape, measureShape, rect, key, possible, minPer, maxPer, get cur(){ return cur; } };
+el.sym.setAttribute('aria-checked', String(S.sym));
+startLevel(Math.min(S.unlocked - 1, Math.max(0, (Number(params.get('livello')) || 1) - 1)));
+})();
+</script>
+</body>
+</html>
