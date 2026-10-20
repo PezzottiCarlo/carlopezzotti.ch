@@ -1,0 +1,1441 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Fabbrica delle Funzioni</title>
+<meta name="description" content="Macchine misteriose che trasformano numeri: prevedi, disegna, riconosci e descrivi le funzioni lineari. Un milieu antagonista da giocare in classe, anche a coppie.">
+<meta name="dd:tags" content="funzioni, grafici, Brousseau">
+<meta name="dd:date" content="2026-10-20">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/_shared/dd.css">
+<style>
+:root{ --mil:#c2560c; }
+
+.app{min-height:100vh;min-height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding:10px 16px 14px}
+.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.topbar .brand{flex:1 1 300px;min-width:0}
+@media (max-height:760px){.brand p{display:none}}
+.levels{display:flex;gap:6px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
+.lvl{font-weight:700;font-size:.86rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:7px 11px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s,transform .12s}
+.lvl:hover:not(:disabled){background:var(--primary-soft)}
+.lvl:active:not(:disabled){transform:scale(.96)}
+.lvl.active{background:var(--primary);color:#fff}
+.lvl:disabled{color:#6b7090;cursor:not-allowed;background:#f3f4f9}
+.lvl .done{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:.7rem}
+.lvl.active .done{background:rgba(255,255,255,.25);color:#fff}
+.top-tools{display:flex;align-items:center;gap:12px}
+.switch-row{display:flex;align-items:center;gap:8px;font-weight:650;font-size:.9rem}
+.icon-btn{width:42px;height:42px;padding:0;font-size:1.25rem}
+.switch{position:relative;width:54px;height:30px;border-radius:999px;border:2px solid #8a91b1;background:#e5e8f4;cursor:pointer;flex:none;transition:background .25s,border-color .25s;padding:0}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .25s var(--wobble)}
+.switch[aria-checked="true"]{background:var(--primary);border-color:var(--primary)}
+.switch[aria-checked="true"]::after{transform:translateX(24px)}
+.switch .st{position:absolute;font:800 .58rem var(--font);top:50%;transform:translateY(-50%);color:#454b6b}
+.switch .st.on{left:6px;color:#fff;display:none}.switch .st.off{right:5px}
+.switch[aria-checked="true"] .st.on{display:block}.switch[aria-checked="true"] .st.off{display:none}
+
+.layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,26vw,380px);gap:14px}
+.stage-card{position:relative;display:flex;flex-direction:column;gap:10px;padding:14px;min-height:0}
+.mission{flex:none;display:flex;gap:12px;align-items:baseline}
+.mission h2{display:inline;margin:0 6px 0 0;font-size:1.05rem}
+.mission p{display:inline;margin:0;color:var(--muted);font-size:.92rem}
+
+/* ---------- Banco: macchina + registro | piano ---------- */
+.bench{flex:1;min-height:0;display:grid;grid-template-columns:clamp(190px,19vw,240px) minmax(0,1fr);gap:12px}
+.bench.no-machine{grid-template-columns:minmax(0,1fr)}
+.bench.no-machine .machine-col{display:none}
+.machine-col{display:flex;flex-direction:column;gap:10px;min-height:0}
+.plane-col{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
+
+.machine{flex:none;border-radius:16px;background:linear-gradient(160deg,#5b50e6,#3a2fb8);color:#fff;padding:10px 12px 12px;box-shadow:0 8px 22px rgba(67,56,202,.3)}
+.m-name{display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:.85rem}
+.m-led{width:9px;height:9px;border-radius:50%;background:#7c74e8;transition:background .2s,box-shadow .2s}
+.machine.busy .m-led{background:#ffd166;box-shadow:0 0 0 3px rgba(255,209,102,.35)}
+.m-body{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;margin-top:8px}
+.m-slot{background:rgba(255,255,255,.14);border-radius:12px;padding:6px 4px;text-align:center;min-width:0}
+.m-lbl{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;opacity:.85;font-weight:700}
+.m-val{display:block;font-size:1.5rem;font-weight:850;line-height:1.15;min-height:1.15em;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis}
+.m-val.bump{animation:bump .4s var(--wobble)}
+@keyframes bump{from{transform:scale(.5);opacity:.3}}
+.m-gears{display:grid;place-items:center;gap:0}
+.m-gears svg{display:block}
+.machine.busy .g1{animation:spin .7s linear infinite}
+.machine.busy .g2{animation:spin .7s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.registro{flex:1;min-height:110px;overflow:auto;border:2px solid var(--line);border-radius:14px;background:#fff}
+.registro table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.registro th{position:sticky;top:0;background:#f3f4fb;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:7px 6px;z-index:1}
+.registro td{text-align:center;padding:5px 6px;border-top:1px solid #eef0f8;font-weight:750}
+.registro td small{color:var(--muted);font-weight:600;font-size:.75rem}
+.registro tr.new td{animation:rowflash 1.1s ease}
+@keyframes rowflash{0%{background:var(--primary-soft)}}
+.registro tr.ok td:last-child{color:var(--ok)}
+.registro tr.err td:last-child{color:var(--err)}
+.registro tr.probe td{color:var(--win)}
+.reg-empty{margin:0;padding:10px;color:var(--muted);font-size:.84rem;text-align:center}
+
+.story{flex:none;border-radius:14px;padding:12px 14px;background:var(--tilt-soft);border:2px solid var(--tilt-line)}
+.story h3{margin:0 0 6px;font-size:.82rem;color:var(--tilt);text-transform:uppercase;letter-spacing:.05em}
+.story-text{margin:0;font-size:1.1rem;font-weight:650;line-height:1.4}
+.story .sub{margin:6px 0 0;font-size:.85rem;color:var(--muted)}
+table.mini{border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;font-variant-numeric:tabular-nums;font-size:1.1rem}
+table.mini th,table.mini td{border:1px solid var(--line);padding:6px 16px;text-align:center}
+table.mini th{background:#f3f4fb;font-family:var(--math);font-style:italic}
+table.mini td{font-weight:800}
+
+.plane-wrap{width:100%;aspect-ratio:640/440;border:2px solid #e1e5f3;border-radius:16px;background:radial-gradient(ellipse at 50% 0%,#fff 0%,#f6f7fc 75%);overflow:hidden;display:grid;place-items:center}
+#plane{width:100%;height:100%;display:block;touch-action:none;-webkit-user-select:none;user-select:none}
+#plane .grid line{stroke:#e4e7f3;stroke-width:1}
+#plane .grid line.axis{stroke:#8a91b1;stroke-width:2}
+#plane .tick{fill:#6b7090;font:600 13px var(--font)}
+#plane .axis-name{fill:var(--primary-dark);font:800 14px var(--font)}
+.dot{fill:var(--primary);stroke:#fff;stroke-width:2.5;transform-box:fill-box;transform-origin:center}
+.dot.probe{fill:var(--win)}
+.dot.ok{fill:var(--ok)}
+.dot.err{fill:var(--err)}
+.dot.sel{fill:#f2a516;stroke:#3a2fb8;stroke-width:3}
+.sel-mode .dot{cursor:pointer}
+.dot.ball{fill:#f59e42}
+.dot.ball.caught{fill:var(--ok-line)}
+.dot.ball.miss{fill:var(--err-line)}
+.dot.secret-pt{fill:var(--mil)}
+.dot.tgt{fill:none;stroke:var(--mil);stroke-width:3}
+.dot.mine{fill:var(--primary)}
+.dot.mine.bad{fill:var(--err)}
+.dot.pop{animation:dpop .45s var(--wobble)}
+@keyframes dpop{from{transform:scale(0)}}
+.dot.drop{animation:ddrop .42s cubic-bezier(.45,0,.75,1) both}
+@keyframes ddrop{from{transform:translateY(-440px);opacity:.2}}
+.ruler-line{stroke:var(--primary);stroke-width:6;stroke-linecap:round;opacity:.7}
+.ruler-line.bad{stroke:var(--err);stroke-dasharray:10 8}
+.handle{cursor:grab;outline:none}
+.handle.drag{cursor:grabbing}
+.handle .hit{fill:transparent}
+.handle .vis{fill:#fff;stroke:var(--primary);stroke-width:4;transition:r .15s}
+.handle:hover .vis,.handle.drag .vis{r:14px}
+.handle:focus-visible .vis{stroke:#f2a516;stroke-width:5}
+.handle.locked{cursor:default}
+.handle.locked .vis{stroke:#9aa1c0}
+.secret-line{stroke:var(--mil);stroke-width:4;stroke-linecap:round}
+.secret-line.reveal{stroke-dasharray:12 8}
+.solved-line{stroke:var(--ok-line);stroke-width:4;opacity:.8}
+.hint-line{stroke:var(--err-line);stroke-width:3;stroke-dasharray:6 6}
+
+.cover{position:absolute;inset:0;z-index:5;border-radius:var(--radius);background:linear-gradient(145deg,#5b50e6,#3a2fb8);color:#fff;display:grid;place-items:center;text-align:center;padding:24px}
+.cover h2{font-size:clamp(1.4rem,3vw,2.1rem);margin:6px 0 8px;letter-spacing:-.02em}
+.cover p{opacity:.92;max-width:42ch;margin:0 auto 18px;font-size:1.02rem}
+.cover-ico{font-size:3rem;line-height:1}
+.btn.light{background:#fff;color:var(--primary-dark);border-color:#fff;font-size:1.05rem;padding:12px 20px}
+.btn.light:hover:not(:disabled){background:#f1efff}
+
+/* ---------- Pannello ---------- */
+.panel{min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.feedback{min-height:84px}
+.tools{display:flex;flex-direction:column;gap:12px}
+.tool{border:2px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
+.tool h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px}
+.tool .sub{margin:0;font-size:.84rem;color:var(--muted)}
+.tool p{margin:0}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lbl{font-weight:650}
+.big-n{font-size:1.25rem}
+.num-input{font:800 1.1rem var(--font);width:76px;height:42px;border:2px solid var(--line);border-radius:12px;text-align:center;color:var(--ink);background:#fff;-moz-appearance:textfield}
+.num-input::-webkit-inner-spin-button,.num-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.num-input:focus,.txt-input:focus,.f-input:focus,textarea.msg:focus{outline:none;border-color:var(--primary)}
+.seg{display:flex;gap:6px}
+.pill{flex:1;min-height:44px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:750;font-size:.9rem;color:var(--ink);cursor:pointer;transition:transform .12s,border-color .2s,background .2s;position:relative;overflow:hidden}
+.pill:hover:not(:disabled){border-color:var(--primary)}
+.pill:active:not(:disabled){transform:scale(.95)}
+.pill[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
+.coins{display:flex;gap:6px;flex-wrap:wrap}
+.coin{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff7d6,#ffd166 60%,#f2a516);box-shadow:inset 0 -2px 0 rgba(0,0,0,.12)}
+.coin.used{background:#eceef7;box-shadow:inset 0 0 0 2px #d6dbee}
+.answers{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px}
+.answers li{font-size:.86rem;padding:6px 9px;border-radius:10px;background:#f7f8fd;border:1px solid #e6e9f5}
+.answers li.ok{background:var(--ok-soft);border-color:var(--ok-line)}
+.answers li.err{background:var(--err-soft);border-color:var(--err-line)}
+.rule{font-size:1rem;line-height:1.45}
+.math{font-family:var(--math);font-size:1.2rem;color:#3a2b8f;white-space:nowrap}
+.math.big{font-size:1.6rem}
+.mchips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mchip{height:46px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:850;font-size:1.05rem;cursor:pointer;color:var(--ink);transition:transform .12s,border-color .2s}
+.mchip:hover{border-color:var(--primary)}
+.mchip.cur{border-color:var(--primary);background:var(--primary-soft);color:var(--primary-dark)}
+.mchip.solved{background:var(--ok-soft);border-color:var(--ok-line);color:var(--ok)}
+.mchip.cur.solved{box-shadow:0 0 0 3px rgba(43,179,159,.3)}
+.solved-card{border-color:var(--ok-line);background:var(--ok-soft)}
+.names{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-weight:650}
+.txt-input{height:42px;border:2px solid var(--line);border-radius:12px;padding:0 10px;font:700 1rem var(--font);color:var(--ink);min-width:0;flex:1}
+.names .btn{flex:1 0 100%}
+textarea.msg{width:100%;min-height:84px;border:2px solid var(--line);border-radius:12px;padding:10px;font:700 1.15rem var(--font);color:var(--ink);resize:vertical}
+.msg-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px}
+.cnt{font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.cnt.full{color:var(--err)}
+.bubble{background:#fff;border:2px solid var(--primary);border-radius:16px 16px 16px 4px;padding:12px 14px;font-size:1.35rem;font-weight:800;word-break:break-word;white-space:pre-wrap;color:var(--ink)}
+.gallery{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px}
+.gallery li{display:flex;gap:8px;align-items:baseline;font-size:.86rem;padding:6px 9px;border-radius:10px;background:#f7f8fd;border:1px solid #e6e9f5}
+.gallery li.ok{border-color:var(--ok-line)}
+.gallery .m{flex:1;font-weight:750;word-break:break-word;white-space:pre-wrap}
+.gallery .n{color:var(--muted);font-size:.75rem;white-space:nowrap}
+.formula-row{display:flex;align-items:center;gap:8px}
+.formula-row label{font:italic 700 1.3rem var(--math);white-space:nowrap}
+.f-input{flex:1;min-width:0;height:46px;border:2px solid var(--line);border-radius:12px;padding:0 10px;font:600 1.25rem var(--math);color:var(--ink)}
+.goal{font-size:1.4rem;letter-spacing:3px;color:#f2a516}
+.rounds{display:flex;gap:6px}
+.rounds i{flex:1;height:8px;border-radius:999px;background:#e5e8f4}
+.rounds i.on{background:var(--ok-line)}
+.rounds i.cur{background:var(--primary)}
+
+details.diario{border:2px solid var(--line);border-radius:14px;padding:0 12px}
+details.diario summary{cursor:pointer;font-weight:750;font-size:.95rem;padding:10px 0;display:flex;align-items:center;gap:8px;list-style:none}
+details.diario summary::-webkit-details-marker{display:none}
+details.diario summary::before{content:"▸";transition:transform .2s;color:var(--primary)}
+details.diario[open] summary::before{transform:rotate(90deg)}
+details.diario .count{margin-left:auto;background:var(--primary-soft);color:var(--primary-dark);border-radius:999px;padding:1px 9px;font-size:.78rem}
+.log{list-style:none;margin:0 0 10px;padding:0;max-height:min(30vh,240px);overflow:auto;display:flex;flex-direction:column;gap:5px}
+.log li{font-size:.82rem;padding:5px 9px;border-radius:9px;background:#f7f8fd;border:1px solid #e6e9f5}
+.log-empty{color:var(--muted);font-size:.84rem;margin:0 0 10px}
+
+dialog{max-width:min(560px,94vw)}
+.dlg-body .reflect{background:#f7f8fd;border-radius:12px;padding:10px 12px;color:var(--ink);text-align:left;font-size:.92rem}
+.dlg-list{list-style:none;padding:0;margin:8px 0;display:flex;flex-direction:column;gap:6px;text-align:left}
+.dlg-list li{background:#f7f8fd;border-radius:10px;padding:7px 10px;font-weight:650}
+.idcard{text-align:left;border:2px solid var(--primary);border-radius:16px;padding:12px 14px;margin:10px 0;background:#fbfbff}
+.idcard .math{display:block;text-align:center;font-size:1.7rem;margin-bottom:6px}
+.idcard ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:.92rem;color:var(--ink)}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70;width:100vw;height:100vh}
+
+/* Desktop grande: tutto nello schermo, il pannello scorre. */
+@media (min-width:921px) and (min-height:680px){
+  body{height:100vh;height:100dvh;overflow:hidden}
+  .app{height:100vh;height:100dvh}
+  .plane-wrap{flex:1;min-height:0;aspect-ratio:auto}
+}
+@media (max-width:920px){
+  .layout{grid-template-columns:1fr}
+  .bench{grid-template-columns:1fr}
+  .machine-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
+  .registro{max-height:170px}
+  .panel{overflow:visible}
+}
+@media (max-width:620px){
+  .app{padding:8px 10px 12px}
+  .mission{flex-wrap:wrap}
+  .levels{width:100%}
+  .lvl{flex:1;justify-content:center;padding:7px 6px;font-size:.8rem}
+  .top-tools{width:100%;justify-content:space-between}
+  .levels{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .levels::-webkit-scrollbar{display:none}
+  .lvl{flex:none;white-space:nowrap}
+  .machine{padding:8px 9px 10px}
+  .m-body{gap:4px}
+  .m-val{font-size:1.15rem}
+  .m-gears svg{width:22px;height:22px}
+  .registro{max-height:132px;min-height:0}
+  .plane-wrap{aspect-ratio:440/420}
+  #plane .tick{font-size:16px}
+  #plane .axis-name{font-size:17px}
+  .handle .vis{r:13px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <a class="dd-back" href="/" aria-label="Tutti gli esperimenti dd" title="Tutti gli esperimenti"><span class="arr" aria-hidden="true">←</span>dd</a>
+      <div class="logo" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 34 34" fill="none">
+          <path d="M5 4v25h25" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8 25L29 8" stroke="#ffd166" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="13" cy="21" r="2.6" fill="#fff"/><circle cx="21" cy="14.6" r="2.6" fill="#fff"/>
+        </svg>
+      </div>
+      <div>
+        <h1>La Fabbrica delle Funzioni</h1>
+        <p>Metti dentro un numero, ne esce un altro. Come ragiona la macchina?</p>
+      </div>
+    </div>
+    <nav class="levels" id="levels" aria-label="Livelli"></nav>
+    <div class="top-tools">
+      <div class="switch-row">
+        <span id="symLbl">Simboli</span>
+        <button class="switch" id="symToggle" type="button" role="switch" aria-checked="false" aria-labelledby="symLbl"><span class="st on" aria-hidden="true">SÌ</span><span class="st off" aria-hidden="true">NO</span></button>
+      </div>
+      <button class="btn ghost-btn icon-btn" type="button" id="btnReset" title="Ricomincia il livello" aria-label="Ricomincia il livello">↺</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="card stage-card" aria-labelledby="missionTitle">
+      <div class="mission">
+        <span class="dd-badge" id="missionBadge">Livello 1</span>
+        <div><h2 id="missionTitle"></h2><p id="missionText"></p></div>
+      </div>
+
+      <div class="bench" id="bench">
+        <div class="machine-col">
+          <div class="machine" id="machine">
+            <div class="m-name"><span id="mName">Macchina</span><span class="m-led" aria-hidden="true"></span></div>
+            <div class="m-body">
+              <div class="m-slot"><span class="m-lbl" id="mInLbl">entra</span><span class="m-val" id="mIn">?</span></div>
+              <div class="m-gears" aria-hidden="true">
+                <svg class="g1" width="34" height="34" viewBox="-17 -17 34 34"><circle r="11" fill="none" stroke="#ffd166" stroke-width="6" stroke-dasharray="4.3 4.3"/><circle r="8" fill="#ffd166"/><circle r="3" fill="#3a2fb8"/></svg>
+                <svg class="g2" width="24" height="24" viewBox="-12 -12 24 24"><circle r="7.5" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="3.4 2.5"/><circle r="5.5" fill="#fff"/><circle r="2" fill="#3a2fb8"/></svg>
+              </div>
+              <div class="m-slot"><span class="m-lbl" id="mOutLbl">esce</span><span class="m-val" id="mOut">?</span></div>
+            </div>
+          </div>
+          <div class="registro" aria-label="Registro delle prove">
+            <table><thead><tr><th id="thX">entra</th><th id="thY">esce</th></tr></thead><tbody id="regBody"></tbody></table>
+            <p class="reg-empty" id="regEmpty">Il registro è vuoto.</p>
+          </div>
+        </div>
+        <div class="plane-col">
+          <div class="story" id="story" hidden></div>
+          <div class="plane-wrap"><svg id="plane" role="img" aria-label="Grafico: in orizzontale i numeri che entrano, in verticale i numeri che escono" preserveAspectRatio="xMidYMid meet"></svg></div>
+        </div>
+      </div>
+
+      <div class="cover" id="cover" hidden></div>
+    </section>
+
+    <aside class="card panel" aria-label="Strumenti">
+      <div class="feedback info" id="feedback">
+        <span class="fb-ico" aria-hidden="true" id="fbIco">i</span>
+        <div><strong id="fbTitle">Osserva</strong><p id="fbText"></p></div>
+      </div>
+      <div class="tools" id="tool"></div>
+      <details class="diario" id="diario">
+        <summary>Diario <span class="count" id="logCount">0</span></summary>
+        <p class="log-empty" id="logEmpty">Ancora niente.</p>
+        <ol class="log" id="log"></ol>
+      </details>
+    </aside>
+  </main>
+</div>
+
+<dialog id="winDlg" aria-labelledby="winTitle" aria-describedby="winText">
+  <div class="dlg-body">
+    <div class="trophy" aria-hidden="true">
+      <svg width="42" height="42" viewBox="0 0 46 46"><path d="M23 4l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5L23 32.7l-11.3 5.9 2.2-12.5-9.1-8.9 12.6-1.8z" fill="#fff" stroke="#b9790c" stroke-width="2" stroke-linejoin="round"/></svg>
+    </div>
+    <h2 id="winTitle"></h2>
+    <p class="big" id="winText"></p>
+    <div id="winExtra"></div>
+    <p class="reflect" id="winReflect"></p>
+    <div class="dlg-actions">
+      <button class="btn ghost-btn" type="button" id="dlgStay">Resta qui</button>
+      <button class="btn" type="button" id="dlgNext">Livello successivo →</button>
+    </div>
+  </div>
+</dialog>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="sr-only" aria-live="polite" id="sr"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* La Fabbrica delle Funzioni.
+   Ogni macchina trasforma il numero che entra (x) nel numero che esce (y).
+   Il milieu valida sempre con le conseguenze: la macchina risponde, le palline
+   cadono o no sul binario, il righello regge o no la prova. */
+
+const $ = s => document.querySelector(s);
+const params = new URLSearchParams(location.search);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, reduceMotion ? Math.min(ms, 60) : ms));
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = arr => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const EPS = 1e-6;
+const same = (a, b) => Math.abs(a - b) < EPS;
+const XS = Array.from({ length: 11 }, (_, i) => i);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
+function fmt(n){
+  if (!Number.isFinite(n)) return '—';
+  const r = Math.round(n * 100) / 100;
+  return (Number.isInteger(r) ? String(r) : String(r).replace('.', ',')).replace('-', '−');
+}
+const pt = (x, y) => `(${fmt(x)}; ${fmt(y)})`;
+function readNum(v){
+  const s = String(v).trim().replace(',', '.').replace(/[−–]/g, '-');
+  return /^-?\d+(\.\d+)?$/.test(s) ? parseFloat(s) : null;
+}
+
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+
+/* ---------------- Macchine ---------------- */
+const lin = (a, b) => ({ kind:'lin', a, b, f: x => a * x + b });
+const NONLIN = {
+  sq:    x => x * x,
+  tri:   x => x * (x + 1) / 2,
+  pow:   x => 2 ** x,
+  steps: x => x <= 3 ? 4 : x <= 6 ? 7 : 10,
+  bend:  x => x <= 5 ? 2 * x : 10 + 4 * (x - 5),
+  hill:  x => x * (10 - x)
+};
+const non = key => ({ kind:'non', key, f: NONLIN[key] });
+
+function coefText(a){
+  if (Number.isInteger(a)) return a === 1 ? 'x' : a === -1 ? '−x' : fmt(a) + 'x';
+  const n = Math.round(a * 2);
+  return `${n < 0 ? '−' : ''}${Math.abs(n)}/2·x`;
+}
+function formula(m){
+  if (!m || m.kind !== 'lin') return '';
+  const { a, b } = m;
+  if (a === 0) return `y = ${fmt(b)}`;
+  return `y = ${coefText(a)}${b === 0 ? '' : b > 0 ? ' + ' + fmt(b) : ' − ' + fmt(-b)}`;
+}
+function ruleWords(m){
+  const start = `Quando entra 0, esce <b>${fmt(m.b)}</b>.`;
+  if (m.a === 0) return `${start} Qualunque numero entri, esce sempre lo stesso.`;
+  const step = Number.isInteger(m.a) ? 1 : 2;
+  return `${start} Ogni volta che il numero che entra aumenta di ${step}, quello che esce <b>${m.a > 0 ? 'aumenta' : 'diminuisce'} di ${fmt(Math.abs(m.a * step))}</b>.`;
+}
+const valuesOf = m => XS.map(m.f);
+
+const STORIES_UP = [
+  (a, b) => ({ text:`Un taxi costa ${b} franchi alla partenza, più ${a} franchi per ogni chilometro.`, x:'chilometri', y:'franchi' }),
+  (a, b) => ({ text:`Mia ha già ${b} figurine e ogni settimana ne compra ${a}.`, x:'settimane', y:'figurine' }),
+  (a, b) => ({ text:`Nella vasca ci sono già ${b} litri d’acqua e il rubinetto ne aggiunge ${a} ogni minuto.`, x:'minuti', y:'litri' }),
+  (a, b) => ({ text:`L’abbonamento del telefono costa ${b} franchi al mese, più ${a} franchi per ogni gigabyte.`, x:'gigabyte', y:'franchi' })
+];
+const STORIES_DOWN = [
+  (a, b) => ({ text:`Una candela è alta ${b} cm e ogni ora si accorcia di ${a} cm.`, x:'ore', y:'centimetri' }),
+  (a, b) => ({ text:`Nel salvadanaio ci sono ${b} franchi e ogni settimana ne spendo ${a}.`, x:'settimane', y:'franchi' }),
+  (a, b) => ({ text:`La borraccia contiene ${b} dl d’acqua e ogni ora ne bevo ${a} dl.`, x:'ore', y:'decilitri' })
+];
+function storyMachine(maxA, maxY){
+  if (Math.random() < .4){
+    const a = rnd(1, Math.min(3, maxA)), b = rnd(10 * a, Math.min(maxY, 10 * a + 15));
+    return Object.assign(lin(-a, b), { story: pick(STORIES_DOWN)(a, b) });
+  }
+  const a = rnd(1, maxA), b = rnd(2, Math.max(2, Math.min(12, maxY - 10 * a)));
+  return Object.assign(lin(a, b), { story: pick(STORIES_UP)(a, b) });
+}
+function tableXs(m){
+  const pool = Number.isInteger(m.a) ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : [2, 4, 6, 8, 10];
+  for (;;){
+    const xs = shuffle(pool).slice(0, 3).sort((p, q) => p - q);
+    if (!(xs[1] - xs[0] === 1 && xs[2] - xs[1] === 1)) return xs;
+  }
+}
+
+/* Formule scritte dagli allievi: 3x + 2, 2(x+1), x/2 + 1, −2x + 10, 0,5x, y = … */
+function parseFormula(src){
+  const s = String(src).toLowerCase().replace(/\s+/g, '').replace(/^(y|f\(x\))=/, '')
+    .replace(/[·×]/g, '*').replace(/[−–]/g, '-').replace(/:/g, '/').replace(/,/g, '.');
+  if (!s) throw new Error('Scrivi la formula dopo “y =”.');
+  if (/=/.test(s)) throw new Error('Scrivi solo quello che viene dopo “y =”.');
+  let i = 0;
+  const peek = () => s[i];
+  const fail = () => { throw new Error(i < s.length ? `Non capisco “${s[i]}”: usa numeri, x, + − · / e parentesi.` : 'La formula è incompleta.'); };
+  function expr(){
+    let f = term();
+    while (peek() === '+' || peek() === '-'){
+      const op = s[i++], g = term(), h = f;
+      f = op === '+' ? x => h(x) + g(x) : x => h(x) - g(x);
+    }
+    return f;
+  }
+  function term(){
+    let f = unary();
+    for (;;){
+      const c = peek();
+      if (c === '*' || c === '/'){ i++; const g = unary(), h = f; f = c === '*' ? x => h(x) * g(x) : x => h(x) / g(x); }
+      else if (c !== undefined && /[\d.x(]/.test(c)){ const g = unary(), h = f; f = x => h(x) * g(x); }
+      else return f;
+    }
+  }
+  function unary(){
+    if (peek() === '-'){ i++; const g = unary(); return x => -g(x); }
+    if (peek() === '+'){ i++; return unary(); }
+    return atom();
+  }
+  function atom(){
+    const c = peek();
+    if (c === 'x'){ i++; return x => x; }
+    if (c === '('){ i++; const f = expr(); if (peek() !== ')') fail(); i++; return f; }
+    const m = /^(\d+\.?\d*|\.\d+)/.exec(s.slice(i));
+    if (!m) fail();
+    i += m[0].length;
+    const n = parseFloat(m[0]);
+    return () => n;
+  }
+  const f = expr();
+  if (i < s.length) fail();
+  return f;
+}
+
+/* ---------------- Elementi ---------------- */
+const el = {
+  levels:$('#levels'), mBadge:$('#missionBadge'), mTitle:$('#missionTitle'), mText:$('#missionText'),
+  bench:$('#bench'), machine:$('#machine'), mName:$('#mName'), mIn:$('#mIn'), mOut:$('#mOut'), mInLbl:$('#mInLbl'), mOutLbl:$('#mOutLbl'),
+  regBody:$('#regBody'), regEmpty:$('#regEmpty'), thX:$('#thX'), thY:$('#thY'), story:$('#story'), cover:$('#cover'),
+  fb:$('#feedback'), fbIco:$('#fbIco'), fbTitle:$('#fbTitle'), fbText:$('#fbText'), tool:$('#tool'),
+  log:$('#log'), logCount:$('#logCount'), logEmpty:$('#logEmpty'), sym:$('#symToggle'), sr:$('#sr'),
+  dlg:$('#winDlg'), winTitle:$('#winTitle'), winText:$('#winText'), winExtra:$('#winExtra'), winReflect:$('#winReflect'), dlgNext:$('#dlgNext')
+};
+
+const S = {
+  idx:0, gen:0, busy:false, L:{}, onNext:null,
+  sym: store.get('fabbrica.sym', false),
+  unlocked: params.has('tutti') ? 5 : Math.max(1, Math.min(5, store.get('fabbrica.unlocked', 1) | 0))
+};
+
+function feedback(type, title, html){
+  el.fb.className = 'feedback ' + type;
+  el.fbIco.textContent = { info:'i', ok:'✓', tilt:'!', error:'✕', win:'★' }[type];
+  el.fbTitle.textContent = title;
+  el.fbText.innerHTML = html;
+  el.sr.textContent = title + '. ' + el.fbText.textContent;
+}
+function log(text){
+  const li = document.createElement('li');
+  li.innerHTML = text;
+  el.log.appendChild(li);
+  el.logCount.textContent = el.log.children.length;
+  el.logEmpty.hidden = true;
+  el.log.scrollTop = el.log.scrollHeight;
+}
+function clearLog(){ el.log.innerHTML = ''; el.logCount.textContent = '0'; el.logEmpty.hidden = false; }
+const coins = (n, max) => '<i class="coin"></i>'.repeat(n) + '<i class="coin used"></i>'.repeat(Math.max(0, max - n));
+function bump(node){ node.classList.remove('bump'); void node.offsetWidth; node.classList.add('bump'); }
+function focusFirst(){
+  if (!matchMedia('(pointer: fine)').matches) return;
+  el.tool.querySelector('input:not([disabled]),textarea')?.focus({ preventScroll:true });
+}
+const names = () => (S.sym || S.idx >= 3) ? ['x', 'y'] : ['entra', 'esce'];
+function applyNames(){
+  const [a, b] = names();
+  plane.setNames(S.sym || S.idx >= 3 ? 'entra (x)' : 'entra', S.sym || S.idx >= 3 ? 'esce (y)' : 'esce');
+  el.thX.textContent = S.sym ? 'entra · x' : 'entra';
+  el.thY.textContent = S.sym ? 'esce · y' : 'esce';
+  el.mInLbl.textContent = S.sym ? 'entra · x' : 'entra';
+  el.mOutLbl.textContent = S.sym ? 'esce · y' : 'esce';
+  return [a, b];
+}
+
+/* ---------------- Piano cartesiano ---------------- */
+const plane = (() => {
+  const svg = $('#plane'), NS = 'http://www.w3.org/2000/svg';
+  const PL = 54, PR = 22, PT = 30, PB = 48, X0 = -0.6, X1 = 10.6, RX0 = -0.15, RX1 = 10.4;
+  const compact = matchMedia('(max-width: 620px)');   // sul telefono il piano è più "quadrato" e i testi più grandi
+  let W = 640, H = 440, Y0 = -0.5, Y1 = 10.5, gy0 = 0, gy1 = 10, step = 1, axisNames = ['entra', 'esce'];
+  svg.innerHTML = `<defs><clipPath id="plotClip"><rect/></clipPath></defs>
+    <g class="grid"></g><g class="lines" clip-path="url(#plotClip)"></g><g class="ruler" clip-path="url(#plotClip)"></g><g class="dots"></g><g class="handles"></g>`;
+  const g = { grid:svg.querySelector('.grid'), lines:svg.querySelector('.lines'), ruler:svg.querySelector('.ruler'), dots:svg.querySelector('.dots'), handles:svg.querySelector('.handles') };
+  const sx = x => PL + (x - X0) / (X1 - X0) * (W - PL - PR);
+  const sy = y => H - PB - (y - Y0) / (Y1 - Y0) * (H - PT - PB);
+  const model = { dots:[], lines:[], ruler:null, rulerOn:false, locked:false, selectOn:false, magnets:[] };
+  let onSelect = null, drag = null;
+
+  const niceStep = span => [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500].find(s => span / s <= 10) || 1000;
+  const unit = () => step >= 10 ? step / 5 : 1;
+  function lineThrough(p, q){
+    if (p.x === q.x) return null;
+    const k = (q.y - p.y) / (q.x - p.x);
+    return x => p.y + k * (x - p.x);
+  }
+  function setRange(lo, hi){
+    lo = Math.min(0, Math.floor(lo)); hi = Math.max(lo + 10, Math.ceil(hi));
+    step = niceStep(hi - lo);
+    gy0 = Math.floor(lo / step) * step; gy1 = Math.ceil(hi / step) * step;
+    const pad = (gy1 - gy0) * 0.04;
+    Y0 = gy0 - pad; Y1 = gy1 + pad;
+    paintGrid(); paintLines(); paintDots(); paintRuler();
+  }
+  function fit(values){
+    const v = values.filter(Number.isFinite).map(y => Math.max(-2000, Math.min(2000, y)));
+    setRange(Math.min(0, ...v), Math.max(10, ...v));
+  }
+  function paintGrid(){
+    let h = '';
+    for (const x of XS) h += `<line x1="${sx(x)}" y1="${sy(gy0)}" x2="${sx(x)}" y2="${sy(gy1)}"/>`;
+    for (let y = gy0; y <= gy1 + EPS; y += step) h += `<line x1="${sx(0)}" y1="${sy(y)}" x2="${sx(10)}" y2="${sy(y)}"/>`;
+    const ay = Math.max(gy0, 0);
+    h += `<line class="axis" x1="${sx(0)}" y1="${sy(ay)}" x2="${sx(10.5)}" y2="${sy(ay)}"/>`;
+    h += `<line class="axis" x1="${sx(0)}" y1="${sy(gy0)}" x2="${sx(0)}" y2="${sy(gy1) - 10}"/>`;
+    for (const x of XS) h += `<text class="tick" x="${sx(x)}" y="${sy(gy0) + 20}" text-anchor="middle">${x}</text>`;
+    for (let y = gy0; y <= gy1 + EPS; y += step) h += `<text class="tick" x="${sx(0) - 9}" y="${sy(y) + 4.5}" text-anchor="end">${fmt(y)}</text>`;
+    h += `<text class="axis-name" x="${sx(5)}" y="${H - 6}" text-anchor="middle">${esc(axisNames[0])} →</text>`;
+    h += `<text class="axis-name" x="${sx(0) - 4}" y="${PT - 12}" text-anchor="middle">↑ ${esc(axisNames[1])}</text>`;
+    g.grid.innerHTML = h;
+  }
+  function paintLines(){
+    g.lines.innerHTML = model.lines.map(l => `<line class="${l.cls}" x1="${sx(l.from ?? 0)}" y1="${sy(l.f(l.from ?? 0))}" x2="${sx(l.to ?? 10)}" y2="${sy(l.f(l.to ?? 10))}"/>`).join('');
+  }
+  function paintDots(){
+    g.dots.innerHTML = model.dots.map((d, i) => {
+      if (!Number.isFinite(d.y) || d.y < Y0 || d.y > Y1 || d.x < 0 || d.x > 10) return '';
+      return `<circle class="dot ${d.cls || ''} ${d.anim || ''}" cx="${sx(d.x)}" cy="${sy(d.y)}" r="${d.r || 7}" data-i="${i}"${d.delay ? ` style="animation-delay:${d.delay}ms"` : ''}><title>${pt(d.x, d.y)}</title></circle>`;
+    }).join('');
+    model.dots.forEach(d => { d.anim = ''; d.delay = 0; });
+  }
+  function paintRuler(){
+    if (!model.rulerOn){ g.ruler.innerHTML = ''; g.handles.innerHTML = ''; return; }
+    const [p, q] = model.ruler, f = lineThrough(p, q);
+    let line = g.ruler.firstElementChild;
+    if (!line){ line = document.createElementNS(NS, 'line'); g.ruler.appendChild(line); }
+    const set = (a, b, c, d, cls) => { line.setAttribute('x1', a); line.setAttribute('y1', b); line.setAttribute('x2', c); line.setAttribute('y2', d); line.setAttribute('class', cls); };
+    if (f) set(sx(RX0), sy(f(RX0)), sx(RX1), sy(f(RX1)), 'ruler-line');
+    else set(sx(p.x), sy(Y0), sx(p.x), sy(Y1), 'ruler-line bad');
+    if (g.handles.children.length !== 2){
+      g.handles.innerHTML = [0, 1].map(i => `<g class="handle" data-h="${i}" tabindex="0" role="slider" aria-label="Pomello ${i + 1} del binario"><circle class="hit" r="24"/><circle class="vis" r="11"/></g>`).join('');
+    }
+    [...g.handles.children].forEach((h, i) => {
+      const c = model.ruler[i];
+      h.setAttribute('transform', `translate(${sx(c.x)} ${sy(c.y)})`);
+      h.setAttribute('aria-valuetext', pt(c.x, c.y));
+      h.setAttribute('tabindex', model.locked ? '-1' : '0');
+      h.classList.toggle('locked', model.locked);
+    });
+  }
+
+  function toSvg(e){
+    const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY;
+    const r = p.matrixTransform(svg.getScreenCTM().inverse());
+    return { px:r.x, py:r.y };
+  }
+  function snap(px, py){
+    let best = null, bd = 16;
+    for (const m of model.magnets){ const d = Math.hypot(sx(m.x) - px, sy(m.y) - py); if (d < bd){ bd = d; best = m; } }
+    if (best) return { x:best.x, y:best.y };
+    const x = Math.max(0, Math.min(10, Math.round(X0 + (px - PL) / (W - PL - PR) * (X1 - X0))));
+    const raw = Y0 + (H - PB - py) / (H - PT - PB) * (Y1 - Y0), u = unit();
+    return { x, y: Math.max(gy0, Math.min(gy1, Math.round(raw / u) * u)) };
+  }
+  function moveHandle(i, p){
+    const c = model.ruler[i];
+    if (c.x === p.x && c.y === p.y) return;
+    model.ruler[i] = p; paintRuler();
+  }
+  function grab(i, e){
+    const h = g.handles.children[i];
+    h.setPointerCapture(e.pointerId);
+    drag = { i, el:h }; h.classList.add('drag');
+  }
+  g.handles.addEventListener('pointerdown', e => {
+    const h = e.target.closest('.handle');
+    if (!h || model.locked) return;
+    e.preventDefault(); grab(+h.dataset.h, e);
+  });
+  // Toccare il grafico sposta il pomello più vicino (comodo sui tablet).
+  svg.addEventListener('pointerdown', e => {
+    if (!model.rulerOn || model.locked || model.selectOn || e.target.closest('.handle')) return;
+    const { px, py } = toSvg(e), p = snap(px, py);
+    const d = c => Math.hypot(sx(c.x) - px, sy(c.y) - py);
+    const i = d(model.ruler[0]) <= d(model.ruler[1]) ? 0 : 1;
+    e.preventDefault(); moveHandle(i, p); grab(i, e);
+  });
+  svg.addEventListener('pointermove', e => { if (!drag) return; const { px, py } = toSvg(e); moveHandle(drag.i, snap(px, py)); });
+  const end = () => { if (drag){ drag.el.classList.remove('drag'); drag = null; } };
+  svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end);
+  g.handles.addEventListener('keydown', e => {
+    const h = e.target.closest('.handle');
+    if (!h || model.locked) return;
+    const i = +h.dataset.h, p = { ...model.ruler[i] }, u = unit();
+    if (e.key === 'ArrowLeft') p.x = Math.max(0, p.x - 1);
+    else if (e.key === 'ArrowRight') p.x = Math.min(10, p.x + 1);
+    else if (e.key === 'ArrowUp') p.y = Math.min(gy1, p.y + u);
+    else if (e.key === 'ArrowDown') p.y = Math.max(gy0, p.y - u);
+    else return;
+    e.preventDefault(); moveHandle(i, p);
+    h.focus();
+  });
+  g.dots.addEventListener('click', e => {
+    if (!model.selectOn) return;
+    const c = e.target.closest('.dot');
+    if (c) onSelect?.(model.dots[+c.dataset.i]);
+  });
+  function applySize(){
+    [W, H] = compact.matches ? [440, 420] : [640, 440];
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const r = svg.querySelector('#plotClip rect');
+    r.setAttribute('x', sx(RX0) - 8); r.setAttribute('y', PT - 8); r.setAttribute('width', sx(RX1) - sx(RX0) + 16); r.setAttribute('height', H - PT - PB + 16);
+    paintGrid(); paintLines(); paintDots(); paintRuler();
+  }
+  compact.addEventListener('change', applySize);
+  applySize();
+
+  return {
+    lineThrough,
+    get range(){ return [gy0, gy1]; },
+    setNames(a, b){ axisNames = [a, b]; paintGrid(); },
+    setRange, fit,
+    setDots(list){ model.dots = list; paintDots(); },
+    addDot(d){ model.dots.push(d); paintDots(); },
+    setLines(list){ model.lines = list; paintLines(); },
+    ruler: {
+      show(arr){ model.ruler = arr; model.rulerOn = true; paintRuler(); },
+      hide(){ model.rulerOn = false; model.magnets = []; paintRuler(); },
+      lock(b){ model.locked = b; paintRuler(); },
+      magnets(list){ model.magnets = list; },
+      f(){ return model.rulerOn ? lineThrough(model.ruler[0], model.ruler[1]) : null; }
+    },
+    select(on, cb){ model.selectOn = on; onSelect = cb || null; svg.classList.toggle('sel-mode', on); },
+    clear(){ model.dots = []; model.lines = []; model.rulerOn = false; model.locked = false; model.magnets = []; this.select(false); setRange(0, 10); }
+  };
+})();
+
+/* ---------------- Macchina e registro ---------------- */
+const machine = {
+  show(name){ el.mName.textContent = name; el.mIn.textContent = '?'; el.mOut.textContent = '?'; },
+  async run(x, y, ms = 650){
+    el.mIn.textContent = fmt(x); bump(el.mIn);
+    el.mOut.textContent = '…';
+    el.machine.classList.add('busy');
+    await wait(ms);
+    el.machine.classList.remove('busy');
+    el.mOut.textContent = fmt(y); bump(el.mOut);
+  }
+};
+const reg = {
+  rows: [],
+  clear(){ this.rows = []; this.paint(); },
+  set(rows){ this.rows = rows; this.paint(); },
+  add(r){ this.rows.push(r); this.paint(r); },
+  paint(fresh){
+    const rows = [...this.rows].sort((a, b) => a.x - b.x);
+    el.regBody.innerHTML = rows.map(r => `<tr class="${r.cls || ''}${r === fresh ? ' new' : ''}"><td>${fmt(r.x)}</td><td>${fmt(r.y)}${r.note ? ` <small>${esc(r.note)}</small>` : ''}</td></tr>`).join('');
+    el.regEmpty.hidden = rows.length > 0;
+    if (fresh) el.regBody.querySelector('.new')?.scrollIntoView({ block:'nearest' });
+  }
+};
+function showStory(html){ el.story.innerHTML = html; el.story.hidden = false; }
+function tableHTML(m, xs, title){
+  return `<h3>${title}</h3><table class="mini"><tr><th>x</th>${xs.map(x => `<td>${fmt(x)}</td>`).join('')}</tr><tr><th>y</th>${xs.map(x => `<td>${fmt(m.f(x))}</td>`).join('')}</tr></table>`;
+}
+function storyHTML(m, title){
+  return `<h3>${title}</h3><p class="story-text">${esc(m.story.text)}</p><p class="sub">Nel grafico: <b>x</b> = ${m.story.x}, <b>y</b> = ${m.story.y}.</p>`;
+}
+const integerPoints = (m, cls) => XS.filter(x => Number.isInteger(m.f(x))).map(x => ({ x, y:m.f(x), cls, r:5 }));
+function ballsOn(f, m){ // la macchina lancia una pallina per ogni x da 0 a 10
+  return XS.map(x => { const y = m.f(x); return { x, y, hit: !!f && same(f(x), y) }; });
+}
+
+/* ================================================================
+   LIVELLO 1 — Prevedi: pochi gettoni, poi la macchina interroga.
+   ================================================================ */
+const L1 = {
+  nav:'1. Prevedi', title:'La macchina misteriosa',
+  mission:'Metti un numero nella macchina e guarda che cosa esce. Hai pochi gettoni per fare prove: poi sarà la macchina a sfidarti con numeri che non hai provato.',
+  ROUNDS: [
+    { tokens:3, gen: () => lin(rnd(2, 5), rnd(1, 9)) },
+    { tokens:2, gen: () => lin(rnd(2, 6), rnd(0, 10)) },
+    { tokens:2, gen: () => { const a = -rnd(2, 3); return lin(a, rnd(-10 * a, -10 * a + 10)); } }
+  ],
+  enter(){ S.L.round = 0; S.L.history = []; L1.load(); },
+  load(){
+    const L = S.L, R = L1.ROUNDS[L.round];
+    Object.assign(L, { m:R.gen(), tokens:R.tokens, max:R.tokens, shown:[], tested:[], phase:'test', quiz:[], qi:0, won:false });
+    machine.show(`Macchina ${L.round + 1} di 3`); reg.clear(); plane.setDots([]); plane.fit([]);
+    L1.render();
+    feedback('info', 'Osserva', L.round === 0
+      ? `Scrivi un numero da 0 a 10 e premi <strong>Prova</strong>. Ogni prova costa un gettone e ne hai ${L.tokens}. Usali bene: dopo sarà la macchina a farti le domande.`
+      : `Una macchina nuova, e questa volta hai solo ${plural(L.tokens, 'gettone', 'gettoni')}. Scegli bene che cosa provare.`);
+  },
+  answers(){
+    return `<ol class="answers">${S.L.quiz.filter(q => q.ans !== null).map(q => `<li class="${same(q.ans, q.y) ? 'ok' : 'err'}">Entra <b>${q.x}</b>: hai detto ${fmt(q.ans)}, la macchina dà <b>${fmt(q.y)}</b> ${same(q.ans, q.y) ? '✓' : '✕'}</li>`).join('')}</ol>`;
+  },
+  render(){
+    const L = S.L;
+    if (L.phase === 'test'){
+      el.tool.innerHTML = `<section class="tool"><h3>🪙 Prove</h3>
+        <div class="coins" aria-label="Gettoni rimasti: ${L.tokens}">${coins(L.tokens, L.max)}</div>
+        <form class="row" data-act="test"><label class="lbl" for="tx">Metti dentro</label><input class="num-input" id="tx" name="x" type="number" inputmode="numeric" min="0" max="10" placeholder="?" required><button class="btn grow" type="submit">Prova</button></form>
+        <p class="sub">Numeri interi da 0 a 10.</p></section>
+        <button class="btn ghost-btn" type="button" data-act="ready">Ho capito: fammi le domande →</button>`;
+    } else if (L.phase === 'quiz'){
+      const q = L.quiz[L.qi];
+      el.tool.innerHTML = `<section class="tool"><h3>⚔️ La macchina ti sfida</h3><p class="sub">Domanda ${L.qi + 1} di ${L.quiz.length}. Niente più prove: devi prevedere.</p>
+        <form class="row" data-act="answer"><label class="lbl" for="ta">Se entra <b class="big-n">${q.x}</b>, esce</label><input class="num-input" id="ta" name="y" type="text" inputmode="decimal" autocomplete="off" placeholder="?" required><button class="btn grow" type="submit">Rispondi</button></form>
+        ${L1.answers()}</section>`;
+    } else {
+      el.tool.innerHTML = `<section class="tool"><h3>⚔️ Le tue risposte</h3>${L1.answers()}</section>
+        ${L.won && L.round === 2 ? '' : `<button class="btn" type="button" data-act="next">${L.won ? 'Prossima macchina →' : 'Nuova macchina ↺'}</button>`}`;
+    }
+    focusFirst();
+  },
+  startQuiz(){
+    const L = S.L, tested = new Set(L.tested);
+    const free = XS.filter(x => !tested.has(x));
+    // Il milieu sceglie i numeri più lontani da quelli che hai provato.
+    const dist = x => L.tested.length ? Math.min(...L.tested.map(t => Math.abs(t - x))) : Math.random();
+    const far = [...free].sort((a, b) => dist(b) - dist(a) || Math.random() - .5);
+    let xs;
+    if (L.m.a > 0) xs = [far[0], pick([13, 15, 17, 20]), pick([30, 50, 100])];
+    else {
+      xs = far.slice(0, 3);
+      if (free.includes(0) && !xs.includes(0)) xs[2] = 0;
+    }
+    L.quiz = xs.map(x => ({ x, y:L.m.f(x), ans:null }));
+    L.qi = 0; L.phase = 'quiz';
+    L1.render();
+    feedback('info', 'Tocca alla macchina', `Basta prove: ora la macchina ti chiede che cosa esce con ${plural(xs.length, 'numero', 'numeri')} che sceglie lei.`);
+    log('Inizia la sfida della macchina');
+  },
+  finish(){
+    const L = S.L, ok = L.quiz.every(q => same(q.ans, q.y));
+    const f = S.sym ? ` Era la macchina <span class="math">${formula(L.m)}</span>.` : '';
+    L.phase = 'done'; L.won = ok;
+    if (ok) L.history.push(L.m);
+    L1.render();
+    if (!ok){
+      feedback('error', 'Ha vinto la macchina', `Qualche risposta non tornava.${f} Ti aspetta una macchina nuova: prima di rispondere, guarda bene il registro.`);
+      log('Sconfitta: si cambia macchina');
+      return;
+    }
+    log(`Macchina ${L.round + 1} battuta`);
+    if (L.round < 2) return feedback('win', 'Macchina battuta!', `Hai previsto tutto giusto.${f}`);
+    feedback('win', 'Tre macchine battute!', 'Hai previsto anche numeri che non avevi mai provato.');
+    markDone(0);
+    showDialog('Tre macchine battute!', 'Hai previsto anche numeri che non avevi mai provato.',
+      S.sym ? `<ul class="dlg-list">${L.history.map((m, i) => `<li>Macchina ${i + 1}: <span class="math">${formula(m)}</span></li>`).join('')}</ul>` : '',
+      'Come facevi a sapere che cosa esce con 50 o con 100, senza provarlo? Quali <b>due cose</b> ti basta sapere di una macchina per prevedere qualunque numero?',
+      'Livello successivo →', () => startLevel(1));
+  },
+  on: {
+    async test(form){
+      const L = S.L, x = Number(form.x.value);
+      if (!Number.isInteger(x) || x < 0 || x > 10) return feedback('tilt', 'Attento', 'Puoi mettere dentro solo numeri interi da 0 a 10.');
+      if (L.tested.includes(x)) return feedback('info', 'Già provato', `Hai già provato ${x}: guarda nel registro.`);
+      const gen = S.gen, y = L.m.f(x);
+      S.busy = true;
+      await machine.run(x, y);
+      if (gen !== S.gen) return;
+      S.busy = false;
+      L.tokens--; L.tested.push(x);
+      const p = { x, y, anim:'pop' };
+      L.shown.push(p);
+      reg.add({ x, y });
+      plane.fit(L.shown.map(d => d.y)); plane.setDots(L.shown);
+      log(`Prova: entra ${x}, esce ${fmt(y)}`);
+      if (!L.tokens){
+        L.phase = 'wait'; el.tool.innerHTML = '';
+        feedback('info', 'Gettoni finiti', `Entra ${x}, esce <strong>${fmt(y)}</strong>. Hai finito i gettoni!`);
+        await wait(1100);
+        if (gen === S.gen) L1.startQuiz();
+        return;
+      }
+      L1.render();
+      feedback('info', 'Osserva', `Entra ${x}, esce <strong>${fmt(y)}</strong>. Ti ${L.tokens === 1 ? 'resta 1 gettone' : `restano ${L.tokens} gettoni`}.`);
+    },
+    ready(){ L1.startQuiz(); },
+    async answer(form){
+      const L = S.L, q = L.quiz[L.qi], v = readNum(form.y.value);
+      if (v === null) return feedback('tilt', 'Attento', 'Scrivi un numero.');
+      const gen = S.gen;
+      q.ans = v; S.busy = true;
+      await machine.run(q.x, q.y, 800);
+      if (gen !== S.gen) return;
+      S.busy = false;
+      const ok = same(v, q.y);
+      reg.add({ x:q.x, y:q.y, cls: ok ? 'ok' : 'err', note: ok ? '✓' : `tu ${fmt(v)}` });
+      if (q.x <= 10){ L.shown.push({ x:q.x, y:q.y, cls: ok ? 'ok' : 'err', anim:'pop' }); plane.fit(L.shown.map(d => d.y)); plane.setDots(L.shown); }
+      log(`Domanda: entra ${q.x}, hai detto ${fmt(v)}, esce ${fmt(q.y)} ${ok ? '✓' : '✕'}`);
+      L.qi++;
+      feedback(ok ? 'ok' : 'error', ok ? 'Giusto' : 'Non è così', `Entra ${q.x}: la macchina dà <strong>${fmt(q.y)}</strong>${ok ? '.' : `, non ${fmt(v)}.`}`);
+      if (L.qi < L.quiz.length) L1.render();
+      else L1.finish();
+    },
+    next(){ const L = S.L; if (L.won) L.round++; L1.load(); }
+  }
+};
+
+/* ================================================================
+   LIVELLO 2 — Il binario: dalla regola al grafico.
+   ================================================================ */
+const L2 = {
+  nav:'2. Binario', title:'Il binario',
+  mission:'La macchina lancerà una pallina per ogni numero da 0 a 10: la pallina cade sopra il numero che entra, all’altezza del numero che esce. Conosci la regola della macchina: metti il binario dove cadranno le palline.',
+  ROUNDS: [
+    () => lin(rnd(1, 3), rnd(0, 4)),
+    () => { const a = -rnd(1, 2); return lin(a, rnd(-10 * a, 20)); },
+    () => lin(pick([0.5, 1.5]), rnd(0, 3))
+  ],
+  enter(){ S.L.round = 0; S.L.history = []; L2.load(); },
+  load(){
+    const L = S.L;
+    Object.assign(L, { m:L2.ROUNDS[L.round](), tries:0, phase:'place' });
+    machine.show(`Macchina ${L.round + 1} di 3`); reg.clear();
+    plane.setDots([]); plane.fit(valuesOf(L.m));
+    const [lo, hi] = plane.range, mid = Math.round((lo + hi) / 2);
+    L.ruler = [{ x:2, y:mid }, { x:8, y:mid }];
+    plane.ruler.show(L.ruler); plane.ruler.lock(false);
+    L2.render();
+    feedback('info', 'Osserva', L.round === 0
+      ? 'Trascina i due pomelli bianchi, oppure tocca il grafico, per spostare il binario. Quando sei pronto, accendi la macchina.'
+      : 'Nuova macchina, nuova regola. Dove metti il binario?');
+  },
+  render(){
+    const L = S.L;
+    el.tool.innerHTML = `<section class="tool"><h3>📜 La regola della macchina</h3><p class="rule">${ruleWords(L.m)}</p>${S.sym ? `<p class="math">${formula(L.m)}</p>` : ''}</section>
+      <section class="tool"><h3>🛤️ Il binario</h3><p class="sub">Sposta i due pomelli ●. Il binario è sempre dritto.</p>
+        <button class="btn" type="button" data-act="fire" ${L.phase === 'place' ? '' : 'disabled'}>▶ Accendi la macchina</button>
+        ${L.tries ? `<p class="sub">Tentativi: ${L.tries}</p>` : ''}</section>
+      ${L.phase === 'won' && L.round < 2 ? '<button class="btn" type="button" data-act="next">Prossima macchina →</button>' : ''}`;
+  },
+  on: {
+    async fire(){
+      const L = S.L, f = plane.ruler.f();
+      if (!f) return feedback('tilt', 'Binario in verticale', 'Così non va: per ogni numero che entra la macchina dà un solo numero, quindi il binario non può stare in piedi. Sposta un pomello.');
+      const gen = S.gen;
+      S.busy = true; L.phase = 'firing'; L.tries++;
+      plane.ruler.lock(true); L2.render(); reg.clear();
+      const dots = []; plane.setDots(dots);
+      const balls = ballsOn(f, L.m);
+      for (const b of balls){
+        machine.run(b.x, b.y, 120);
+        reg.add({ x:b.x, y:b.y, cls: b.hit ? 'ok' : 'err' });
+        plane.addDot({ x:b.x, y:b.y, cls:'ball ' + (b.hit ? 'caught' : 'miss'), anim:'drop' });
+        await wait(190);
+        if (gen !== S.gen) return;
+      }
+      S.busy = false;
+      const caught = balls.filter(b => b.hit).length;
+      log(`Macchina ${L.round + 1}, tentativo ${L.tries}: ${caught} palline su 11`);
+      if (caught < 11){
+        L.phase = 'place'; plane.ruler.lock(false); L2.render();
+        return feedback('error', 'Palline perse', `Il binario ne ha prese ${caught} su 11. Le palline sono rimaste dove sono cadute: sposta il binario e riprova.`);
+      }
+      L.phase = 'won'; L.history.push(L.m); L2.render();
+      if (L.round < 2) return feedback('win', 'Tutte prese!', `Undici palline su undici${L.tries > 1 ? '' : ', al primo colpo'}.`);
+      feedback('win', 'Tutte prese!', 'Tre binari perfetti.');
+      markDone(1);
+      showDialog('Tre binari perfetti!', 'Ogni pallina è caduta sul tuo binario.',
+        S.sym ? `<ul class="dlg-list">${L.history.map((m, i) => `<li>Macchina ${i + 1}: <span class="math">${formula(m)}</span></li>`).join('')}</ul>` : '',
+        'Quanti punti ti servivano <b>davvero</b> per mettere il binario? Quale punto si trova subito leggendo la regola, e come trovi il secondo?',
+        'Livello successivo →', () => startLevel(2));
+    },
+    next(){ S.L.round++; L2.load(); }
+  }
+};
+
+/* ================================================================
+   LIVELLO 3 — Dritta o storta? Riconoscere una funzione lineare.
+   ================================================================ */
+const L3 = {
+  nav:'3. Dritta o storta?', title:'Dritta o storta?',
+  mission:'Quattro macchine nuove. Alcune si possono descrivere con un righello, altre no. Fai le tue prove e dai un verdetto per ciascuna: la macchina lo metterà alla prova.',
+  enter(){
+    const k = rnd(1, 3);
+    const lins = shuffle([
+      () => lin(rnd(1, 4), rnd(0, 8)),
+      () => { const a = -rnd(1, 3); return lin(a, rnd(-10 * a, -10 * a + 8)); },
+      () => lin(0, rnd(3, 9)),
+      () => lin(rnd(2, 5), 0)
+    ]).slice(0, k).map(gen => gen());
+    const nons = shuffle(Object.keys(NONLIN)).slice(0, 4 - k).map(non);
+    S.L.ms = shuffle([...lins, ...nons]).map((m, i) => ({ m, name:'ABCD'[i], known:[], tokens:4, solved:false, mode:null, sel:[], ruler:null, errors:0 }));
+    S.L.cur = 0;
+    L3.load();
+    feedback('info', 'Osserva', 'Scegli una macchina (A, B, C o D), fai qualche prova e poi decidi: è <b>dritta</b>, cioè i suoi punti stanno lungo un righello, oppure <b>storta</b>?');
+  },
+  get M(){ return S.L.ms[S.L.cur]; },
+  load(){
+    const M = L3.M;
+    machine.show(`Macchina ${M.name}`);
+    reg.set(M.known.map(p => ({ x:p.x, y:p.y, cls: p.probe ? 'probe' : '' })));
+    L3.paint(); L3.render();
+  },
+  paint(fresh){
+    const M = L3.M;
+    plane.fit(M.known.map(p => p.y));
+    plane.setLines(M.solved && M.m.kind === 'lin' ? [{ f:M.m.f, cls:'solved-line' }] : (M.hint ? [M.hint] : []));
+    plane.setDots(M.known.map(p => ({ x:p.x, y:p.y, ref:p, cls:(p.probe ? 'probe' : '') + (M.sel.includes(p) ? ' sel' : ''), anim: p === fresh ? 'pop' : '' })));
+    if (M.mode === 'line' && !M.solved){
+      if (!M.ruler){
+        const s = [...M.known].sort((a, b) => a.x - b.x);
+        const [lo, hi] = plane.range, mid = Math.round((lo + hi) / 2);
+        M.ruler = s.length >= 2 ? [{ x:s[0].x, y:s[0].y }, { x:s[1].x, y:s[1].y }] : [{ x:2, y:mid }, { x:8, y:mid }];
+      }
+      plane.ruler.show(M.ruler); plane.ruler.magnets(M.known); plane.ruler.lock(false);
+    } else plane.ruler.hide();
+    plane.select(M.mode === 'curve' && !M.solved, d => L3.toggle(d.ref));
+  },
+  render(){
+    const L = S.L, M = L3.M;
+    const chips = L.ms.map((z, i) => `<button class="mchip${i === L.cur ? ' cur' : ''}${z.solved ? ' solved' : ''}" type="button" data-act="pick" data-i="${i}" aria-pressed="${i === L.cur}" aria-label="Macchina ${z.name}${z.solved ? ', risolta' : ''}">${z.name}${z.solved ? ' ✓' : ''}</button>`).join('');
+    let body;
+    if (M.solved){
+      const straight = M.m.kind === 'lin';
+      body = `<section class="tool solved-card"><h3>✓ Macchina ${M.name}: ${straight ? 'dritta' : 'storta'}</h3>
+        <p class="sub">${straight ? 'Il righello ha retto la prova della macchina.' : 'Hai mostrato tre punti che non stanno sulla stessa retta.'}</p>
+        ${S.sym && straight ? `<p class="math">${formula(M.m)}</p>` : ''}</section>`;
+    } else {
+      body = `<section class="tool"><h3>🪙 Prove sulla macchina ${M.name}</h3><div class="coins" aria-label="Gettoni rimasti: ${M.tokens}">${coins(M.tokens, 4)}</div>
+        <form class="row" data-act="test"><label class="lbl" for="tx">Metti dentro</label><input class="num-input" id="tx" name="x" type="number" inputmode="numeric" min="0" max="10" placeholder="?" ${M.tokens ? '' : 'disabled'}><button class="btn grow" type="submit" ${M.tokens ? '' : 'disabled'}>Prova</button></form></section>
+        <section class="tool"><h3>⚖️ Il tuo verdetto</h3><p class="sub">Si può descrivere con un righello?</p>
+        <div class="seg"><button class="pill" type="button" data-act="mode" data-mode="line" aria-pressed="${M.mode === 'line'}">📏 È dritta</button><button class="pill" type="button" data-act="mode" data-mode="curve" aria-pressed="${M.mode === 'curve'}">〰️ È storta</button></div>
+        ${M.mode === 'line' ? `<p class="sub">Metti il righello sui punti che conosci. Poi la macchina sceglierà un numero <b>che non hai provato</b>, e il punto dovrà cadere sul righello.</p><button class="btn" type="button" data-act="verify">Metti alla prova il righello</button>` : ''}
+        ${M.mode === 'curve' ? `<p class="sub">Dimostralo: tocca sul grafico <b>3 punti</b> che non stanno sulla stessa retta. Scelti: ${M.sel.length} di 3.</p><button class="btn" type="button" data-act="prove" ${M.sel.length === 3 ? '' : 'disabled'}>Mostra la prova</button>` : ''}
+        </section>`;
+    }
+    el.tool.innerHTML = `<div class="mchips" role="group" aria-label="Macchine">${chips}</div>${body}`;
+  },
+  toggle(p){
+    const M = L3.M, i = M.sel.indexOf(p);
+    if (i >= 0) M.sel.splice(i, 1); else if (M.sel.length < 3) M.sel.push(p);
+    M.hint = null; L3.paint(); L3.render();
+  },
+  solve(){
+    const L = S.L, M = L3.M, straight = M.m.kind === 'lin';
+    M.solved = true; M.mode = null; M.hint = null;
+    L3.paint(); L3.render();
+    log(`Macchina ${M.name}: ${straight ? 'dritta' : 'storta'} ✓`);
+    const left = L.ms.filter(z => !z.solved).map(z => z.name);
+    feedback('ok', `Macchina ${M.name}: ${straight ? 'dritta' : 'storta'}`,
+      (straight ? 'Il punto scelto dalla macchina è caduto proprio sul tuo righello.' : 'Tre punti non allineati: nessun righello può passare da tutti e tre.') +
+      (left.length ? ` Restano: ${left.join(', ')}.` : ''));
+    if (left.length) return;
+    markDone(2);
+    const errors = L.ms.reduce((s, z) => s + z.errors, 0);
+    setTimeout(() => showDialog('Tutte le macchine smascherate!', errors ? `Ce l’hai fatta, con ${plural(errors, 'verdetto respinto', 'verdetti respinti')} lungo la strada.` : 'Nessun verdetto respinto: complimenti!',
+      `<ul class="dlg-list">${L.ms.map(z => `<li>Macchina ${z.name}: <b>${z.m.kind === 'lin' ? 'dritta' : 'storta'}</b>${S.sym && z.m.kind === 'lin' ? ` · <span class="math">${formula(z.m)}</span>` : ''}</li>`).join('')}</ul>`,
+      'Riguarda i registri delle macchine dritte: quando il numero che entra aumenta di 1, che cosa succede sempre al numero che esce? E nelle macchine storte? Riusciresti a capirlo <b>senza</b> disegnare?',
+      'Livello successivo →', () => startLevel(3)), 500);
+  },
+  on: {
+    pick(b){
+      S.L.cur = +b.dataset.i; L3.load();
+      const M = L3.M;
+      feedback('info', `Macchina ${M.name}`, M.solved ? 'Questa l’hai già risolta.' : M.known.length ? 'Riprendi da dove eri rimasto.' : 'Fai qualche prova, poi dai il tuo verdetto.');
+    },
+    async test(form){
+      const M = L3.M, x = Number(form.x.value);
+      if (!M.tokens) return;
+      if (!Number.isInteger(x) || x < 0 || x > 10) return feedback('tilt', 'Attento', 'Puoi mettere dentro solo numeri interi da 0 a 10.');
+      if (M.known.some(p => p.x === x)) return feedback('info', 'Già provato', `Conosci già che cosa esce con ${x}.`);
+      const gen = S.gen, y = M.m.f(x);
+      S.busy = true;
+      await machine.run(x, y);
+      if (gen !== S.gen) return;
+      S.busy = false;
+      M.tokens--;
+      const p = { x, y }; M.known.push(p);
+      reg.add({ x, y });
+      L3.paint(p); L3.render();
+      log(`${M.name}: entra ${x}, esce ${fmt(y)}`);
+      feedback('info', 'Osserva', `Entra ${x}, esce <strong>${fmt(y)}</strong>.${M.tokens ? '' : ' Gettoni finiti per questa macchina: ora decidi.'}`);
+    },
+    mode(b){
+      const M = L3.M;
+      M.mode = b.dataset.mode; M.sel = []; M.hint = null;
+      L3.paint(); L3.render();
+      if (M.mode === 'curve' && M.known.length < 3) feedback('tilt', 'Servono punti', 'Per dimostrare che è storta ti servono almeno 3 punti: fai qualche prova.');
+      else feedback('info', M.mode === 'line' ? 'Il righello' : 'La prova', M.mode === 'line' ? 'Trascina i pomelli: si agganciano ai punti che conosci.' : 'Tocca i punti sul grafico per sceglierli.');
+    },
+    async verify(){
+      const M = L3.M, f = plane.ruler.f();
+      if (!f) return feedback('tilt', 'Righello in verticale', 'Un righello in verticale non descrive nessuna macchina: per ogni numero che entra ne esce uno solo.');
+      const off = M.known.find(p => !same(f(p.x), p.y));
+      if (off) return feedback('tilt', 'Il righello non regge', `Il righello non passa per ${pt(off.x, off.y)}, un punto che conosci già.`);
+      const free = XS.filter(x => !M.known.some(p => p.x === x));
+      if (!free.length) return L3.solve();
+      // Il milieu è antagonista: sceglie il numero dove il tuo righello sbaglia di più.
+      const dev = x => Math.abs(M.m.f(x) - f(x));
+      const worst = Math.max(...free.map(dev));
+      const x = pick(free.filter(z => same(dev(z), worst))), y = M.m.f(x), gen = S.gen;
+      S.busy = true; plane.ruler.lock(true);
+      feedback('info', 'La macchina prova…', `La macchina sceglie un numero che non hai provato: <strong>${x}</strong>.`);
+      await machine.run(x, y, 900);
+      if (gen !== S.gen) return;
+      S.busy = false;
+      const p = { x, y, probe:true }; M.known.push(p);
+      reg.add({ x, y, cls:'probe' });
+      if (same(f(x), y) && M.m.kind === 'lin') return L3.solve();
+      M.errors++;
+      L3.paint(p); L3.render();
+      log(`${M.name}: il righello non regge (entra ${x}, esce ${fmt(y)})`);
+      feedback('error', 'Fuori dal righello', `Entra ${x}, esce <strong>${fmt(y)}</strong>: il punto ${pt(x, y)} cade fuori dal tuo righello. Ora conosci un punto in più.`);
+    },
+    prove(){
+      const M = L3.M, [p, q, r] = M.sel;
+      const aligned = same((q.y - p.y) * (r.x - p.x), (r.y - p.y) * (q.x - p.x));
+      if (!aligned) return L3.solve();
+      M.errors++;
+      const ends = [p, q, r].sort((a, b) => a.x - b.x);
+      M.hint = { f: plane.lineThrough(ends[0], ends[2]), cls:'hint-line' };
+      M.sel = [];
+      L3.paint(); L3.render();
+      log(`${M.name}: prova respinta, i tre punti erano allineati`);
+      feedback('error', 'Nessuna prova', `${pt(p.x, p.y)}, ${pt(q.x, q.y)} e ${pt(r.x, r.y)} stanno sulla stessa retta: guarda la linea tratteggiata. Così non dimostri che è storta.`);
+    }
+  }
+};
+
+/* ================================================================
+   LIVELLO 4 — Il messaggio (a coppie): la formula nasce per comunicare.
+   ================================================================ */
+const L4 = {
+  nav:'4. Messaggio 👥', title:'Il messaggio', noMachine:true,
+  mission:'Si gioca in due. Uno vede la macchina segreta e scrive un messaggio; l’altro legge solo il messaggio e mette il binario. Se tutte le palline cadono sul binario, il round è vinto. Ma a ogni round il messaggio deve essere più corto!',
+  ROUNDS: [ { budget:40, rep:'grafico' }, { budget:24, rep:'tabella' }, { budget:14, rep:'storia' }, { budget:8, rep:'grafico' } ],
+  enter(){
+    Object.assign(S.L, { round:0, writer:0, names: store.get('fabbrica.names', ['', '']), gallery:[], phase:'names', msg:'' });
+    plane.setRange(0, 30);
+    L4.stage(); L4.render();
+    feedback('info', 'Come si gioca', 'Scrivete i vostri nomi. A turno, uno scrive il messaggio e l’altro costruisce il binario. Il dispositivo passa di mano: non sbirciate!');
+  },
+  get A(){ return S.L.names[S.L.writer] || (S.L.writer ? 'B' : 'A'); },
+  get B(){ return S.L.names[1 - S.L.writer] || (S.L.writer ? 'A' : 'B'); },
+  get R(){ return L4.ROUNDS[S.L.round]; },
+  newSecret(){
+    const L = S.L, rep = L4.R.rep;
+    let m;
+    if (rep === 'tabella'){ const a = pick([1, 2]); m = lin(a, rnd(1, a === 1 ? 15 : 8)); m.xs = tableXs(m); }
+    else if (rep === 'storia') m = storyMachine(2, 30);
+    else if (L.round === 3){ const a = -pick([1, 2]); m = lin(a, rnd(-10 * a, 30)); }
+    else m = lin(pick([1, 2]), rnd(0, 8));
+    L.m = m;
+  },
+  stage(){
+    const L = S.L, m = L.m;
+    const covered = L.phase === 'coverA' || L.phase === 'coverB';
+    el.cover.hidden = !covered;
+    if (L.phase === 'coverA') el.cover.innerHTML = `<div><div class="cover-ico">🙈</div><h2>Tocca a ${esc(L4.A)}</h2><p>${esc(L4.A)} vede la macchina segreta e scrive il messaggio.<br><b>${esc(L4.B)}, non guardare lo schermo!</b></p><button class="btn light" type="button" data-act="showA">Sono ${esc(L4.A)}: mostra la macchina</button></div>`;
+    if (L.phase === 'coverB') el.cover.innerHTML = `<div><div class="cover-ico">📨</div><h2>Passa il dispositivo a ${esc(L4.B)}</h2><p>${esc(L4.A)}, niente suggerimenti: conta solo il messaggio!</p><button class="btn light" type="button" data-act="showB">Sono ${esc(L4.B)}: leggi il messaggio</button></div>`;
+    el.story.hidden = true;
+    plane.setDots([]); plane.setLines([]); plane.ruler.hide();
+    if (L.phase === 'write'){
+      if (L4.R.rep === 'grafico'){ plane.setLines([{ f:m.f, cls:'secret-line' }]); plane.setDots(integerPoints(m, 'secret-pt')); }
+      else if (L4.R.rep === 'tabella') showStory(tableHTML(m, m.xs, '🔒 La macchina segreta'));
+      else showStory(storyHTML(m, '🔒 La macchina segreta'));
+    }
+    if (L.phase === 'build'){ L.ruler = [{ x:2, y:15 }, { x:8, y:15 }]; plane.ruler.show(L.ruler); plane.ruler.lock(false); }
+    if (L.phase === 'firing' || L.phase === 'reveal'){ plane.ruler.show(L.ruler); plane.ruler.lock(true); plane.setLines([{ f:m.f, cls:'secret-line reveal' }]); }
+  },
+  gallery(){
+    const g = S.L.gallery;
+    if (!g.length) return '';
+    return `<details class="diario" open><summary>Messaggi <span class="count">${g.length}</span></summary><ol class="gallery">${g.map(z =>
+      `<li class="${z.ok ? 'ok' : ''}"><span>${z.ok ? '✓' : '✕'}</span><span class="m">${esc(z.msg)}</span><span class="n">${z.len}/${z.budget}</span></li>`).join('')}</ol></details>`;
+  },
+  rounds(){ return `<div class="rounds" aria-label="Round vinti: ${S.L.round} di 4">${L4.ROUNDS.map((_, i) => `<i class="${i < S.L.round ? 'on' : i === S.L.round ? 'cur' : ''}"></i>`).join('')}</div>`; },
+  render(){
+    const L = S.L, R = L4.R;
+    const head = `<section class="tool"><h3>Round ${Math.min(L.round + 1, 4)} di 4</h3>${L4.rounds()}<p class="sub">Messaggio di al massimo <b>${R ? R.budget : '—'}</b> caratteri (anche gli spazi contano).</p></section>`;
+    let body = '';
+    if (L.phase === 'names'){
+      body = `<section class="tool"><h3>👥 Chi gioca?</h3><p class="sub">Due giocatori sullo stesso dispositivo.</p>
+        <form class="names" data-act="start"><input class="txt-input" name="a" maxlength="14" placeholder="Giocatore 1" value="${esc(L.names[0])}" aria-label="Nome del giocatore 1"><span>e</span><input class="txt-input" name="b" maxlength="14" placeholder="Giocatore 2" value="${esc(L.names[1])}" aria-label="Nome del giocatore 2"><button class="btn" type="submit">Iniziamo</button></form></section>
+        <section class="tool"><h3>Le regole</h3><p class="sub">4 round. I messaggi possono essere lunghi al massimo 40, poi 24, poi 14, poi solo <b>8</b> caratteri. La macchina segreta si presenta come grafico, come tabella o come storia.</p></section>`;
+      el.tool.innerHTML = body; focusFirst(); return;
+    }
+    if (L.phase === 'write'){
+      body = `<section class="tool"><h3>✉️ Il messaggio di ${esc(L4.A)}</h3><p class="sub">${esc(L4.B)} vedrà solo questo, non la macchina.</p>
+        <form data-act="send"><textarea class="msg" name="msg" maxlength="${R.budget}" data-input="count" rows="3" placeholder="Scrivi qui…" aria-label="Messaggio"></textarea>
+        <div class="msg-foot"><span class="cnt" id="cnt">0 / ${R.budget}</span><button class="btn" type="submit">Invia e nascondi</button></div></form></section>`;
+    } else if (L.phase === 'build' || L.phase === 'firing'){
+      body = `<section class="tool"><h3>📨 Messaggio da ${esc(L4.A)}</h3><div class="bubble">${esc(L.msg)}</div></section>
+        <section class="tool"><h3>🛤️ Il binario di ${esc(L4.B)}</h3><p class="sub">Trascina i pomelli seguendo il messaggio, poi accendi la macchina segreta.</p>
+        <button class="btn" type="button" data-act="check" ${L.phase === 'build' ? '' : 'disabled'}>▶ Accendi la macchina</button></section>`;
+    } else if (L.phase === 'reveal'){
+      body = `<section class="tool ${L.ok ? 'solved-card' : ''}"><h3>${L.ok ? '✓ Round vinto' : '✕ Il messaggio non bastava'}</h3><div class="bubble">${esc(L.msg)}</div>
+        <p class="sub">${L.ok ? 'Ogni pallina è caduta sul binario.' : `Il binario ha preso ${L.caught} palline su 11. La linea tratteggiata è la macchina segreta.`}</p></section>
+        <button class="btn" type="button" data-act="next">${L.ok ? (L.round === 3 ? 'Fine →' : 'Prossimo round →') : 'Riprovate con una nuova macchina ↺'}</button>`;
+    }
+    el.tool.innerHTML = head + body + L4.gallery();
+    focusFirst();
+  },
+  on: {
+    start(form){
+      const L = S.L;
+      L.names = [form.a.value.trim().slice(0, 14), form.b.value.trim().slice(0, 14)];
+      store.set('fabbrica.names', L.names);
+      L.phase = 'coverA'; L4.newSecret(); L4.stage(); L4.render();
+      feedback('info', 'Round 1', `Comincia ${esc(L4.A)} a scrivere.`);
+      log(`Giocano ${esc(L4.A)} e ${esc(L4.B)}`);
+    },
+    showA(){ S.L.phase = 'write'; L4.stage(); L4.render(); feedback('info', 'Scrivi il messaggio', `Che cosa deve sapere ${esc(L4.B)} per mettere il binario giusto?`); },
+    count(t){ const n = [...t.value].length, c = $('#cnt'); c.textContent = `${n} / ${L4.R.budget}`; c.classList.toggle('full', n >= L4.R.budget); },
+    send(form){
+      const msg = form.msg.value.trim();
+      if (!msg) return feedback('tilt', 'Messaggio vuoto', 'Scrivi qualcosa!');
+      S.L.msg = msg.slice(0, L4.R.budget); S.L.phase = 'coverB';
+      L4.stage(); L4.render();
+      feedback('info', 'Messaggio inviato', `Ora tocca a ${esc(L4.B)}.`);
+    },
+    showB(){ S.L.phase = 'build'; L4.stage(); L4.render(); feedback('info', 'Costruisci', `Leggi il messaggio di ${esc(L4.A)} e metti il binario.`); },
+    async check(){
+      const L = S.L, f = plane.ruler.f();
+      if (!f) return feedback('tilt', 'Binario in verticale', 'Il binario non può stare in piedi: sposta un pomello.');
+      const gen = S.gen;
+      S.busy = true; L.phase = 'firing'; L4.stage(); L4.render();
+      const balls = ballsOn(f, L.m);
+      for (const b of balls){
+        plane.addDot({ x:b.x, y:b.y, cls:'ball ' + (b.hit ? 'caught' : 'miss'), anim:'drop' });
+        await wait(170);
+        if (gen !== S.gen) return;
+      }
+      S.busy = false;
+      L.caught = balls.filter(b => b.hit).length; L.ok = L.caught === 11;
+      L.gallery.push({ msg:L.msg, len:[...L.msg].length, budget:L4.R.budget, ok:L.ok, m:L.m });
+      L.phase = 'reveal'; L4.render();
+      log(`Round ${L.round + 1}: «${esc(L.msg)}» ${L.ok ? '✓' : '✕'}`);
+      feedback(L.ok ? 'win' : 'error', L.ok ? 'Messaggio riuscito!' : 'Palline perse', L.ok
+        ? `Con ${[...L.msg].length} caratteri ${esc(L4.B)} ha messo il binario giusto.`
+        : 'Confrontate il messaggio con la macchina segreta: che cosa mancava? Che cosa si capiva male?');
+    },
+    next(){
+      const L = S.L;
+      if (L.ok) L.round++;
+      if (L.round >= 4) return L4.complete();
+      L.writer = 1 - L.writer; L.phase = 'coverA';
+      L4.newSecret(); L4.stage(); L4.render();
+      feedback('info', `Round ${L.round + 1}`, `Ora scrive ${esc(L4.A)}, al massimo ${L4.R.budget} caratteri.`);
+    }
+  },
+  complete(){
+    const L = S.L;
+    markDone(3);
+    L.phase = 'done'; el.tool.innerHTML = L4.gallery();
+    const best = L.gallery.filter(z => z.ok).sort((a, b) => a.len - b.len).slice(0, 3);
+    const last = L.gallery[L.gallery.length - 1].m;
+    feedback('win', 'Quattro round vinti!', 'Riguardate i vostri messaggi: quali informazioni non mancano mai?');
+    showDialog('Messaggi perfetti!', 'Avete costruito quattro binari leggendo solo i messaggi. I più corti che hanno funzionato:',
+      `<ul class="dlg-list">${best.map(z => `<li>«${esc(z.msg)}» <small>(${z.len} caratteri)</small></li>`).join('')}</ul>`,
+      `Nei messaggi più corti bastano <b>due numeri</b>: da dove parte la retta (che cosa esce quando entra 0) e di quanto sale o scende a ogni passo. In matematica si scrive così: <span class="math">y = a·x + b</span>, dove <b>b</b> è la partenza e <b>a</b> il passo. L’ultima macchina segreta era <span class="math">${formula(last)}</span>.`,
+      'Vai alla sfida →', () => startLevel(4));
+  }
+};
+
+/* ================================================================
+   SFIDA — da una forma all'altra: grafico, tabella, storia, formula.
+   ================================================================ */
+const L5 = {
+  nav:'⚡ Sfida', title:'Da una forma all’altra', noMachine:true,
+  mission:'Ogni macchina si presenta in una forma diversa: grafico, tabella, storia o formula. Scrivi la formula oppure metti il binario. Cinque macchine giuste completano la fabbrica.',
+  GOAL:5,
+  TYPES: {
+    g2f:{ title:'📈 Dal grafico alla formula', hint:'Ecco il grafico della macchina. Qual è la sua formula?' },
+    t2f:{ title:'🔢 Dalla tabella alla formula', hint:'Conosci solo qualche valore della macchina. Qual è la sua formula?' },
+    s2f:{ title:'📖 Dalla storia alla formula', hint:'Leggi la storia. Qual è la formula della macchina?' },
+    f2g:{ title:'📐 Dalla formula al grafico', hint:'Conosci la formula: metti il binario e accendi la macchina.' }
+  },
+  enter(){ Object.assign(S.L, { done:0, errors:0, last:null }); L5.load(); },
+  gen(){
+    const a = pick([1, 2, 3, 4, -1, -2, -3, 0.5, 2, 3]);
+    return lin(a, a < 0 ? rnd(-10 * a, -10 * a + 10) : rnd(0, 10));
+  },
+  load(){
+    const L = S.L;
+    let type;
+    do type = pick(Object.keys(L5.TYPES)); while (type === L.last);
+    Object.assign(L, { type, last:type, phase:'work', input:'' });
+    const m = L.m = type === 's2f' ? storyMachine(4, 50) : L5.gen();
+    el.story.hidden = true;
+    plane.setDots([]); plane.setLines([]); plane.ruler.hide();
+    plane.fit(valuesOf(m));
+    if (type === 'g2f'){ plane.setLines([{ f:m.f, cls:'secret-line' }]); plane.setDots(integerPoints(m, 'secret-pt')); }
+    if (type === 't2f'){ m.xs = tableXs(m); showStory(tableHTML(m, m.xs, 'La macchina')); }
+    if (type === 's2f') showStory(storyHTML(m, 'La macchina'));
+    if (type === 'f2g'){ const [lo, hi] = plane.range, mid = Math.round((lo + hi) / 2); L.ruler = [{ x:2, y:mid }, { x:8, y:mid }]; plane.ruler.show(L.ruler); plane.ruler.lock(false); }
+    L5.render();
+    feedback('info', L5.TYPES[type].title.slice(3), L5.TYPES[type].hint);
+  },
+  render(){
+    const L = S.L, T = L5.TYPES[L.type];
+    const goal = `<section class="tool"><h3>🏭 Macchine giuste</h3><div class="goal" aria-label="${L.done} di ${L5.GOAL}">${'★'.repeat(L.done)}${'☆'.repeat(L5.GOAL - L.done)}</div></section>`;
+    let body;
+    if (L.phase === 'ok'){
+      body = `<section class="tool solved-card"><h3>✓ Macchina giusta</h3><p class="math">${formula(L.m)}</p></section>
+        ${L.done < L5.GOAL ? '<button class="btn" type="button" data-act="next">Prossima macchina →</button>' : ''}`;
+    } else if (L.type === 'f2g'){
+      body = `<section class="tool"><h3>${T.title}</h3><p class="math big">${formula(L.m)}</p><p class="sub">Sposta i pomelli del binario, poi accendi.</p>
+        <button class="btn" type="button" data-act="fire" ${L.phase === 'work' ? '' : 'disabled'}>▶ Accendi la macchina</button></section>`;
+    } else {
+      body = `<section class="tool"><h3>${T.title}</h3>
+        <form class="formula-row" data-act="build"><label for="fy">y =</label><input class="f-input" id="fy" name="f" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="…" value="${esc(L.input)}"><button class="btn" type="submit" ${L.phase === 'work' ? '' : 'disabled'}>Costruisci</button></form>
+        <p class="sub">La fabbrica costruisce la macchina con la tua formula e la confronta con quella vera.</p></section>`;
+    }
+    el.tool.innerHTML = goal + body + (L.phase === 'ok' ? '' : '<button class="btn ghost-btn" type="button" data-act="skip">Cambia macchina</button>');
+    focusFirst();
+  },
+  success(){
+    const L = S.L;
+    L.done++; L.phase = 'ok';
+    log(`✓ ${formula(L.m)}`);
+    L5.render();
+    if (L.done < L5.GOAL) return feedback('win', 'Macchina giusta!', `Le due macchine danno sempre lo stesso numero. Ne mancano ${L5.GOAL - L.done}.`);
+    feedback('win', 'Fabbrica completata!', 'Cinque macchine giuste.');
+    markDone(4);
+    showDialog('La fabbrica è tua!', `Cinque macchine giuste${L.errors ? `, con ${plural(L.errors, 'tentativo', 'tentativi')} a vuoto` : ' senza errori'}.`,
+      `<div class="idcard"><span class="math">y = a·x + b</span><ul>
+        <li><b>b</b> è quello che esce quando entra 0: il punto dove la retta incontra l’asse verticale.</li>
+        <li><b>a</b> dice di quanto cambia y quando x aumenta di 1: se è positivo la retta sale, se è negativo scende, se è 0 è orizzontale.</li>
+        <li>Il grafico è una <b>retta</b>: per disegnarla bastano due punti.</li>
+        <li>La riconosci perché, a passi uguali di x, y cambia sempre della stessa quantità.</li></ul></div>`,
+      '', 'Altre cinque macchine →', () => startLevel(4));
+  },
+  on: {
+    async build(form){
+      const L = S.L;
+      L.input = form.f.value;
+      let g;
+      try { g = parseFormula(L.input); } catch (err){ return feedback('tilt', 'Non riesco a leggerla', esc(err.message)); }
+      const gen = S.gen, tv = XS.map(L.m.f), uv = XS.map(x => g(x));
+      S.busy = true; L.phase = 'run'; L5.render();
+      plane.fit([...tv, ...uv]);
+      const base = L.type === 'g2f' ? integerPoints(L.m, 'secret-pt') : [];
+      plane.setDots(base);
+      let wrong = null;
+      for (const x of XS){
+        const ok = same(tv[x], uv[x]);
+        if (!ok && wrong === null) wrong = x;
+        plane.addDot({ x, y:tv[x], cls:'tgt', r:9 });
+        plane.addDot({ x, y:uv[x], cls:'mine' + (ok ? '' : ' bad'), r:6, anim:'pop' });
+        await wait(110);
+        if (gen !== S.gen) return;
+      }
+      S.busy = false;
+      if (wrong === null) return L5.success();
+      L.errors++; L.phase = 'work'; L5.render();
+      log(`✕ y = ${esc(L.input)}`);
+      feedback('error', 'Le macchine non coincidono', `Con x = ${wrong} la tua macchina dà <strong>${fmt(uv[wrong])}</strong>, quella vera <strong>${fmt(tv[wrong])}</strong>. I cerchi arancioni sono la macchina vera.`);
+    },
+    async fire(){
+      const L = S.L, f = plane.ruler.f();
+      if (!f) return feedback('tilt', 'Binario in verticale', 'Il binario non può stare in piedi: sposta un pomello.');
+      const gen = S.gen;
+      S.busy = true; L.phase = 'run'; plane.ruler.lock(true); L5.render();
+      plane.setDots([]);
+      const balls = ballsOn(f, L.m);
+      for (const b of balls){
+        plane.addDot({ x:b.x, y:b.y, cls:'ball ' + (b.hit ? 'caught' : 'miss'), anim:'drop' });
+        await wait(150);
+        if (gen !== S.gen) return;
+      }
+      S.busy = false;
+      const caught = balls.filter(b => b.hit).length;
+      if (caught === 11) return L5.success();
+      L.errors++; L.phase = 'work'; plane.ruler.lock(false); L5.render();
+      log(`✕ binario per ${formula(L.m)}: ${caught}/11`);
+      feedback('error', 'Palline perse', `Il binario ne ha prese ${caught} su 11. Sposta il binario e riprova.`);
+    },
+    next(){ L5.load(); },
+    skip(){ S.L.errors++; log(`Saltata: ${formula(S.L.m)}`); L5.load(); }
+  }
+};
+
+const LEVELS = [L1, L2, L3, L4, L5];
+let cur = L1;
+
+/* ---------------- Livelli ---------------- */
+function renderLevels(){
+  const done = store.get('fabbrica.done', []);
+  el.levels.innerHTML = LEVELS.map((L, i) => {
+    const locked = i + 1 > S.unlocked;
+    return `<button class="lvl${i === S.idx ? ' active' : ''}" type="button" data-i="${i}" ${locked ? `disabled aria-label="${L.nav} (bloccato)"` : ''} ${i === S.idx ? 'aria-current="true"' : ''}>${locked ? '🔒 ' : ''}${L.nav}${done.includes(i) ? '<span class="done" aria-hidden="true">✓</span>' : ''}</button>`;
+  }).join('');
+}
+function markDone(i){
+  const done = store.get('fabbrica.done', []);
+  if (!done.includes(i)){ done.push(i); store.set('fabbrica.done', done); }
+  if (i + 2 > S.unlocked && i < 4){ S.unlocked = i + 2; if (!params.has('tutti')) store.set('fabbrica.unlocked', S.unlocked); }
+  renderLevels();
+}
+function startLevel(i){
+  if (i + 1 > S.unlocked) return;
+  if (el.dlg.open) el.dlg.close();
+  S.idx = i; S.gen++; S.busy = false; S.L = {};
+  cur = LEVELS[i];
+  el.cover.hidden = true; el.story.hidden = true;
+  el.bench.classList.toggle('no-machine', !!cur.noMachine);
+  el.mBadge.textContent = i === 4 ? 'Sfida' : `Livello ${i + 1}`;
+  el.mTitle.textContent = cur.title; el.mText.textContent = cur.mission;
+  clearLog(); reg.clear(); plane.clear();
+  applyNames(); renderLevels();
+  cur.enter();
+}
+function showDialog(title, text, extra, reflect, nextLabel, onNext){
+  el.winTitle.textContent = title;
+  el.winText.innerHTML = text;
+  el.winExtra.innerHTML = extra || '';
+  el.winReflect.innerHTML = reflect || '';
+  el.winReflect.hidden = !reflect;
+  el.dlgNext.textContent = nextLabel;
+  S.onNext = onNext;
+  el.dlg.showModal();
+  if (!reduceMotion) fx.confetti();
+}
+
+/* ---------------- Effetti ---------------- */
+const fx = (() => {
+  const c = $('#fx'), ctx = c.getContext('2d'); let parts = [], raf = 0, W = 0, H = 0;
+  function size(){ const d = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  function tick(){
+    ctx.clearRect(0, 0, W, H);
+    parts = parts.filter(p => p.life > 0);
+    for (const p of parts){
+      p.vy += .18; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = Math.min(1, p.life / 30); ctx.fillStyle = p.col;
+      ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
+    }
+    raf = parts.length ? requestAnimationFrame(tick) : 0;
+  }
+  function confetti(){
+    size();
+    const cols = ['#4338ca', '#6b3fd1', '#ffd166', '#f0a24a', '#2bb39f', '#e5675b'];
+    for (let i = 0; i < 140; i++) parts.push({ x: W / 2 + (Math.random() - .5) * W * .4, y: H * .35, vx: (Math.random() - .5) * 14, vy: -Math.random() * 12 - 4,
+      r: Math.random() * 6, vr: (Math.random() - .5) * .3, s: 7 + Math.random() * 7, life: 90 + Math.random() * 60, col: cols[i % cols.length] });
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+  addEventListener('resize', () => { if (raf) size(); });
+  return { confetti };
+})();
+
+/* ---------------- Collegamenti ---------------- */
+function dispatch(act, node){
+  if (S.busy) return;
+  cur.on[act]?.(node);
+}
+el.tool.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (!b || b.disabled || b.tagName === 'FORM') return;
+  dispatch(b.dataset.act, b);
+});
+el.tool.addEventListener('submit', e => { e.preventDefault(); dispatch(e.target.dataset.act, e.target); });
+el.tool.addEventListener('input', e => { const t = e.target.closest('[data-input]'); if (t) cur.on[t.dataset.input]?.(t); });
+el.cover.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b) dispatch(b.dataset.act, b); });
+el.levels.addEventListener('click', e => { const b = e.target.closest('.lvl'); if (b && !b.disabled) startLevel(+b.dataset.i); });
+$('#btnReset').addEventListener('click', () => startLevel(S.idx));
+function setSym(on){
+  S.sym = on; el.sym.setAttribute('aria-checked', String(on)); store.set('fabbrica.sym', on);
+  applyNames();
+  if (S.idx < 3 && cur.render) cur.render();
+}
+el.sym.addEventListener('click', () => setSym(!S.sym));
+$('#dlgStay').addEventListener('click', () => el.dlg.close());
+el.dlgNext.addEventListener('click', () => { el.dlg.close(); S.onNext?.(); });
+document.addEventListener('pointerdown', e => {
+  const host = e.target.closest('.btn, .pill');
+  if (!host || host.disabled || reduceMotion) return;
+  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
+  const sp = document.createElement('span');
+  sp.className = 'rip';
+  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
+  host.appendChild(sp);
+  setTimeout(() => sp.remove(), 600);
+});
+
+if (params.has('debug')) window.__fabbrica = { S, plane, parseFormula, startLevel, get cur(){ return cur; } };
+
+el.sym.setAttribute('aria-checked', String(S.sym));
+startLevel(Math.min(S.unlocked - 1, Math.max(0, (Number(params.get('livello')) || 1) - 1)));
+})();
+</script>
+</body>
+</html>
