@@ -11,8 +11,7 @@
 body{min-height:100vh}
 .app{max-width:1180px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:18px}
 .topbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
-.logo span{color:#fff;font-weight:800;font-size:1.05rem;letter-spacing:-.04em;position:relative}
-.logo span::after{content:"";position:absolute;right:-7px;bottom:3px;width:6px;height:6px;border-radius:50%;background:#ffd166}
+.brand .mark{width:46px;height:46px;flex:none;border-radius:14px;box-shadow:0 6px 16px rgba(67,56,202,.35)}
 .home{color:var(--muted);font-size:.86rem;font-weight:650;text-decoration:none}
 .home:hover{color:var(--primary-dark);text-decoration:underline}
 
@@ -58,7 +57,7 @@ footer a{color:inherit}
 <div class="app">
   <header class="topbar">
     <div class="brand">
-      <div class="logo" aria-hidden="true"><span>dd</span></div>
+      <img class="mark" src="/favicon.svg" alt="" width="46" height="46">
       <div>
         <h1>Esperimenti dd</h1>
         <p>Giochi e piccoli laboratori per scoprire provando.</p>
