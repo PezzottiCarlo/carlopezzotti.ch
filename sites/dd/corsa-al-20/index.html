@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La corsa al 20</title>
+<meta name="description" content="Aggiungi 1 o 2, chi dice 20 vince. Sfida un milieu antagonista, scrivi le tue scoperte e dimostrale: la situazione didattica classica di Brousseau.">
+<meta name="dd:tags" content="aritmetica, strategia, Brousseau">
+<meta name="dd:date" content="2026-10-20">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/_shared/dd.css">
+<style>
+/* Colori dei due giocatori: tu = indaco, il Milieu = arancio (stessa scala "tilt" della Bilancia). */
+:root{ --me:var(--primary); --me-soft:var(--primary-soft); --mil:#c2560c; --mil-soft:var(--tilt-soft); --mil-line:var(--tilt-line); }
+
+.app{min-height:100vh;min-height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding:10px 16px 14px}
+.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+@media (max-height:760px){.brand p{display:none}}
+.levels{display:flex;gap:6px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
+.lvl{font-weight:700;font-size:.88rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:7px 12px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s,transform .12s}
+.lvl:hover:not(:disabled){background:var(--primary-soft)}
+.lvl:active:not(:disabled){transform:scale(.96)}
+.lvl.active{background:var(--primary);color:#fff}
+.lvl:disabled{color:#6b7090;cursor:not-allowed;background:#f3f4f9}
+.lvl .done{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:.7rem}
+.lvl.active .done{background:rgba(255,255,255,.25);color:#fff}
+
+.layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(290px,25vw,370px);gap:14px}
+.stage-card{display:flex;flex-direction:column;gap:14px;padding:14px;min-height:0;overflow:auto}
+.mission{flex:none;display:flex;gap:12px;align-items:baseline}
+.mission h2{display:inline;margin:0 6px 0 0;font-size:1.05rem}
+.mission p{display:inline;margin:0;color:var(--muted);font-size:.92rem}
+.mission .btn{margin-left:auto;flex:none;align-self:center}
+.mission.proof .dd-badge{background:var(--win-soft);color:var(--win)}
+
+/* ---------- Duello ---------- */
+.duel{flex:none;margin-top:auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
+.player{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;border:2px solid var(--line);background:#fff;transition:border-color .3s,box-shadow .3s,transform .3s var(--wobble)}
+.player.mil{flex-direction:row-reverse;text-align:right}
+.player .av{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center}
+.player.me .av{background:linear-gradient(145deg,#5b50e6,#3a2fb8);color:#fff;font-weight:800}
+.player.mil .av{background:linear-gradient(145deg,#f59e42,#c2560c)}
+.player strong{display:block;font-size:1rem;line-height:1.1}
+.player small{color:var(--muted);font-size:.8rem}
+.player.turn.me{border-color:var(--me);box-shadow:0 0 0 4px rgba(67,56,202,.15);transform:translateY(-2px)}
+.player.turn.mil{border-color:var(--mil-line);box-shadow:0 0 0 4px rgba(240,162,74,.2);transform:translateY(-2px)}
+.thinking .dots i{display:inline-block;width:5px;height:5px;margin:0 1px;border-radius:50%;background:var(--mil);animation:dot 1s infinite}
+.thinking .dots i:nth-child(2){animation-delay:.15s}.thinking .dots i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.said{text-align:center;min-width:120px}
+.said .lbl{display:block;color:var(--muted);font-size:.72rem;font-weight:750;text-transform:uppercase;letter-spacing:.05em}
+.said .val{display:block;font-size:clamp(2.4rem,5vw,3.6rem);font-weight:850;line-height:1;letter-spacing:-.04em;color:var(--ink);transition:color .3s}
+.said .val.me{color:var(--me)} .said .val.mil{color:var(--mil)}
+.said .val.pop{animation:pop .45s var(--wobble)}
+@keyframes pop{from{transform:scale(.6);opacity:.2}}
+.said .of{display:block;color:var(--muted);font-size:.8rem;font-weight:650}
+
+/* ---------- Pista dei numeri ---------- */
+.track-area{flex:none;container-type:inline-size;padding:clamp(4px,2vh,24px) 0}
+.track{width:100%;display:grid;grid-template-columns:repeat(var(--cols,11),minmax(0,1fr));gap:clamp(4px,1cqi,10px);padding:4px}
+.tile{position:relative;aspect-ratio:1;border-radius:clamp(8px,1.4cqi,14px);border:2px solid var(--line);background:#fff;color:var(--muted);font-weight:800;font-size:clamp(.85rem,2.6cqi,1.5rem);
+  display:grid;place-items:center;padding:0;cursor:default;transition:background .25s,border-color .25s,color .25s,transform .2s var(--wobble),opacity .25s}
+.tile.zero{font-size:clamp(.6rem,1.5cqi,.9rem);letter-spacing:.04em;text-transform:uppercase}
+.tile.goal{border-color:#f2c14e;background:#fffaf0;color:#9a6a00}
+.tile.goal::before{content:"🏁";position:absolute;top:-.55em;right:-.3em;font-size:.75em}
+.tile.skip{opacity:.4}
+.tile.me{background:var(--me);border-color:var(--me);color:#fff;opacity:1}
+.tile.mil{background:var(--mil-soft);border-color:var(--mil-line);color:var(--mil);opacity:1}
+.tile.start{outline:2px dashed var(--me);outline-offset:3px}
+.tile .who{position:absolute;bottom:6%;font-size:.42em;font-weight:750;letter-spacing:.03em;opacity:.9}
+.tile.cur{transform:scale(1.08);z-index:1}
+.tile.cur.me{box-shadow:0 0 0 4px rgba(67,56,202,.25)}
+.tile.cur.mil{box-shadow:0 0 0 4px rgba(240,162,74,.35)}
+.tile.next{cursor:pointer;border-style:dashed;border-color:var(--primary);background:var(--primary-soft);color:var(--primary-dark);opacity:1}
+.tile.next:hover{border-style:solid;transform:translateY(-3px)}
+.tile.next:active{transform:scale(.94)}
+.tile .star{position:absolute;top:3%;left:6%;font-size:.5em;color:#e09b06;line-height:1}
+.tile.me .star{color:#ffd166}
+.track.locked .tile.next{animation:none}
+.tile.next{animation:breathe 1.6s ease-in-out infinite}
+@keyframes breathe{50%{box-shadow:0 0 0 4px rgba(67,56,202,.12)}}
+
+/* ---------- Mosse ---------- */
+.moves{flex:none;margin-bottom:auto;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.move{min-width:130px;flex-direction:column;gap:0;padding:10px 18px;font-size:1.25rem;line-height:1.1}
+.move small{font-size:.75rem;font-weight:650;opacity:.85}
+.endbar{flex:none;margin-bottom:auto;display:flex;align-items:center;justify-content:center;gap:10px 14px;flex-wrap:wrap;padding:10px 12px;border-radius:14px;font-weight:700}
+.endbar.won{background:var(--win-soft);color:var(--win)}
+.endbar.lost{background:var(--mil-soft);color:var(--tilt)}
+
+/* ---------- Pannello ---------- */
+.panel{min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.feedback{min-height:92px}
+.tool{border:2px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
+.tool h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px}
+.tool .sub{margin:0;font-size:.84rem;color:var(--muted)}
+.seg{display:flex;gap:6px}
+.pill{flex:1;min-height:42px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:750;font-size:.88rem;color:var(--ink);cursor:pointer;transition:transform .12s,border-color .2s,background .2s;position:relative;overflow:hidden}
+.pill:hover:not(:disabled){border-color:var(--primary)}
+.pill:active:not(:disabled){transform:scale(.94)}
+.pill[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
+.pill:disabled{opacity:.5;cursor:not-allowed}
+.score{display:flex;gap:14px;font-size:.84rem;color:var(--muted);font-weight:650}
+.score b{color:var(--ink)}
+
+.claim-form{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-weight:650}
+.claim-form .btn{flex:1 0 100%}
+.num-input{font:800 1.1rem var(--font);width:64px;height:42px;border:2px solid var(--line);border-radius:12px;text-align:center;color:var(--ink);background:#fff;-moz-appearance:textfield}
+.num-input::-webkit-inner-spin-button,.num-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.num-input:focus{outline:none;border-color:var(--primary)}
+.claims{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.claim{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:10px;background:#f7f8fd;border:1px solid #e6e9f5;font-size:.86rem}
+.claim .txt{flex:1;min-width:0}
+.claim .txt b{font-size:1rem}
+.claim .st{flex:none;font-size:.72rem;font-weight:800;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.claim .st.todo{background:#eceef7;color:var(--muted)}
+.claim .st.proved{background:var(--ok-soft);color:var(--ok)}
+.claim .st.doubt{background:var(--mil-soft);color:var(--tilt)}
+.claim.rule{background:#fffaf0;border-color:#f6e2b3}
+.claim .mini{flex:none;border:0;background:transparent;color:var(--primary-dark);font-weight:800;font-size:.8rem;cursor:pointer;padding:4px 6px;border-radius:8px}
+.claim .mini:hover:not(:disabled){background:var(--primary-soft)}
+.claim .mini:disabled{opacity:.4;cursor:not-allowed}
+.claim .mini.x{color:var(--muted)}
+.claim.flash{animation:flash .9s ease}
+@keyframes flash{30%{background:var(--primary-soft)}}
+.claims-note{margin:0;font-size:.8rem;color:var(--muted)}
+
+details.diario{border:2px solid var(--line);border-radius:14px;padding:0 12px}
+details.diario summary{cursor:pointer;font-weight:750;font-size:.95rem;padding:10px 0;display:flex;align-items:center;gap:8px;list-style:none}
+details.diario summary::-webkit-details-marker{display:none}
+details.diario summary::before{content:"▸";transition:transform .2s;color:var(--primary)}
+details.diario[open] summary::before{transform:rotate(90deg)}
+details.diario .count{margin-left:auto;background:var(--primary-soft);color:var(--primary-dark);border-radius:999px;padding:1px 9px;font-size:.78rem}
+.log{list-style:none;margin:0 0 10px;padding:0;max-height:min(30vh,240px);overflow:auto;display:flex;flex-wrap:wrap;gap:6px}
+.log li{font-size:.82rem;font-weight:750;padding:4px 9px;border-radius:999px}
+.log li.me{background:var(--me-soft);color:var(--primary-dark)}
+.log li.mil{background:var(--mil-soft);color:var(--tilt)}
+.log li small{font-weight:600;opacity:.75}
+.log-empty{color:var(--muted);font-size:.84rem;margin:0 0 10px}
+
+.dlg-body .reflect{background:#f7f8fd;border-radius:12px;padding:10px 12px;color:var(--ink);text-align:left;font-size:.92rem}
+.chain{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin:8px 0}
+.chain span{font-weight:850;background:var(--me);color:#fff;border-radius:8px;padding:2px 8px}
+.chain i{font-style:normal;color:var(--muted);align-self:center}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70;width:100vw;height:100vh}
+
+/* Desktop: tutto nello schermo, il pannello scorre. */
+@media (min-width:921px) and (min-height:600px){
+  body{height:100vh;height:100dvh;overflow:hidden}
+  .app{height:100vh;height:100dvh}
+}
+@media (max-width:920px){
+  .layout{grid-template-columns:1fr}
+  .panel{display:grid;grid-template-columns:1fr 1fr;align-content:start}
+  .panel .feedback,.panel .notebook,.panel details.diario{grid-column:1/-1}
+  .feedback{min-height:0}
+}
+@media (max-width:620px){
+  .app{padding:8px 10px 12px}
+  .panel{grid-template-columns:1fr}
+  .mission{flex-wrap:wrap}
+  .duel{grid-template-columns:1fr 1fr;gap:8px}
+  .said{grid-column:1/-1;grid-row:1}
+  .player{padding:8px}
+  .player .av{width:38px;height:38px}
+  .move{min-width:0;flex:1}
+  .levels{width:100%}
+  .lvl{flex:1;justify-content:center;padding:7px 6px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <a class="dd-back" href="/" aria-label="Tutti gli esperimenti dd" title="Tutti gli esperimenti"><span class="arr" aria-hidden="true">←</span>dd</a>
+      <div class="logo" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 34 34" fill="none">
+          <path d="M4 26h26" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          <path d="M8 26V20M14 26V16M20 26V12" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+          <path d="M26 26V5" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          <path d="M26 5h6l-2 3 2 3h-6z" fill="#ffd166"/>
+        </svg>
+      </div>
+      <div>
+        <h1>La corsa al 20</h1>
+        <p>Aggiungi 1 o 2. Chi dice 20 vince. Sembra fortuna…</p>
+      </div>
+    </div>
+    <nav class="levels" id="levels" aria-label="Livelli"></nav>
+  </header>
+
+  <main class="layout">
+    <section class="card stage-card" aria-labelledby="missionTitle">
+      <div class="mission" id="mission">
+        <span class="dd-badge" id="missionBadge">Livello 1</span>
+        <div><h2 id="missionTitle"></h2><p id="missionText"></p></div>
+        <button class="btn ghost-btn" type="button" id="btnAbort" hidden>Annulla dimostrazione</button>
+      </div>
+
+      <div class="duel">
+        <div class="player me" id="pMe">
+          <div class="av" aria-hidden="true">Tu</div>
+          <div><strong>Tu</strong><small id="meState">&nbsp;</small></div>
+        </div>
+        <div class="said" aria-live="polite">
+          <span class="lbl">Ultimo numero detto</span>
+          <span class="val" id="saidVal">0</span>
+          <span class="of" id="saidOf">si parte da 0</span>
+        </div>
+        <div class="player mil" id="pMil">
+          <div class="av" aria-hidden="true">
+            <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
+              <path d="M16 3v4" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="16" cy="3" r="2" fill="#ffd166"/>
+              <rect x="5" y="8" width="22" height="18" rx="6" fill="#fff" opacity=".95"/>
+              <circle cx="12" cy="16" r="2.6" fill="#c2560c"/><circle cx="20" cy="16" r="2.6" fill="#c2560c"/>
+              <path d="M12 21.5h8" stroke="#c2560c" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div><strong>Il Milieu</strong><small id="milState">&nbsp;</small></div>
+        </div>
+      </div>
+
+      <div class="track-area">
+        <div class="track" id="track" role="group" aria-label="Pista dei numeri"></div>
+      </div>
+
+      <div class="moves" id="moves" role="group" aria-label="La tua mossa"></div>
+      <div class="endbar" id="endbar" hidden>
+        <span id="endText"></span>
+        <button class="btn" type="button" id="btnAgain">Rivincita</button>
+      </div>
+    </section>
+
+    <aside class="card panel" aria-label="Strumenti">
+      <div class="feedback info" id="feedback">
+        <span class="fb-ico" aria-hidden="true" id="fbIco">i</span>
+        <div><strong id="fbTitle">Osserva</strong><p id="fbText"></p></div>
+      </div>
+
+      <section class="tool" aria-labelledby="gameTitle" id="gameTool">
+        <h3 id="gameTitle">🎲 Nuova partita</h3>
+        <p class="sub" id="startSub">Chi dice il primo numero?</p>
+        <div class="seg" role="group" aria-labelledby="startSub">
+          <button class="pill" type="button" data-start="me" aria-pressed="true">Comincio io</button>
+          <button class="pill" type="button" data-start="mil" aria-pressed="false">Comincia il Milieu</button>
+        </div>
+        <div class="score" id="score"></div>
+      </section>
+
+      <section class="tool notebook" aria-labelledby="nbTitle">
+        <h3 id="nbTitle">📓 Taccuino delle scoperte</h3>
+        <p class="sub" id="nbSub">Hai notato qualcosa? Scrivilo come frase e dimostralo: il Milieu farà di tutto per smentirti.</p>
+        <form class="claim-form" id="claimForm">
+          <label for="claimN">Chi dice</label>
+          <input class="num-input" id="claimN" type="number" inputmode="numeric" min="1" max="19" placeholder="?">
+          <span>vince sempre.</span>
+          <button class="btn grow" type="submit">Scrivi</button>
+        </form>
+        <ol class="claims" id="claims"></ol>
+        <p class="claims-note" id="claimsNote"></p>
+      </section>
+
+      <details class="diario" id="diario">
+        <summary>Mosse della partita <span class="count" id="logCount">0</span></summary>
+        <p class="log-empty" id="logEmpty">Nessuna mossa ancora.</p>
+        <ol class="log" id="log"></ol>
+      </details>
+    </aside>
+  </main>
+</div>
+
+<dialog id="winDlg" aria-labelledby="winTitle" aria-describedby="winText">
+  <div class="dlg-body">
+    <div class="trophy" aria-hidden="true">
+      <svg width="42" height="42" viewBox="0 0 46 46"><path d="M23 4l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5L23 32.7l-11.3 5.9 2.2-12.5-9.1-8.9 12.6-1.8z" fill="#fff" stroke="#b9790c" stroke-width="2" stroke-linejoin="round"/></svg>
+    </div>
+    <h2 id="winTitle">Hai detto 20!</h2>
+    <p class="big" id="winText"></p>
+    <div id="winExtra"></div>
+    <p class="reflect" id="winReflect"></p>
+    <div class="dlg-actions">
+      <button class="btn ghost-btn" type="button" id="dlgStay">Resta qui</button>
+      <button class="btn" type="button" id="dlgNext">Livello successivo →</button>
+    </div>
+  </div>
+</dialog>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="sr-only" aria-live="polite" id="sr"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* La corsa al 20 (G. Brousseau): da 0, a turno si aggiunge da 1 a K all'ultimo numero detto;
+   chi dice T vince. Chi dice un numero n con (T - n) multiplo di K+1 può sempre vincere. */
+const MAIN = { T:20, K:2 };
+const LEVELS = [
+  { title:'Prima corsa', skill:'novice',
+    mission:'Si parte da 0. A turno, ognuno aggiunge 1 o 2 all’ultimo numero detto. Chi riesce a dire 20 vince. Batti il Milieu!' },
+  { title:'Il Milieu ha studiato', skill:'expert',
+    mission:'Ora il Milieu non si lascia scappare nessuna occasione. Riesci a batterlo lo stesso?' },
+  { title:'Il taccuino', skill:'expert', notebook:true,
+    mission:'Scrivi nel taccuino le frasi «Chi dice … vince sempre» e dimostrale al Milieu. Il taccuino è completo quando ti dice come vincere già dalla prima mossa.' },
+  { title:'Sfida', skill:'expert', challenge:true, mission:'' }
+];
+const CHALLENGE = 3;
+
+const $ = s => document.querySelector(s);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, reduceMotion ? Math.min(ms, 150) : ms));
+
+const el = {
+  levels:$('#levels'), mission:$('#mission'), mBadge:$('#missionBadge'), mTitle:$('#missionTitle'), mText:$('#missionText'), btnAbort:$('#btnAbort'),
+  pMe:$('#pMe'), pMil:$('#pMil'), meState:$('#meState'), milState:$('#milState'), saidVal:$('#saidVal'), saidOf:$('#saidOf'),
+  track:$('#track'), moves:$('#moves'), endbar:$('#endbar'), endText:$('#endText'), btnAgain:$('#btnAgain'),
+  fb:$('#feedback'), fbIco:$('#fbIco'), fbTitle:$('#fbTitle'), fbText:$('#fbText'),
+  starts:[...document.querySelectorAll('[data-start]')], score:$('#score'), gameTool:$('#gameTool'),
+  claimForm:$('#claimForm'), claimN:$('#claimN'), claims:$('#claims'), claimsNote:$('#claimsNote'), nbSub:$('#nbSub'),
+  log:$('#log'), logCount:$('#logCount'), logEmpty:$('#logEmpty'),
+  dlg:$('#winDlg'), winTitle:$('#winTitle'), winText:$('#winText'), winExtra:$('#winExtra'), winReflect:$('#winReflect'), dlgNext:$('#dlgNext'), sr:$('#sr')
+};
+
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+
+const S = {
+  idx:0, T:MAIN.T, K:MAIN.K, n:0, hist:[], turn:'me', starter:'me', over:false, busy:false, proof:null, token:0,
+  score:{ me:0, mil:0 },
+  unlocked: Math.max(1, Math.min(CHALLENGE + 1, store.get('corsa20.unlocked', 1) | 0)),
+  claims: store.get('corsa20.claims', [])   // [{ n, status:'todo'|'proved'|'doubt', tries }]
+};
+S.claims = Array.isArray(S.claims) ? S.claims.filter(c => c && c.n >= 1 && c.n < MAIN.T) : [];
+
+/* ---------------- Strategia ---------------- */
+const winning = (v, T = S.T, K = S.K) => (T - v) % (K + 1) === 0;
+const MAIN_CHAIN = (() => { const a = []; for (let v = MAIN.T - MAIN.K - 1; v > 0; v -= MAIN.K + 1) a.unshift(v); return a; })();
+const isMain = () => S.T === MAIN.T && S.K === MAIN.K;
+const options = () => { const o = []; for (let s = 1; s <= S.K && S.n + s <= S.T; s++) o.push(s); return o; };
+
+// Il Milieu principiante conosce solo gli ultimi numeri vincenti; quello esperto li conosce tutti.
+// Quando non ha una mossa vincente gioca a caso: contro chi sa giocare, ogni mossa perde.
+function milieuStep(){
+  const opts = options();
+  const best = opts.find(s => winning(S.n + s));
+  const novice = LEVELS[S.idx].skill === 'novice' && !S.proof;
+  if (best && (!novice || S.n + best >= S.T - (S.K + 1))) return best;
+  return opts[Math.floor(Math.random() * opts.length)];
+}
+
+/* ---------------- Rendering ---------------- */
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const provedSet = () => new Set(S.claims.filter(c => c.status === 'proved').map(c => c.n));
+const saidBy = v => S.hist.find(h => h.v === v)?.who;
+
+function feedback(type, title, html){
+  el.fb.className = 'feedback ' + type;
+  el.fbIco.textContent = { info:'i', ok:'✓', tilt:'!', error:'✕', win:'★' }[type];
+  el.fbTitle.textContent = title;
+  el.fbText.innerHTML = html;
+  el.sr.textContent = title + '. ' + el.fbText.textContent;
+}
+
+function cols(){
+  const w = el.track.parentElement.getBoundingClientRect().width || 800;
+  const max = w < 420 ? 6 : w < 640 ? 8 : 11;
+  const rows = Math.ceil((S.T + 1) / max);
+  return Math.ceil((S.T + 1) / rows);
+}
+
+function renderTrack(){
+  el.track.style.setProperty('--cols', cols());
+  const stars = isMain() ? provedSet() : new Set();
+  const myTurn = S.turn === 'me' && !S.over && !S.busy;
+  const nexts = new Set(myTurn ? options().map(s => S.n + s) : []);
+  let html = '';
+  for (let v = 0; v <= S.T; v++){
+    const who = saidBy(v);
+    const cls = ['tile'];
+    if (v === 0) cls.push('zero');
+    if (v === S.T) cls.push('goal');
+    if (who) cls.push(who);
+    if (S.proof && v === S.proof.n) cls.push('start');
+    if (!who && v < S.n) cls.push('skip');
+    if (v === S.n && who) cls.push('cur');
+    if (nexts.has(v)) cls.push('next');
+    const lab = v === 0 ? 'via' : v;
+    const star = stars.has(v) && v !== S.T ? '<span class="star" aria-hidden="true">★</span>' : '';
+    const whoTxt = who ? `<span class="who" aria-hidden="true">${who === 'me' ? 'tu' : 'Milieu'}</span>` : '';
+    const aria = nexts.has(v) ? `aria-label="Di’ ${v}"` : `aria-label="${v}${who ? (who === 'me' ? ', detto da te' : ', detto dal Milieu') : ''}${stars.has(v) ? ', scoperta dimostrata' : ''}" tabindex="-1"`;
+    html += `<button type="button" class="${cls.join(' ')}" data-v="${v}" ${aria}>${lab}${star}${whoTxt}</button>`;
+  }
+  el.track.innerHTML = html;
+  el.track.classList.toggle('locked', !myTurn);
+}
+
+function renderMoves(){
+  const myTurn = S.turn === 'me' && !S.over && !S.busy;
+  el.moves.hidden = S.over;
+  el.moves.innerHTML = Array.from({ length:S.K }, (_, i) => i + 1).map(s => {
+    const ok = myTurn && S.n + s <= S.T;
+    return `<button class="btn move" type="button" data-step="${s}" ${ok ? '' : 'disabled'}>+${s}<small>${S.n + s <= S.T ? 'dico ' + (S.n + s) : '—'}</small></button>`;
+  }).join('');
+}
+
+function renderDuel(pop){
+  const last = S.hist[S.hist.length - 1];
+  el.saidVal.textContent = S.n;
+  el.saidVal.className = 'val' + (last ? ' ' + last.who : '');
+  if (pop && !reduceMotion){ void el.saidVal.offsetWidth; el.saidVal.classList.add('pop'); }
+  el.saidOf.textContent = last ? (last.who === 'me' ? (S.proof && S.hist.length === 1 ? 'parti da qui' : 'l’hai detto tu') : 'l’ha detto il Milieu') : 'si parte da 0';
+  const meTurn = !S.over && S.turn === 'me', milTurn = !S.over && S.turn === 'mil';
+  el.pMe.classList.toggle('turn', meTurn); el.pMil.classList.toggle('turn', milTurn);
+  el.meState.textContent = meTurn ? 'tocca a te' : (S.over && saidBy(S.T) === 'me' ? 'ha vinto!' : ' ');
+  el.pMil.classList.toggle('thinking', milTurn && S.busy);
+  el.milState.innerHTML = milTurn && S.busy ? 'ci pensa <span class="dots"><i></i><i></i><i></i></span>' : (milTurn ? 'tocca al Milieu' : (S.over && saidBy(S.T) === 'mil' ? 'ha vinto!' : '&nbsp;'));
+}
+
+function renderLog(){
+  el.log.innerHTML = S.hist.map(h => `<li class="${h.who}">${h.step ? '+' + h.step + ' → ' : ''}${h.v} <small>${h.who === 'me' ? 'tu' : 'Milieu'}</small></li>`).join('');
+  el.logCount.textContent = S.hist.filter(h => h.step).length;
+  el.logEmpty.hidden = S.hist.length > 0;
+}
+
+function renderScore(){
+  el.score.innerHTML = `<span>Vinte da te: <b>${S.score.me}</b></span><span>Vinte dal Milieu: <b>${S.score.mil}</b></span>`;
+  el.starts.forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.start === S.starter)); b.disabled = !!S.proof; });
+}
+
+function renderLevels(){
+  const done = store.get('corsa20.done', []);
+  el.levels.innerHTML = LEVELS.map((L, i) => {
+    const locked = i + 1 > S.unlocked;
+    const name = i === CHALLENGE ? '⚡ Sfida' : `${i + 1}. ${L.title}`;
+    return `<button class="lvl${i === S.idx ? ' active' : ''}" type="button" data-i="${i}" ${locked ? 'disabled aria-label="' + name + ' (bloccato)"' : ''} ${i === S.idx ? 'aria-current="true"' : ''}>${locked ? '🔒 ' : ''}${name}${done.includes(i) ? '<span class="done" aria-hidden="true">✓</span>' : ''}</button>`;
+  }).join('');
+}
+
+function renderClaims(){
+  const sorted = [...S.claims].sort((a, b) => b.n - a.n);
+  const enabled = isMain();
+  el.claimForm.hidden = !enabled;
+  el.nbSub.textContent = enabled
+    ? 'Hai notato qualcosa? Scrivilo come frase e dimostralo: il Milieu farà di tutto per smentirti.'
+    : `Il taccuino vale per la corsa al ${MAIN.T}. Qui le regole sono diverse: le tue scoperte valgono ancora?`;
+  const rows = [`<li class="claim rule"><span class="txt">Chi dice <b>${MAIN.T}</b> vince.</span><span class="st proved">è la regola</span></li>`];
+  for (const c of sorted){
+    const st = { todo:['todo', 'da dimostrare'], proved:['proved', '✓ dimostrata'], doubt:['doubt', `in dubbio${c.tries > 1 ? ' ×' + c.tries : ''}`] }[c.status];
+    const canProve = enabled && c.status !== 'proved' && !S.proof && !S.busy;
+    rows.push(`<li class="claim" data-n="${c.n}"><span class="txt">Chi dice <b>${c.n}</b> vince sempre.</span><span class="st ${st[0]}">${st[1]}</span>` +
+      (c.status !== 'proved' ? `<button class="mini" type="button" data-prove="${c.n}" ${canProve ? '' : 'disabled'}>Dimostra</button><button class="mini x" type="button" data-del="${c.n}" aria-label="Cancella la frase su ${c.n}" ${S.proof ? 'disabled' : ''}>✕</button>` : '') +
+      `</li>`);
+  }
+  el.claims.innerHTML = rows.join('');
+  const p = provedSet().size;
+  el.claimsNote.textContent = S.claims.length ? `${plural(p, 'scoperta dimostrata', 'scoperte dimostrate')}. Le stelle ★ sulla pista le ricordano.` : '';
+}
+
+function render(pop){ renderTrack(); renderMoves(); renderDuel(pop); renderLog(); renderScore(); renderClaims(); }
+
+/* ---------------- Partita ---------------- */
+function setMission(){
+  const L = LEVELS[S.idx];
+  el.mission.classList.toggle('proof', !!S.proof);
+  el.btnAbort.hidden = !S.proof;
+  if (S.proof){
+    el.mBadge.textContent = 'Dimostrazione';
+    el.mTitle.textContent = `Chi dice ${S.proof.n} vince sempre?`;
+    el.mText.textContent = `Hai appena detto ${S.proof.n}: ora tocca al Milieu, che proverà in ogni modo a dire ${S.T} prima di te. Vinci e la frase è dimostrata.`;
+    return;
+  }
+  el.mBadge.textContent = S.idx < CHALLENGE ? `Livello ${S.idx + 1}` : 'Sfida';
+  el.mTitle.textContent = S.idx === CHALLENGE ? `La corsa al ${S.T}` : L.title;
+  el.mText.textContent = S.idx === CHALLENGE
+    ? `Stesso gioco, nuove regole: si aggiunge da 1 a ${S.K} e vince chi dice ${S.T}. Le tue scoperte funzionano ancora?`
+    : L.mission;
+}
+
+function newGame(opts = {}){
+  S.token++;
+  if (el.dlg.open) el.dlg.close();
+  S.proof = opts.proof ?? null;
+  S.over = false; S.busy = false;
+  if (S.proof){ S.n = S.proof.n; S.hist = [{ v:S.proof.n, who:'me' }]; S.turn = 'mil'; }
+  else { S.n = 0; S.hist = []; S.turn = S.starter; }
+  el.endbar.hidden = true;
+  setMission();
+  render();
+  if (S.proof){
+    feedback('info', 'Dimostrazione', `Partiamo da <strong>${S.n}</strong>, detto da te. Il Milieu risponde: tu devi arrivare a ${S.T} qualunque cosa faccia.`);
+  } else if (S.turn === 'mil'){
+    feedback('info', 'Osserva', 'Comincia il Milieu.');
+  } else {
+    feedback('info', 'Osserva', S.idx === 0 && !S.score.me && !S.score.mil
+      ? `Tocca a te: di’ 1 o 2 (premi <strong>+1</strong> o <strong>+2</strong>, oppure tocca la casella). Poi il Milieu aggiungerà 1 o 2 al tuo numero, e così via fino a ${S.T}.`
+      : `Tocca a te. Puoi dire ${options().map(s => S.n + s).join(' o ')}.`);
+  }
+  if (S.turn === 'mil') milieuTurn();
+}
+
+function play(step){
+  if (S.over || S.busy || S.turn !== 'me' || !options().includes(step)) return;
+  S.n += step;
+  S.hist.push({ v:S.n, who:'me', step });
+  if (S.n === S.T) return end('me');
+  S.turn = 'mil';
+  render(true);
+  milieuTurn();
+}
+
+async function milieuTurn(){
+  const token = S.token;
+  S.busy = true; render();
+  await wait(S.hist.length ? 750 : 500);
+  if (token !== S.token) return;
+  const step = milieuStep();
+  S.n += step;
+  S.hist.push({ v:S.n, who:'mil', step });
+  S.busy = false;
+  if (S.n === S.T) return end('mil');
+  S.turn = 'me';
+  render(true);
+  feedback('info', 'Tocca a te', `Il Milieu ha aggiunto ${step} e ha detto <strong>${S.n}</strong>. Puoi dire ${options().map(s => S.n + s).join(' o ')}.`);
+}
+
+function end(who){
+  S.over = true; S.busy = false; S.turn = null;
+  render(true);
+  const proof = S.proof;
+  if (proof) return endProof(proof.n, who === 'me');
+  S.score[who]++;
+  renderScore();
+  el.endbar.hidden = false;
+  el.endbar.className = 'endbar ' + (who === 'me' ? 'won' : 'lost');
+  el.btnAgain.textContent = who === 'me' ? 'Gioca ancora' : 'Rivincita';
+  if (who === 'mil'){
+    el.endText.textContent = `Il Milieu ha detto ${S.T}.`;
+    const mine = S.hist.filter(h => h.who === 'me').map(h => h.v);
+    feedback('error', 'Ha vinto il Milieu', S.idx === 0
+      ? 'Ripensa alla fine della partita: da quale numero in poi il Milieu era sicuro di vincere?'
+      : `Hai detto ${mine.length ? mine.join(', ') : 'nessun numero'}. In quale momento la partita era già decisa?`);
+    return;
+  }
+  el.endText.textContent = `Hai detto ${S.T}: hai vinto!`;
+  feedback('win', 'Hai vinto!', 'Saresti capace di rifarlo? Prova anche a far cominciare l’altro.');
+  win();
+}
+
+function endProof(n, ok){
+  const c = S.claims.find(c => c.n === n);
+  el.endbar.hidden = false;
+  if (ok){
+    c.status = 'proved';
+    store.set('corsa20.claims', S.claims);
+    el.endbar.className = 'endbar won';
+    el.endText.textContent = `Dimostrato: chi dice ${n} vince sempre.`;
+    el.btnAgain.textContent = 'Torna a giocare';
+    renderClaims(); renderTrack();
+    const proved = provedSet();
+    const missing = MAIN_CHAIN.filter(v => !proved.has(v));
+    if (!missing.length) return completeNotebook();
+    const hint = proved.has(MAIN_CHAIN[0])
+      ? 'Ripercorri la dimostrazione: quali altri numeri hai detto prima di arrivare al traguardo? Anche quelli meritano una riga nel taccuino.'
+      : 'Dopo il Milieu, quale numero hai scelto ogni volta? C’è un altro numero, più piccolo, che ti porta qui in modo sicuro?';
+    feedback('ok', 'Frase dimostrata', `Hai vinto partendo da ${n}, nonostante il Milieu. ${hint}`);
+    flashClaim(n);
+  } else {
+    c.status = 'doubt'; c.tries = (c.tries || 0) + 1;
+    store.set('corsa20.claims', S.claims);
+    el.endbar.className = 'endbar lost';
+    el.endText.textContent = `Il Milieu ha detto ${S.T}: la frase su ${n} resta in dubbio.`;
+    el.btnAgain.textContent = 'Torna a giocare';
+    renderClaims();
+    feedback('tilt', 'Non dimostrata', `Il Milieu è riuscito a dire ${S.T}. La frase è falsa, oppure c’era una mossa migliore della tua? Puoi riprovare quando vuoi.`);
+  }
+}
+
+function flashClaim(n){
+  const li = el.claims.querySelector(`[data-n="${n}"]`);
+  if (li && !reduceMotion){ li.classList.remove('flash'); void li.offsetWidth; li.classList.add('flash'); }
+}
+
+function markDone(i){
+  const done = store.get('corsa20.done', []);
+  if (!done.includes(i)){ done.push(i); store.set('corsa20.done', done); }
+  if (i + 2 > S.unlocked && i < CHALLENGE){ S.unlocked = i + 2; store.set('corsa20.unlocked', S.unlocked); }
+  renderLevels();
+}
+
+function showDialog(title, text, extra, reflect, nextLabel){
+  el.winTitle.textContent = title;
+  el.winText.innerHTML = text;
+  el.winExtra.innerHTML = extra || '';
+  el.winReflect.innerHTML = reflect;
+  el.winReflect.hidden = !reflect;
+  el.dlgNext.textContent = nextLabel;
+  el.dlg.showModal();
+  if (!reduceMotion) fx.confetti();
+}
+
+function win(){
+  const i = S.idx;
+  const mine = S.hist.filter(h => h.who === 'me').map(h => h.v);
+  if (i === 0){
+    markDone(0);
+    showDialog('Hai detto 20!', 'Hai battuto il Milieu principiante.', '',
+      'Ti sei accorto che, a un certo punto, la partita era già decisa? Da quale numero in poi eri sicuro di vincere? Se hai un’idea, scrivila nel <strong>taccuino</strong>.',
+      'Livello successivo →');
+  } else if (i === 1){
+    markDone(1);
+    showDialog('Battuto il Milieu esperto!', `I numeri che hai detto: <strong>${mine.join(', ')}</strong>.`, '',
+      'Il Milieu ora non perdona, eppure hai vinto. Sono numeri qualsiasi? Prova a scriverli nel taccuino e a <strong>dimostrarli</strong> uno per uno.',
+      'Livello successivo →');
+  } else if (i === 2){
+    feedback('win', 'Hai vinto!', 'Bella partita. Ora trasforma quello che sai in frasi del taccuino e dimostrale.');
+  } else {
+    markDone(CHALLENGE);
+    const chain = []; for (let v = S.T; v > 0; v -= S.K + 1) chain.unshift(v);
+    const first = S.T % (S.K + 1);
+    showDialog(`Hai vinto la corsa al ${S.T}!`, `Si aggiungeva da 1 a ${S.K}: le tue scoperte hanno funzionato anche qui.`,
+      `<div class="chain">${chain.map(v => `<span>${v}</span>`).join('<i>→</i>')}</div>`,
+      `Ogni numero sicuro sta ${S.K + 1} passi prima del successivo, perché ${S.K + 1} = ${S.K} + 1: qualunque cosa aggiunga l’avversario, tu completi fino a ${S.K + 1}. ` +
+      (first ? `Chi comincia dicendo ${first} vince sempre.` : `Qui ${S.T} è multiplo di ${S.K + 1}: conviene far cominciare l’altro!`),
+      'Nuova sfida →');
+  }
+}
+
+function completeNotebook(){
+  const already = store.get('corsa20.done', []).includes(2);
+  markDone(2);
+  feedback('win', 'Taccuino completo', 'Ogni numero sicuro, dal primo all’ultimo, è dimostrato.');
+  showDialog('Il taccuino è completo!', 'Hai dimostrato tutti i numeri che fanno vincere sempre:',
+    `<div class="chain">${[...MAIN_CHAIN, MAIN.T].map(v => `<span>${v}</span>`).join('<i>→</i>')}</div>`,
+    `Ogni numero sicuro si ottiene dal successivo togliendo <strong>3</strong>, perché 3 = 1 + 2: se l’avversario aggiunge 1 tu aggiungi 2, se aggiunge 2 tu aggiungi 1. ` +
+    `Sono i numeri che divisi per 3 danno resto 2, e chi comincia dicendo <strong>2</strong> vince sempre.`,
+    already ? 'Vai alla sfida →' : 'Sblocca la sfida →');
+}
+
+/* ---------------- Taccuino ---------------- */
+el.claimForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const n = Number(el.claimN.value);
+  if (!Number.isInteger(n) || n < 1 || n >= MAIN.T){
+    feedback('tilt', 'Attento', `Scrivi un numero intero da 1 a ${MAIN.T - 1}.`);
+    el.claimN.focus(); return;
+  }
+  el.claimN.value = '';
+  if (S.claims.some(c => c.n === n)){
+    feedback('info', 'È già nel taccuino', `La frase su ${n} c’è già.`);
+    renderClaims(); flashClaim(n); return;
+  }
+  S.claims.push({ n, status:'todo', tries:0 });
+  store.set('corsa20.claims', S.claims);
+  renderClaims(); flashClaim(n);
+  feedback('info', 'Scritta', S.proof || S.busy ? `Frase su ${n} aggiunta: dimostrala quando hai finito.` : `Ora premi <strong>Dimostra</strong>: partirai da ${n} e il Milieu proverà a batterti.`);
+});
+el.claims.addEventListener('click', e => {
+  const p = e.target.closest('[data-prove]'), d = e.target.closest('[data-del]');
+  if (p && !p.disabled){ const n = +p.dataset.prove; newGame({ proof:{ n } }); el.track.scrollIntoView({ block:'nearest', behavior: reduceMotion ? 'auto' : 'smooth' }); }
+  if (d && !d.disabled){ S.claims = S.claims.filter(c => c.n !== +d.dataset.del); store.set('corsa20.claims', S.claims); renderClaims(); renderTrack(); }
+});
+
+/* ---------------- Livelli ---------------- */
+function startLevel(i){
+  if (i + 1 > S.unlocked) return;
+  S.idx = i;
+  if (i === CHALLENGE){
+    for (;;){
+      S.K = 2 + Math.floor(Math.random() * 3);              // da 1 a 2, 3 o 4
+      S.T = 21 + Math.floor(Math.random() * 20);            // traguardo tra 21 e 40
+      if (!(S.T === MAIN.T && S.K === MAIN.K)) break;
+    }
+  } else { S.T = MAIN.T; S.K = MAIN.K; }
+  S.score = { me:0, mil:0 };
+  S.starter = 'me';
+  renderLevels();
+  newGame();
+}
+
+/* ---------------- Effetti ---------------- */
+const fx = (() => {
+  const c = $('#fx'), ctx = c.getContext('2d'); let parts = [], raf = 0, W = 0, H = 0;
+  function size(){ const d = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  function tick(){
+    ctx.clearRect(0, 0, W, H);
+    parts = parts.filter(p => p.life > 0);
+    for (const p of parts){
+      p.vy += .18; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = Math.min(1, p.life / 30); ctx.fillStyle = p.col;
+      ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
+    }
+    raf = parts.length ? requestAnimationFrame(tick) : 0;
+  }
+  function confetti(){
+    size();
+    const cols = ['#4338ca', '#6b3fd1', '#ffd166', '#f0a24a', '#2bb39f', '#e5675b'];
+    for (let i = 0; i < 140; i++) parts.push({ x: W / 2 + (Math.random() - .5) * W * .4, y: H * .35, vx: (Math.random() - .5) * 14, vy: -Math.random() * 12 - 4,
+      r: Math.random() * 6, vr: (Math.random() - .5) * .3, s: 7 + Math.random() * 7, life: 90 + Math.random() * 60, col: cols[i % cols.length] });
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+  addEventListener('resize', () => { if (raf) size(); });
+  return { confetti };
+})();
+
+/* ---------------- Collegamenti ---------------- */
+el.moves.addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (b && !b.disabled) play(+b.dataset.step); });
+el.track.addEventListener('click', e => { const t = e.target.closest('.tile.next'); if (t) play(+t.dataset.v - S.n); });
+el.levels.addEventListener('click', e => { const b = e.target.closest('.lvl'); if (b && !b.disabled) startLevel(+b.dataset.i); });
+el.starts.forEach(b => b.addEventListener('click', () => { if (S.proof) return; S.starter = b.dataset.start; newGame(); }));
+el.btnAgain.addEventListener('click', () => newGame());
+el.btnAbort.addEventListener('click', () => { newGame(); feedback('info', 'Dimostrazione annullata', 'Puoi riprovarla dal taccuino quando vuoi.'); });
+$('#dlgStay').addEventListener('click', () => el.dlg.close());
+el.dlgNext.addEventListener('click', () => {
+  el.dlg.close();
+  if (S.idx === CHALLENGE) startLevel(CHALLENGE);
+  else if (S.idx === 2 || S.proof) startLevel(Math.min(S.unlocked - 1, CHALLENGE));
+  else startLevel(Math.min(S.idx + 1, S.unlocked - 1));
+});
+document.addEventListener('keydown', e => {
+  if (el.dlg.open || e.target.closest('input')) return;
+  const s = Number(e.key);
+  if (Number.isInteger(s) && s >= 1 && s <= S.K) play(s);
+});
+document.addEventListener('pointerdown', e => {
+  const host = e.target.closest('.btn, .pill');
+  if (!host || host.disabled || reduceMotion) return;
+  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
+  const sp = document.createElement('span');
+  sp.className = 'rip';
+  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
+  host.appendChild(sp);
+  setTimeout(() => sp.remove(), 600);
+});
+let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(renderTrack, 120); });
+
+startLevel(0);
+})();
+</script>
+</body>
+</html>

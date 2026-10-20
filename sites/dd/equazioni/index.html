@@ -1,0 +1,1010 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Bilancia delle Equazioni</title>
+<meta name="description" content="Scopri le equazioni di primo grado con una bilancia a bracci uguali: un milieu antagonista ispirato alla Teoria delle Situazioni Didattiche di Brousseau.">
+<meta name="dd:tags" content="algebra, equazioni, Brousseau">
+<meta name="dd:date" content="2026-10-20">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/_shared/dd.css">
+<style>
+:root{
+  --bg:#eef1fa; --card:#ffffff; --ink:#1b1f3b; --muted:#454b6b; --line:#d6dbee;
+  --primary:#4338ca; --primary-dark:#3730a3; --primary-soft:#ebeaff;
+  --ok:#0b6b62; --ok-soft:#dcf5f0; --ok-line:#2bb39f;
+  --tilt:#8a3c00; --tilt-soft:#fff2df; --tilt-line:#f0a24a;
+  --err:#a1190f; --err-soft:#fde8e6; --err-line:#e5675b;
+  --win:#6b3fd1; --win-soft:#f1ebff; --win-line:#9b7af5;
+  --radius:18px;
+  --shadow:0 1px 2px rgba(27,31,59,.06),0 10px 30px rgba(27,31,59,.08);
+  --wobble:cubic-bezier(.34,1.56,.64,1);
+  --font:Inter,"Segoe UI",Roboto,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --math:"Cambria Math","STIX Two Math","Latin Modern Math",Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+html{font-size:clamp(14px,.32vw + 11.5px,19px);height:100%}
+body{margin:0;height:100%;overflow:hidden;font-family:var(--font);color:var(--ink);line-height:1.45;
+  background:radial-gradient(1200px 600px at 10% -10%,#e2e6ff 0%,transparent 60%),
+             radial-gradient(900px 500px at 110% 10%,#ffeedd 0%,transparent 55%),var(--bg)}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:8px}
+button{font:inherit}
+
+/* ---------- App frame: everything fits the viewport ---------- */
+.app{height:100vh;height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding:10px 16px 14px}
+.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#5b50e6,#3a2fb8);display:grid;place-items:center;box-shadow:0 6px 16px rgba(67,56,202,.35);flex:none}
+.brand h1{font-size:1.2rem;margin:0;letter-spacing:-.01em;line-height:1.15}
+.brand p{margin:1px 0 0;color:var(--muted);font-size:.82rem}
+@media (max-height:760px){.brand p{display:none}}
+.levels{display:flex;gap:6px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
+.lvl{font-weight:700;font-size:.88rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:7px 12px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s,transform .12s}
+.lvl:hover:not(:disabled){background:var(--primary-soft)}
+.lvl:active:not(:disabled){transform:scale(.96)}
+.lvl.active{background:var(--primary);color:#fff}
+.lvl:disabled{color:#6b7090;cursor:not-allowed;background:#f3f4f9}
+.lvl .done{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:.7rem}
+.lvl.active .done{background:rgba(255,255,255,.25);color:#fff}
+.top-tools{display:flex;align-items:center;gap:12px}
+.switch-row{display:flex;align-items:center;gap:8px;font-weight:650;font-size:.9rem}
+
+.layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(290px,25vw,370px);gap:14px}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid #e4e7f4}
+.stage-card{display:flex;flex-direction:column;gap:10px;padding:14px;min-height:0}
+.mission{flex:none;display:flex;gap:12px;align-items:baseline}
+.mission-badge{flex:none;background:var(--primary-soft);color:var(--primary-dark);font-weight:800;border-radius:10px;padding:4px 10px;font-size:.78rem;letter-spacing:.03em;text-transform:uppercase}
+.mission h2{display:inline;margin:0 6px 0 0;font-size:1.05rem}
+.mission p{display:inline;margin:0;color:var(--muted);font-size:.92rem}
+
+.stage-area{flex:1;min-height:0;container-type:size;display:grid;place-items:center}
+.stage{position:relative;width:min(100cqw,calc(100cqh * 1.389));aspect-ratio:100/72;container-type:inline-size;border-radius:16px;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 0%,#ffffff 0%,#f4f6fd 55%,#e7ebf8 100%);
+  border:2px solid #e1e5f3;transition:box-shadow .4s,border-color .4s}
+.stage[data-state="tilt"]{border-color:var(--tilt-line);box-shadow:inset 0 0 0 2px rgba(240,162,74,.25)}
+.stage[data-state="ok"]{border-color:#bfe7df}
+.stage.won{border-color:var(--win-line);box-shadow:0 0 0 4px rgba(155,122,245,.25)}
+.stage-inner{position:relative;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none;
+  --ball:3.4cqi; --box:6cqi; --panW:30cqi; --panH:28cqi}
+@container (max-width:520px){ .stage-inner{--ball:4cqi;--box:6.8cqi;--panW:32cqi} }
+
+/* ---------- Scale ---------- */
+.scale{position:absolute;inset:0}
+.scale.shake{animation:shake .55s ease-in-out}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-1.1cqi)}30%{transform:translateX(1cqi)}45%{transform:translateX(-.7cqi)}60%{transform:translateX(.5cqi)}75%{transform:translateX(-.25cqi)}}
+.gauge{position:absolute;left:calc(50% - 10cqi);top:4cqi;width:20cqi;height:11cqi;overflow:visible;pointer-events:none}
+.gauge .arc{fill:none;stroke:#c8cde3;stroke-width:3}
+.gauge .tick{stroke:#9aa1c0;stroke-width:2.5;stroke-linecap:round}
+.gauge .tick.zero{stroke:var(--ok);stroke-width:4}
+.floor{position:absolute;left:50%;bottom:1.2cqi;width:40cqi;height:3cqi;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(30,34,70,.18),transparent 70%)}
+.post{position:absolute;left:50%;top:15cqi;bottom:4.2cqi;width:2.4cqi;transform:translateX(-50%);background:linear-gradient(90deg,#3f4566,#8b93b7 45%,#3f4566);border-radius:1cqi}
+.base{position:absolute;left:50%;bottom:2cqi;width:22cqi;height:3cqi;transform:translateX(-50%);background:linear-gradient(#5a6286,#343a5a);border-radius:1.6cqi 1.6cqi .8cqi .8cqi;box-shadow:0 .6cqi 1cqi rgba(30,34,70,.25)}
+.beam-wrap{position:absolute;left:14cqi;width:72cqi;top:14cqi;height:1.8cqi}
+.beam{position:absolute;inset:0;transform-origin:50% 50%;transition:transform 1s var(--wobble);background:linear-gradient(180deg,#8790b4,#444b6f);border-radius:99px;box-shadow:0 .5cqi 1cqi rgba(30,34,70,.25)}
+.needle{position:absolute;left:50%;bottom:50%;width:.7cqi;height:8cqi;transform:translateX(-50%);background:linear-gradient(#e5484d,#a1190f);border-radius:99px 99px 0 0;pointer-events:none}
+.pivot{position:absolute;left:50%;top:14.9cqi;width:3.4cqi;height:3.4cqi;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3c4,#f2b632 55%,#b9790c);border:.35cqi solid #2f3452;z-index:3;transition:box-shadow .5s;pointer-events:none}
+.stage.won .pivot{box-shadow:0 0 0 1cqi rgba(242,182,50,.35),0 0 4cqi 1cqi rgba(242,182,50,.6)}
+.hanger{position:absolute;top:50%;width:0;height:0}
+.hanger.l{left:4cqi}.hanger.r{right:4cqi}
+.pan{position:absolute;left:0;top:0;width:var(--panW);height:var(--panH);transform-origin:50% 0;transform:translateX(-50%) rotate(0deg);transition:transform 1s var(--wobble);border-radius:1.2cqi}
+.no-anim .beam,.no-anim .pan{transition:none!important}
+.hook{position:absolute;left:50%;top:-1cqi;width:2cqi;height:2cqi;border-radius:50%;transform:translateX(-50%);background:#2f3452;border:.4cqi solid #c9cee3;z-index:2}
+.strings{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.strings path{stroke:#6b7392;stroke-width:2;fill:none;vector-effect:non-scaling-stroke}
+.plate{position:absolute;left:0;right:0;bottom:0;height:2.6cqi;background:linear-gradient(#a3abcb,#4f577b);border-radius:.4cqi .4cqi 50% 50%/.4cqi .4cqi 100% 100%;box-shadow:0 1.1cqi 1.4cqi -.7cqi rgba(30,34,70,.45);transition:box-shadow .2s}
+.pan-label{position:absolute;top:calc(100% + .7cqi);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:clamp(10px,1.5cqi,15px);font-weight:800;letter-spacing:.09em;color:var(--muted);text-transform:uppercase;pointer-events:none}
+.drop-ring{position:absolute;left:2%;right:2%;top:12%;bottom:-.6cqi;border:.3cqi dashed transparent;border-radius:1.4cqi;transition:border-color .2s,background .2s;pointer-events:none}
+.stage.dragging .drop-ring,.stage.holding .drop-ring{border-color:#9ea5c9}
+.pan.over .drop-ring{border-color:var(--primary);background:rgba(67,56,202,.08)}
+.pan.over .plate{box-shadow:0 0 0 .5cqi rgba(67,56,202,.45),0 1.1cqi 1.4cqi -.7cqi rgba(30,34,70,.45)}
+.pan:focus-visible{outline:.4cqi solid var(--primary);outline-offset:.4cqi}
+
+.items{position:absolute;left:6%;right:6%;bottom:2.4cqi;top:14%;display:flex;flex-wrap:wrap-reverse;justify-content:center;align-content:flex-start;align-items:flex-end;gap:.45cqi;z-index:1}
+.items.dense{--k:.82}
+.items.nope{animation:nope .45s ease-in-out}
+@keyframes nope{0%,100%{transform:translateX(0)}20%{transform:translateX(-.8cqi)}40%{transform:translateX(.8cqi)}60%{transform:translateX(-.5cqi)}80%{transform:translateX(.4cqi)}}
+
+.item{position:relative;flex:none}
+.ball{width:calc(var(--ball)*var(--k,1));height:calc(var(--ball)*var(--k,1));border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#fff1cf 0 14%,#ffb547 42%,#e07000 100%);border:max(1px,.18cqi) solid #9a4a00;box-shadow:0 .25cqi .5cqi rgba(120,60,0,.3);transition:transform .2s var(--wobble),box-shadow .2s}
+.items .ball{cursor:grab}
+.items .ball:hover{transform:translateY(-.4cqi) scale(1.1)}
+.ball.held{transform:translateY(-1.3cqi) scale(1.25)!important;box-shadow:0 0 0 .35cqi #fff,0 0 0 .75cqi var(--primary),0 1cqi 1.5cqi rgba(0,0,0,.25);z-index:4}
+.box{width:calc(var(--box)*var(--k,1));height:calc(var(--box)*var(--k,1)*.86);border-radius:calc(var(--box)*.15);
+  background:linear-gradient(160deg,#8f72f7,#5634cf);border:max(1.5px,.22cqi) solid #351a9c;color:#fff;display:grid;place-items:center;
+  font:italic 700 calc(var(--box)*var(--k,1)*.46)/1 var(--math);box-shadow:inset 0 -.5cqi 0 rgba(0,0,0,.2),0 .4cqi .9cqi rgba(53,26,156,.3);cursor:not-allowed}
+.box::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:16%;transform:translateX(-50%);background:rgba(255,255,255,.2)}
+.box .lbl{position:relative;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.box .xv{display:none}
+body.sym-on .box .xv{display:inline}
+body.sym-on .box .q{display:none}
+.box .num{font-style:normal;font-family:var(--font);font-size:calc(var(--box)*var(--k,1)*.4)}
+.box.probe{background:linear-gradient(160deg,#ffd166,#f2a516);border-color:#8a5a00;color:#2b1d00;animation:pulse 1s ease-in-out infinite}
+.box.probe .lbl{text-shadow:none}
+.box.reveal{animation:flip .7s ease both;background:linear-gradient(160deg,#25c2a8,#0b7a6c);border-color:#06473f}
+@keyframes flip{0%{transform:rotateY(0)}50%{transform:rotateY(90deg)}100%{transform:rotateY(0)}}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.item.pop{animation:pop .45s var(--wobble) both;animation-delay:var(--delay,0ms)}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.item.fly{animation:fly .65s cubic-bezier(.45,0,.7,.2) forwards;animation-delay:var(--delay,0ms);z-index:5}
+@keyframes fly{0%{transform:translate(0,0) scale(1);opacity:1}25%{transform:translate(0,-1.6cqi) scale(1.2);opacity:1}100%{transform:translate(var(--dx,2cqi),-26cqi) rotate(var(--rot,180deg)) scale(.35);opacity:0}}
+
+/* ---------- Division view ---------- */
+.items.split{top:36%;flex-wrap:nowrap;align-items:stretch;align-content:stretch;justify-content:stretch;gap:0}
+.grp{position:relative;flex:1 1 0;min-width:0;display:flex;flex-wrap:wrap-reverse;align-content:flex-start;justify-content:center;align-items:flex-end;gap:.3cqi;padding:2.6cqi .25cqi .3cqi;border-radius:.8cqi;animation:pop .35s var(--wobble) both}
+.grp+.grp{border-left:.28cqi dashed #7d84a9}
+.grp::before{content:attr(data-label);position:absolute;top:0;left:50%;transform:translateX(-50%);min-width:2.3cqi;height:2.3cqi;padding:0 .5cqi;border-radius:99px;background:#fff;border:.2cqi solid var(--gc,#4338ca);color:var(--ink);font:800 clamp(9px,1.3cqi,13px)/1 var(--font);display:grid;place-items:center;white-space:nowrap}
+.grp.first{background:rgba(43,179,159,.12)}
+.grp.extra{flex:0 0 auto;min-width:5cqi;border:.3cqi dashed var(--err)!important;background:rgba(229,103,91,.14);margin-left:.4cqi}
+.grp.extra::before{border-color:var(--err);color:var(--err)}
+.stage.splitting .items .ball{cursor:default}
+.stage.splitting .items .ball:hover{transform:none}
+
+/* ---------- Supply & trash ---------- */
+.zone{position:absolute;bottom:1.2cqi;display:flex;flex-direction:column;align-items:center;gap:.6cqi;cursor:grab;border-radius:1.4cqi;padding:.6cqi;transition:transform .2s var(--wobble),background .2s,box-shadow .2s}
+.zone:focus-visible{outline:.4cqi solid var(--primary);outline-offset:.2cqi}
+.zone-label{font-size:clamp(10px,1.45cqi,15px);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.supply{left:2cqi;width:18cqi}
+.crate{position:relative;width:15cqi;height:9cqi}
+.crate .heap{position:absolute;left:1cqi;right:1cqi;bottom:4.6cqi;display:flex;flex-wrap:wrap-reverse;justify-content:center;gap:.25cqi}
+.crate .heap .ball{--k:.82;transition:none}
+.crate .front{position:absolute;left:0;right:0;bottom:0;height:5.4cqi;border-radius:.6cqi .6cqi 1cqi 1cqi;
+  background:repeating-linear-gradient(180deg,#c98a4b 0 1.6cqi,#b77838 1.6cqi 1.8cqi);border:.3cqi solid #7a4a1a;box-shadow:0 .6cqi 1cqi rgba(80,40,0,.25);
+  display:grid;place-items:center;color:#fff;font:800 clamp(10px,1.8cqi,18px)/1 var(--font);text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.trash{right:2cqi;width:13cqi;cursor:pointer}
+.trash svg{width:9cqi;height:10cqi;overflow:visible}
+.trash .lid{transform-origin:15% 100%;transition:transform .25s var(--wobble)}
+.stage.dragging .trash .lid,.stage.holding .trash .lid{transform:rotate(-12deg)}
+.zone.over{background:rgba(67,56,202,.1);box-shadow:0 0 0 .35cqi var(--primary);transform:scale(1.06)}
+.trash.over .lid{transform:rotate(-38deg)!important}
+.supply.held{box-shadow:0 0 0 .35cqi var(--primary);background:rgba(67,56,202,.08)}
+.zone.bump{animation:bump .4s var(--wobble)}
+@keyframes bump{40%{transform:scale(1.12) rotate(-3deg)}}
+.stage.splitting .zone{opacity:.45;cursor:not-allowed}
+
+.ghost{position:fixed;z-index:60;pointer-events:none;transform:translate(-50%,-50%) scale(1.15);box-shadow:0 10px 22px rgba(120,60,0,.35);transition:none!important}
+
+/* ---------- Under stage ---------- */
+.readout{flex:none;display:flex;align-items:stretch;gap:12px}
+.status{flex:none;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;font-weight:800;border:2px solid;font-size:.95rem;align-self:center;transition:background .3s,color .3s,border-color .3s}
+.status .ico{font-size:1.1rem;line-height:1}
+.status.ok{background:var(--ok-soft);color:var(--ok);border-color:var(--ok-line)}
+.status.tilt{background:var(--tilt-soft);color:var(--tilt);border-color:var(--tilt-line)}
+.status.win{background:var(--win-soft);color:var(--win);border-color:var(--win-line)}
+.eqbox{flex:1;min-height:52px;border-radius:14px;background:#f7f8fd;border:2px dashed #cfd5ec;display:grid;place-items:center;padding:6px 12px;text-align:center}
+.eqbox .sym{display:none}
+body.sym-on .eqbox .sym{display:flex}
+body.sym-on .eqbox .nosym{display:none}
+.eq{align-items:center;justify-content:center;gap:.45em;font:500 clamp(1.2rem,2.4vw,1.9rem)/1.15 var(--math)}
+.eq i{font-style:italic;color:#4a2bc2;font-weight:600}
+.eq .rel{font-style:normal;font-weight:700}
+.eq .rel.ne{color:var(--tilt)} .eq .rel.eqs{color:var(--ok)}
+.nosym{margin:0;color:var(--muted);font-size:.85rem}
+
+/* ---------- Panel ---------- */
+.panel{min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.feedback{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:14px;border-left:6px solid;font-size:.93rem;transition:background .3s,border-color .3s;min-height:92px}
+.feedback .fb-ico{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:#fff;font-size:.9rem}
+.feedback.info{background:#eef0ff;border-color:var(--primary)} .feedback.info .fb-ico{background:var(--primary)}
+.feedback.ok{background:var(--ok-soft);border-color:var(--ok-line)} .feedback.ok .fb-ico{background:var(--ok)}
+.feedback.tilt{background:var(--tilt-soft);border-color:var(--tilt-line)} .feedback.tilt .fb-ico{background:#b45309}
+.feedback.error{background:var(--err-soft);border-color:var(--err-line)} .feedback.error .fb-ico{background:var(--err)}
+.feedback.win{background:var(--win-soft);border-color:var(--win-line)} .feedback.win .fb-ico{background:var(--win)}
+.feedback p{margin:2px 0 0}
+.tool{border:2px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
+.tool h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px}
+.tool .sub{margin:0;font-size:.84rem;color:var(--muted)}
+.pills{display:flex;gap:6px}
+.pill{flex:1;height:42px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:800;font-size:1.05rem;color:var(--ink);cursor:pointer;transition:transform .12s,border-color .2s,background .2s}
+.pill:hover:not(:disabled){border-color:var(--primary)}
+.pill:active:not(:disabled){transform:scale(.94)}
+.pill[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
+.pill:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{position:relative;overflow:hidden;font-weight:750;border-radius:12px;padding:9px 14px;border:2px solid var(--primary);background:var(--primary);color:#fff;cursor:pointer;transition:transform .12s,background .2s,box-shadow .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover:not(:disabled){background:var(--primary-dark);box-shadow:0 6px 16px rgba(67,56,202,.25)}
+.btn:active:not(:disabled){transform:scale(.96)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost-btn{background:#fff;color:var(--primary-dark)}
+.btn.ghost-btn:hover:not(:disabled){background:var(--primary-soft)}
+.btn.grow{flex:1}
+.num-input{font:800 1.1rem var(--font);width:76px;height:42px;border:2px solid var(--line);border-radius:12px;text-align:center;color:var(--ink);background:#fff;-moz-appearance:textfield}
+.num-input:focus{border-color:var(--primary)}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.switch{position:relative;width:54px;height:30px;border-radius:999px;border:2px solid #8a91b1;background:#e5e8f4;cursor:pointer;flex:none;transition:background .25s,border-color .25s;padding:0}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .25s var(--wobble)}
+.switch[aria-checked="true"]{background:var(--primary);border-color:var(--primary)}
+.switch[aria-checked="true"]::after{transform:translateX(24px)}
+.switch .st{position:absolute;font:800 .58rem var(--font);top:50%;transform:translateY(-50%);color:#454b6b}
+.switch .st.on{left:6px;color:#fff;display:none}.switch .st.off{right:5px}
+.switch[aria-checked="true"] .st.on{display:block}.switch[aria-checked="true"] .st.off{display:none}
+details.diario{border:2px solid var(--line);border-radius:14px;padding:0 12px}
+details.diario summary{cursor:pointer;font-weight:750;font-size:.95rem;padding:10px 0;display:flex;align-items:center;gap:8px;list-style:none}
+details.diario summary::-webkit-details-marker{display:none}
+details.diario summary::before{content:"▸";transition:transform .2s;color:var(--primary)}
+details.diario[open] summary::before{transform:rotate(90deg)}
+.count{margin-left:auto;background:var(--primary-soft);color:var(--primary-dark);border-radius:99px;padding:1px 9px;font-size:.8rem}
+.log{list-style:none;margin:0 0 10px;padding:0;max-height:min(30vh,240px);overflow:auto;display:flex;flex-direction:column;gap:6px}
+.log li{display:flex;gap:9px;align-items:flex-start;font-size:.84rem;padding:7px 9px;border-radius:10px;background:#f7f8fd;border:1px solid #e6e9f5}
+.log .n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--primary-soft);color:var(--primary-dark);font-weight:800;display:grid;place-items:center;font-size:.75rem}
+.log .res{font-weight:750}
+.log .res.ok{color:var(--ok)} .log .res.tilt{color:var(--tilt)} .log .res.win{color:var(--win)}
+.log .sym{display:none;font-family:var(--math);font-size:.95rem;color:#3a2b8f}
+body.sym-on .log .sym{display:block}
+.log-empty{color:var(--muted);font-size:.84rem;margin:0 0 10px}
+.legend{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:.82rem;margin-top:auto}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.lg-box{width:20px;height:17px;border-radius:4px;background:linear-gradient(160deg,#8f72f7,#5634cf);border:1.5px solid #351a9c;flex:none}
+.lg-ball{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff1cf 0 14%,#ffb547 42%,#e07000 100%);border:1px solid #9a4a00;flex:none}
+
+.rip{position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,.4);animation:rip .55s ease-out forwards;pointer-events:none}
+.ghost-btn .rip,.pill .rip{background:rgba(67,56,202,.2)}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+
+/* ---------- Dialog ---------- */
+dialog{border:none;border-radius:24px;padding:0;max-width:min(500px,92vw);box-shadow:0 30px 80px rgba(20,22,60,.35);color:var(--ink)}
+dialog::backdrop{background:rgba(20,22,50,.45);backdrop-filter:blur(3px)}
+dialog[open]{animation:dlg .45s var(--wobble)}
+@keyframes dlg{from{transform:scale(.85) translateY(20px);opacity:0}}
+.dlg-body{padding:24px 26px 20px;text-align:center}
+.trophy{width:76px;height:76px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fff7d6,#ffd166 60%,#f2a516);box-shadow:0 10px 30px rgba(242,165,22,.45)}
+.dlg-body h2{margin:4px 0;font-size:1.4rem}
+.dlg-body p{margin:7px 0;color:var(--muted)}
+.dlg-body .big{font-size:1.08rem;color:var(--ink)}
+.reflect{background:var(--primary-soft);border-radius:14px;padding:11px 13px;text-align:left;color:#2c2780!important;font-weight:600}
+.dlg-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70;width:100vw;height:100vh}
+
+/* ---------- Responsive ---------- */
+@media (max-width:920px){
+  .layout{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
+  .panel{display:grid;grid-template-columns:1fr 1fr;max-height:40vh;align-content:start}
+  .panel .feedback,.panel details.diario{grid-column:1/-1}
+  .legend{display:none}
+  .feedback{min-height:0}
+}
+@media (max-width:620px),(max-height:520px){
+  body{overflow:auto}
+  .app{height:auto;min-height:100dvh}
+  .stage-area{flex:none;container-type:inline-size}
+  .stage{width:100%}
+  .panel{grid-template-columns:1fr;max-height:none}
+  .mission p{display:block}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.15s!important}
+  .beam,.pan{transition:transform .25s ease!important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <a class="dd-back" href="/" aria-label="Tutti gli esperimenti dd" title="Tutti gli esperimenti"><span class="arr" aria-hidden="true">←</span>dd</a>
+      <div class="logo" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 34 34" fill="none">
+          <path d="M5 11h24" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          <path d="M17 7v21M11 28h12" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          <path d="M5 11l-3.5 8h7zM29 11l-3.5 8h7z" stroke="#fff" stroke-width="2" stroke-linejoin="round" fill="rgba(255,255,255,.25)"/>
+          <circle cx="17" cy="7" r="2.6" fill="#ffd166"/>
+        </svg>
+      </div>
+      <div>
+        <h1>La Bilancia delle Equazioni</h1>
+        <p>Scopri quanto pesa una scatola misteriosa… senza aprirla.</p>
+      </div>
+    </div>
+    <nav class="levels" id="levels" aria-label="Livelli"></nav>
+    <div class="top-tools">
+      <div class="switch-row">
+        <span id="symLbl">Simboli</span>
+        <button class="switch" id="symToggle" type="button" role="switch" aria-checked="false" aria-labelledby="symLbl"><span class="st on" aria-hidden="true">SÌ</span><span class="st off" aria-hidden="true">NO</span></button>
+      </div>
+      <button class="btn ghost-btn" type="button" id="btnReset">↺ Azzera livello</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="card stage-card" aria-labelledby="missionTitle">
+      <div class="mission">
+        <span class="mission-badge" id="missionBadge">Livello 1</span>
+        <div><h2 id="missionTitle"></h2><p id="missionText"></p></div>
+      </div>
+
+      <div class="stage-area">
+        <div class="stage" id="stage" data-state="ok">
+          <div class="stage-inner" id="stageInner">
+            <div class="scale" id="scale">
+              <svg class="gauge" viewBox="0 0 200 110" aria-hidden="true">
+                <path class="arc" d="M 22 64 A 90 90 0 0 1 178 64"/>
+                <line class="tick" x1="32.4" y1="70" x2="22" y2="64"/>
+                <line class="tick" x1="55" y1="41.5" x2="49.5" y2="32"/>
+                <line class="tick zero" x1="100" y1="31" x2="100" y2="17"/>
+                <line class="tick" x1="145" y1="41.5" x2="150.5" y2="32"/>
+                <line class="tick" x1="167.6" y1="70" x2="178" y2="64"/>
+              </svg>
+              <div class="floor" aria-hidden="true"></div>
+              <div class="post" aria-hidden="true"></div>
+              <div class="base" aria-hidden="true"></div>
+              <div class="beam-wrap">
+                <div class="beam" id="beam">
+                  <div class="needle" aria-hidden="true"></div>
+                  <div class="hanger l">
+                    <div class="pan" id="panL" data-zone="L" tabindex="0" role="button">
+                      <svg class="strings" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 1 L3 92 M50 1 L97 92"/></svg>
+                      <div class="hook" aria-hidden="true"></div>
+                      <div class="drop-ring" aria-hidden="true"></div>
+                      <div class="items" id="itemsL" aria-hidden="true"></div>
+                      <div class="plate" aria-hidden="true"></div>
+                      <div class="pan-label" aria-hidden="true">Sinistra</div>
+                    </div>
+                  </div>
+                  <div class="hanger r">
+                    <div class="pan" id="panR" data-zone="R" tabindex="0" role="button">
+                      <svg class="strings" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 1 L3 92 M50 1 L97 92"/></svg>
+                      <div class="hook" aria-hidden="true"></div>
+                      <div class="drop-ring" aria-hidden="true"></div>
+                      <div class="items" id="itemsR" aria-hidden="true"></div>
+                      <div class="plate" aria-hidden="true"></div>
+                      <div class="pan-label" aria-hidden="true">Destra</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="pivot" aria-hidden="true"></div>
+            </div>
+
+            <div class="zone supply" id="supply" data-zone="supply" tabindex="0" role="button">
+              <div class="crate" aria-hidden="true">
+                <div class="heap"><i class="ball"></i><i class="ball"></i><i class="ball"></i><i class="ball"></i><i class="ball"></i><i class="ball"></i><i class="ball"></i></div>
+                <div class="front">∞</div>
+              </div>
+              <span class="zone-label" aria-hidden="true">Scorta</span>
+            </div>
+            <div class="zone trash" id="trash" data-zone="trash" tabindex="0" role="button" aria-label="Cestino">
+              <svg viewBox="0 0 90 100" aria-hidden="true">
+                <g class="lid"><rect x="6" y="12" width="78" height="9" rx="4" fill="#5a6286"/><rect x="34" y="5" width="22" height="9" rx="3" fill="#5a6286"/></g>
+                <path d="M14 26h62l-6 66a6 6 0 0 1-6 5H26a6 6 0 0 1-6-5z" fill="#8a93b7" stroke="#3f4566" stroke-width="3"/>
+                <path d="M33 38v46M45 38v46M57 38v46" stroke="#3f4566" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+              </svg>
+              <span class="zone-label">Cestino</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="readout">
+        <div class="status ok" id="status" aria-hidden="true"><span class="ico">⚖</span><span>In equilibrio</span></div>
+        <div class="eqbox" aria-label="Traduzione simbolica">
+          <div class="sym eq" id="eqSym"></div>
+          <p class="nosym">Simboli nascosti: attiva l’interruttore “Simboli” in alto quando ti senti pronto.</p>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card panel" aria-label="Strumenti">
+      <div class="feedback info" id="feedback">
+        <span class="fb-ico" aria-hidden="true" id="fbIco">i</span>
+        <div><strong id="fbTitle">Osserva</strong><p id="fbText"></p></div>
+      </div>
+
+      <section class="tool" aria-labelledby="divTitle">
+        <h3 id="divTitle">✂ Dividi i piatti</h3>
+        <p class="sub" id="divSub">In quante parti uguali vuoi dividere ogni piatto?</p>
+        <div class="pills" role="group" aria-labelledby="divSub">
+          <button class="pill" type="button" data-n="2" aria-pressed="false">2</button>
+          <button class="pill" type="button" data-n="3" aria-pressed="false">3</button>
+          <button class="pill" type="button" data-n="4" aria-pressed="false">4</button>
+          <button class="pill" type="button" data-n="5" aria-pressed="false">5</button>
+        </div>
+        <div class="row" id="splitActions" hidden>
+          <button class="btn grow" type="button" id="btnKeep">Tieni 1 parte per piatto</button>
+          <button class="btn ghost-btn" type="button" id="btnCancelSplit">Annulla</button>
+        </div>
+      </section>
+
+      <section class="tool" aria-labelledby="hypTitle">
+        <h3 id="hypTitle">🔍 Prova un’ipotesi</h3>
+        <form class="row" id="verifyForm">
+          <label class="sr-only" for="guess">Quante palline pesa una scatola?</label>
+          <span aria-hidden="true" style="font-weight:650">1 scatola =</span>
+          <input class="num-input" id="guess" type="number" inputmode="numeric" min="0" max="99" placeholder="?">
+          <button class="btn grow" type="submit" id="btnGuess">Prova</button>
+        </form>
+      </section>
+
+      <details class="diario" id="diario">
+        <summary>Diario delle mosse <span class="count" id="logCount">0</span></summary>
+        <p class="log-empty" id="logEmpty">Nessuna mossa ancora.</p>
+        <ol class="log" id="log"></ol>
+      </details>
+
+      <div class="legend">
+        <span><i class="lg-box" aria-hidden="true"></i>Scatola misteriosa: sigillata, tutte pesano uguale</span>
+        <span><i class="lg-ball" aria-hidden="true"></i>Pallina: peso 1 — trascinala o toccala</span>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<dialog id="winDlg" aria-labelledby="winTitle" aria-describedby="winText">
+  <div class="dlg-body">
+    <div class="trophy" aria-hidden="true">
+      <svg width="42" height="42" viewBox="0 0 46 46"><path d="M23 4l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5L23 32.7l-11.3 5.9 2.2-12.5-9.1-8.9 12.6-1.8z" fill="#fff" stroke="#b9790c" stroke-width="2" stroke-linejoin="round"/></svg>
+    </div>
+    <h2 id="winTitle">Equilibrio trovato!</h2>
+    <p class="big" id="winText"></p>
+    <p id="winSym"></p>
+    <p id="winMoves"></p>
+    <p class="reflect" id="winReflect"></p>
+    <div class="dlg-actions">
+      <button class="btn ghost-btn" type="button" id="dlgStay">Rivedi la bilancia</button>
+      <button class="btn" type="button" id="dlgNext">Livello successivo →</button>
+    </div>
+  </div>
+</dialog>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="sr-only" aria-live="polite" id="sr"></div>
+
+<script>
+(() => {
+'use strict';
+
+const LEVELS = [
+  { a:1, b:3, c:7,  title:'La scatola misteriosa',
+    mission:'Quante palline pesa la scatola? Non puoi aprirla: sposta le palline tra scorta, piatti e cestino, e osserva la bilancia.' },
+  { a:2, b:2, c:8,  title:'Due scatole gemelle',
+    mission:'Le scatole sono due, identiche. Quanto pesa una sola scatola?' },
+  { a:3, b:5, c:14, title:'Tre scatole e tante palline',
+    mission:'Scopri il peso di una scatola… con meno mosse che puoi!' }
+];
+const CHALLENGE = 3;
+const MAX = 20;
+
+const $ = s => document.querySelector(s);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, reduceMotion ? Math.min(ms, 150) : ms));
+
+const el = {
+  stage:$('#stage'), inner:$('#stageInner'), scale:$('#scale'), beam:$('#beam'),
+  panL:$('#panL'), panR:$('#panR'), itemsL:$('#itemsL'), itemsR:$('#itemsR'),
+  supply:$('#supply'), trash:$('#trash'),
+  status:$('#status'), eq:$('#eqSym'), fb:$('#feedback'), fbIco:$('#fbIco'), fbTitle:$('#fbTitle'), fbText:$('#fbText'),
+  log:$('#log'), logCount:$('#logCount'), logEmpty:$('#logEmpty'), levels:$('#levels'),
+  mBadge:$('#missionBadge'), mTitle:$('#missionTitle'), mText:$('#missionText'),
+  guess:$('#guess'), btnGuess:$('#btnGuess'), sym:$('#symToggle'), sr:$('#sr'),
+  pills:[...document.querySelectorAll('.pill')], splitActions:$('#splitActions'), btnKeep:$('#btnKeep'),
+  dlg:$('#winDlg'), winText:$('#winText'), winSym:$('#winSym'), winMoves:$('#winMoves'), winReflect:$('#winReflect'), dlgNext:$('#dlgNext')
+};
+const zones = { L: el.panL, R: el.panR, supply: el.supply, trash: el.trash };
+
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+
+const S = { idx:0, def:null, a:0, b:0, c:0, x:0, busy:false, solved:false, moves:0, lastBalanced:true,
+  held:null, split:0, unlocked: store.get('bilancia.unlocked', 1), sym: store.get('bilancia.sym', false) };
+
+/* ---------------- Helpers ---------------- */
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const weights = () => ({ L: S.a * S.x + S.b, R: S.c });
+const sideName = z => z === 'L' ? 'sinistro' : 'destro';
+const itemsOf = z => z === 'L' ? el.itemsL : el.itemsR;
+const ballsOn = z => z === 'L' ? S.b : S.c;
+function tiltFor(L, R){ const d = R - L; return d === 0 ? 0 : Math.sign(d) * Math.min(16, 5 + Math.abs(d) * 2.2); }
+function sideHTML(a, b){ const p = []; if (a) p.push(a === 1 ? '<i>x</i>' : `${a}<i>x</i>`); if (b || !p.length) p.push(String(b)); return p.join(' + '); }
+function sideTxt(a, b){ const p = []; if (a) p.push(a === 1 ? 'x' : a + 'x'); if (b || !p.length) p.push(String(b)); return p.join(' + '); }
+const relOf = (L, R) => L === R ? '=' : (L < R ? '<' : '>');
+const dirText = (L, R) => L > R ? 'a sinistra' : 'a destra';
+function describe(){
+  return {
+    left: plural(S.a, 'scatola misteriosa', 'scatole misteriose') + (S.b ? ' e ' + plural(S.b, 'pallina', 'palline') : ''),
+    right: S.c ? plural(S.c, 'pallina', 'palline') : 'nessuna pallina'
+  };
+}
+function centerOf(node){ const r = node.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }
+function ballSize(){ const w = el.stage.getBoundingClientRect().width; return w * (w <= 520 ? .04 : .034); }
+function lastBall(cont){ const b = cont.querySelectorAll('.ball'); return b[b.length - 1]; }
+
+/* ---------------- Rendering ---------------- */
+function makeBox(){ const d = document.createElement('div'); d.className = 'item box'; d.innerHTML = '<span class="lbl"><span class="q">?</span><span class="xv">x</span></span>'; return d; }
+function makeBall(){ const d = document.createElement('div'); d.className = 'item ball'; return d; }
+function setBoxNum(box, n){ box.querySelector('.lbl').innerHTML = `<span class="num">${n}</span>`; }
+
+function renderPan(cont, boxes, balls, pop){
+  cont.innerHTML = '';
+  cont.className = 'items' + (balls > 12 || boxes + balls > 14 ? ' dense' : '');
+  cont.style.removeProperty('--k');
+  let k = 0;
+  const add = node => { if (pop){ node.classList.add('pop'); node.style.setProperty('--delay', (k++ * 45) + 'ms'); } cont.appendChild(node); };
+  for (let i = 0; i < boxes; i++) add(makeBox());
+  for (let i = 0; i < balls; i++) add(makeBall());
+}
+
+function applyTilt(deg){
+  el.beam.style.transform = `rotate(${deg}deg)`;
+  el.panL.style.transform = el.panR.style.transform = `translateX(-50%) rotate(${-deg}deg)`;
+}
+
+function render(opts = {}){
+  renderPan(el.itemsL, S.a, S.b, opts.pop);
+  renderPan(el.itemsR, 0, S.c, opts.pop);
+  const { L, R } = weights();
+  if (!opts.noTilt) applyTilt(tiltFor(L, R));
+  updateStatus(L, R);
+  updateEquation(L, R);
+  updateLabels();
+  updateControls();
+}
+
+function updateStatus(L, R){
+  let cls, ico, txt;
+  if (S.solved){ cls = 'win'; ico = '★'; txt = 'Risolto!'; }
+  else if (L === R){ cls = 'ok'; ico = '⚖'; txt = 'In equilibrio'; }
+  else if (L > R){ cls = 'tilt'; ico = '↙'; txt = 'Pende a sinistra'; }
+  else { cls = 'tilt'; ico = '↘'; txt = 'Pende a destra'; }
+  el.status.className = 'status ' + cls;
+  el.status.innerHTML = `<span class="ico">${ico}</span><span>${txt}</span>`;
+  el.stage.dataset.state = cls === 'win' ? 'ok' : cls;
+}
+function updateEquation(L, R){
+  const r = relOf(L, R);
+  el.eq.innerHTML = `<span>${sideHTML(S.a, S.b)}</span><span class="rel ${r === '=' ? 'eqs' : 'ne'}" aria-label="${r === '=' ? 'uguale a' : r === '<' ? 'minore di' : 'maggiore di'}">${r}</span><span>${sideHTML(0, S.c)}</span>`;
+}
+function updateLabels(){
+  const d = describe(), { L, R } = weights();
+  const tilt = L === R ? 'La bilancia è in equilibrio.' : 'La bilancia pende ' + dirText(L, R) + '.';
+  const act = S.held ? 'Premi Invio per mettere qui la pallina.' : 'Premi Invio per prendere una pallina.';
+  el.panL.setAttribute('aria-label', `Piatto sinistro: ${d.left}. ${tilt} ${act}`);
+  el.panR.setAttribute('aria-label', `Piatto destro: ${d.right}. ${tilt} ${act}`);
+  el.supply.setAttribute('aria-label', `Scorta di palline, infinite. ${S.held ? 'Premi Invio per rimettere qui la pallina.' : 'Premi Invio per prendere una pallina.'}`);
+  el.trash.setAttribute('aria-label', `Cestino. ${S.held ? 'Premi Invio per buttare la pallina.' : ''}`);
+}
+function updateControls(){
+  const off = S.solved;
+  el.pills.forEach(p => { p.disabled = off; p.setAttribute('aria-pressed', String(S.split === +p.dataset.n)); });
+  el.guess.disabled = el.btnGuess.disabled = off || !!S.split;
+  el.splitActions.hidden = !S.split;
+}
+
+const FB = {
+  info:{ ico:'i', title:'Osserva' }, ok:{ ico:'✓', title:'Equilibrio' }, tilt:{ ico:'!', title:'La bilancia si muove' },
+  error:{ ico:'✕', title:'Non si può fare' }, win:{ ico:'★', title:'Fantastico!' }, hold:{ ico:'✋', title:'Pallina in mano' }
+};
+function feedback(type, html){
+  const f = FB[type];
+  el.fb.className = 'feedback ' + (type === 'hold' ? 'info' : type);
+  el.fbIco.textContent = f.ico; el.fbTitle.textContent = f.title; el.fbText.innerHTML = html;
+  el.sr.textContent = '';
+  setTimeout(() => { el.sr.textContent = f.title + '. ' + el.fbText.textContent; }, 30);
+}
+
+function addLog(what, resCls, resTxt){
+  el.logEmpty.hidden = true;
+  const { L, R } = weights();
+  const li = document.createElement('li');
+  li.innerHTML = `<span class="n">${el.log.children.length + 1}</span><div><div>${what}</div><div class="res ${resCls}">${resTxt}</div><div class="sym">${sideTxt(S.a, S.b)} ${relOf(L, R)} ${sideTxt(0, S.c)}</div></div>`;
+  el.log.appendChild(li);
+  el.logCount.textContent = el.log.children.length;
+  el.log.scrollTop = el.log.scrollHeight;
+}
+
+function renderLevels(){
+  el.levels.innerHTML = '';
+  for (let i = 0; i <= CHALLENGE; i++){
+    const locked = i + 1 > S.unlocked, done = i < CHALLENGE && S.unlocked > i + 1;
+    const name = i < CHALLENGE ? `Livello ${i + 1}` : 'Sfida ★';
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'lvl' + (i === S.idx ? ' active' : ''); b.disabled = locked;
+    if (i === S.idx) b.setAttribute('aria-current', 'step');
+    b.setAttribute('aria-label', name + (locked ? ', bloccato' : '') + (done ? ', completato' : ''));
+    b.innerHTML = (locked ? '<svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="6" width="10" height="7" rx="1.5" fill="currentColor"/><path d="M4.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>' : '')
+      + `<span>${name}</span>` + (done ? '<span class="done" aria-hidden="true">✓</span>' : '');
+    b.addEventListener('click', () => startLevel(i));
+    el.levels.appendChild(b);
+  }
+}
+
+/* ---------------- Effects ---------------- */
+const fx = (() => {
+  const c = $('#fx'), ctx = c.getContext('2d');
+  let W = 0, H = 0, parts = [], raf = 0;
+  const COLS = ['#4338ca','#7c5cf0','#ff9f1c','#0f9d8a','#ef476f','#ffd166','#06aed5'];
+  function size(){ const d = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d,0,0,d,0,0); }
+  size(); addEventListener('resize', size);
+  function star(s){ ctx.beginPath(); for (let i = 0; i < 10; i++){ const r = i % 2 ? s * .22 : s * .55, a = i * Math.PI / 5 - Math.PI / 2; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); ctx.fill(); }
+  function tick(){
+    ctx.clearRect(0, 0, W, H);
+    parts = parts.filter(p => p.life > 0 && p.y < H + 40);
+    for (const p of parts){
+      p.vy += p.g; p.vx *= p.drag; p.vy *= p.drag; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life--;
+      ctx.save(); ctx.globalAlpha = Math.min(1, p.life / 30); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.col;
+      if (p.shape === 'rect') ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+      else if (p.shape === 'star') star(p.s);
+      else { ctx.beginPath(); ctx.arc(0, 0, p.s / 2, 0, 7); ctx.fill(); }
+      ctx.restore();
+    }
+    if (parts.length) raf = requestAnimationFrame(tick); else { raf = 0; ctx.clearRect(0, 0, W, H); }
+  }
+  const go = () => { if (!raf) raf = requestAnimationFrame(tick); };
+  function burst(x, y, n = 10, o = {}){
+    if (reduceMotion) return;
+    for (let i = 0; i < n; i++){
+      const a = Math.random() * Math.PI * 2, v = (o.speed || 3) * (.5 + Math.random());
+      parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - (o.lift || 1), g: o.g ?? .08, drag: .96, rot: Math.random() * 6, vr: (Math.random() - .5) * .3,
+        s: o.size || (6 + Math.random() * 6), life: o.life || (40 + Math.random() * 25), col: o.col || COLS[Math.random() * COLS.length | 0], shape: o.shape || 'star' });
+    }
+    go();
+  }
+  function confetti(){
+    if (reduceMotion) return;
+    for (let i = 0; i < 190; i++){
+      parts.push({ x: Math.random() * W, y: -20 - Math.random() * H * .5, vx: (Math.random() - .5) * 3, vy: 2 + Math.random() * 3, g: .05, drag: .995,
+        rot: Math.random() * 6, vr: (Math.random() - .5) * .25, s: 8 + Math.random() * 8, life: 170 + Math.random() * 90,
+        col: COLS[Math.random() * COLS.length | 0], shape: Math.random() < .75 ? 'rect' : 'circle' });
+    }
+    go();
+  }
+  return { burst, confetti };
+})();
+
+function fly(nodes){
+  nodes.forEach((n, i) => {
+    n.style.setProperty('--dx', (Math.random() * 8 - 4).toFixed(1) + 'cqi');
+    n.style.setProperty('--rot', (Math.random() * 360 - 180).toFixed(0) + 'deg');
+    n.style.setProperty('--delay', (i * 30) + 'ms');
+    n.classList.remove('pop'); n.classList.add('fly');
+    const [x, y] = centerOf(n);
+    setTimeout(() => fx.burst(x, y, 6, { speed: 2.2, size: 7, life: 30, col: n.classList.contains('ball') ? '#ffb547' : '#8f72f7' }), i * 30);
+  });
+  return wait(nodes.length ? 650 + nodes.length * 30 : 0);
+}
+function shake(){ if (reduceMotion) return; el.scale.classList.remove('shake'); void el.scale.offsetWidth; el.scale.classList.add('shake'); }
+function nope(nodes){ nodes.forEach(c => { c.classList.remove('nope'); void c.offsetWidth; c.classList.add('nope'); }); }
+function bump(node){ node.classList.remove('bump'); void node.offsetWidth; node.classList.add('bump'); }
+
+/* ---------------- Ghost ball (drag & tap) ---------------- */
+function makeGhost(size, x, y){
+  const g = document.createElement('div');
+  g.className = 'ball ghost';
+  g.style.width = g.style.height = size + 'px';
+  g.style.left = x + 'px'; g.style.top = y + 'px';
+  document.body.appendChild(g);
+  return g;
+}
+function moveGhost(g, [x, y], dur, vanish){
+  const from = { left: g.style.left, top: g.style.top, transform: 'translate(-50%,-50%) scale(1.15)', opacity: 1 };
+  const to = { left: x + 'px', top: y + 'px', transform: `translate(-50%,-50%) scale(${vanish ? .3 : 1})`, opacity: vanish ? 0 : 1 };
+  const anim = g.animate([from, to], { duration: reduceMotion ? 1 : dur, easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'forwards' });
+  return anim.finished.catch(() => {});
+}
+function targetPoint(z){
+  if (z === 'L' || z === 'R'){
+    const r = itemsOf(z).getBoundingClientRect();
+    return [r.left + r.width / 2, r.bottom - ballSize() / 2];
+  }
+  return centerOf(zones[z]);
+}
+function clearOver(){ Object.values(zones).forEach(z => z.classList.remove('over')); }
+function zoneAt(x, y){ const t = document.elementFromPoint(x, y); const z = t && t.closest('[data-zone]'); return z && el.inner.contains(z) ? z.dataset.zone : null; }
+
+function moveText(from, to){
+  if (from === 'supply') return `Hai preso 1 pallina dalla scorta e l’hai messa sul piatto ${sideName(to)}`;
+  if (to === 'trash') return `Hai buttato nel cestino 1 pallina del piatto ${sideName(from)}`;
+  if (to === 'supply') return `Hai rimesso nella scorta 1 pallina del piatto ${sideName(from)}`;
+  return `Hai spostato 1 pallina dal piatto ${sideName(from)} a quello ${sideName(to)}`;
+}
+
+async function performDrop(from, to, ghost, srcBall){
+  S.busy = true; clearOver();
+  const origin = from === 'supply' ? centerOf(el.supply) : centerOf(srcBall);
+  const back = async (msgType, msg) => {
+    await moveGhost(ghost, origin, 240, from === 'supply');
+    ghost.remove(); if (srcBall) srcBall.style.visibility = '';
+    S.busy = false; if (msg) feedback(msgType, msg);
+  };
+  const valid = to && to !== from && !(from === 'supply' && (to === 'trash' || to === 'supply'));
+  if (!valid){ return back('info', to === 'trash' && from === 'supply' ? 'La pallina è tornata nella scorta.' : null); }
+  if ((to === 'L' && S.b >= MAX) || (to === 'R' && S.c >= MAX)){
+    nope([itemsOf(to)]);
+    return back('error', `Il piatto ${sideName(to)} è pieno: non ci stanno altre palline.`);
+  }
+  const vanish = to === 'trash' || to === 'supply';
+  await moveGhost(ghost, targetPoint(to), 280, vanish);
+  ghost.remove();
+  if (vanish){ bump(zones[to]); const [x, y] = centerOf(zones[to]); fx.burst(x, y, 6, { speed: 2, size: 6, life: 26, col: '#ffb547' }); }
+  if (from === 'L') S.b--; else if (from === 'R') S.c--;
+  if (to === 'L') S.b++; else if (to === 'R') S.c++;
+  S.busy = false;
+  postMove(moveText(from, to), to);
+}
+
+function markHeld(){
+  document.querySelectorAll('.held').forEach(n => n.classList.remove('held'));
+  el.stage.classList.toggle('holding', !!S.held);
+  if (S.held){
+    if (S.held.from === 'supply') el.supply.classList.add('held');
+    else { const b = lastBall(itemsOf(S.held.from)); if (b) b.classList.add('held'); }
+  }
+  updateLabels();
+}
+function cancelHold(msg){ if (!S.held) return; S.held = null; markHeld(); if (msg) feedback('info', msg); }
+
+function pick(z){
+  if (z === 'trash'){ feedback('info', 'Il cestino serve per buttare via le palline: prima prendine una.'); return; }
+  if ((z === 'L' || z === 'R') && ballsOn(z) === 0){
+    nope([itemsOf(z)]);
+    feedback('error', `Sul piatto ${sideName(z)} non ci sono palline da prendere.${z === 'L' && S.a ? ' Le scatole sono sigillate.' : ''}`);
+    return;
+  }
+  S.held = { from: z }; markHeld();
+  feedback('hold', `Hai in mano 1 pallina ${z === 'supply' ? 'presa dalla scorta' : 'del piatto ' + sideName(z)}. Ora tocca dove vuoi metterla: un piatto, la scorta o il cestino. <kbd>Esc</kbd> per annullare.`);
+}
+async function tapDrop(to){
+  const from = S.held.from;
+  const src = from === 'supply' ? null : lastBall(itemsOf(from));
+  const start = from === 'supply' ? centerOf(el.supply) : centerOf(src);
+  const size = src ? src.getBoundingClientRect().width : ballSize();
+  S.held = null; markHeld();
+  const g = makeGhost(size, start[0], start[1]);
+  if (src) src.style.visibility = 'hidden';
+  await performDrop(from, to, g, src);
+}
+function tap(z){
+  if (S.busy || S.solved) return;
+  if (S.split){ feedback('info', 'Stai dividendo i piatti: scegli “Tieni 1 parte per piatto” oppure “Annulla”.'); return; }
+  if (S.held){
+    if (S.held.from === z) cancelHold('Hai rimesso giù la pallina.');
+    else tapDrop(z);
+  } else pick(z);
+}
+
+/* pointer: drag or tap */
+let ptr = null;
+el.inner.addEventListener('pointerdown', e => {
+  if (e.button > 0 || S.busy || S.solved) return;
+  const zEl = e.target.closest('[data-zone]');
+  if (!zEl){ cancelHold(); return; }
+  if (S.split){ tap(zEl.dataset.zone); return; }
+  const z = zEl.dataset.zone;
+  if (e.target.closest('.box') && !S.held){
+    nope([itemsOf('L')]);
+    feedback('error', 'Le scatole misteriose sono sigillate: non si possono aprire né spostare.');
+    return;
+  }
+  const ball = (z === 'L' || z === 'R') ? e.target.closest('.items .ball') : null;
+  ptr = { z, ball, x0: e.clientX, y0: e.clientY, id: e.pointerId, dragging: false, ghost: null };
+  e.preventDefault();
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onEnd);
+  window.addEventListener('pointercancel', onEnd);
+});
+function onMove(e){
+  if (!ptr || e.pointerId !== ptr.id) return;
+  if (!ptr.dragging){
+    if (Math.hypot(e.clientX - ptr.x0, e.clientY - ptr.y0) < 7) return;
+    const canDrag = ptr.z === 'supply' || !!ptr.ball;
+    if (!canDrag) return;
+    if (S.held) cancelHold();
+    ptr.dragging = true;
+    const size = ptr.ball ? ptr.ball.getBoundingClientRect().width : ballSize();
+    ptr.ghost = makeGhost(size, e.clientX, e.clientY);
+    if (ptr.ball) ptr.ball.style.visibility = 'hidden';
+    el.stage.classList.add('dragging');
+  }
+  ptr.ghost.style.left = e.clientX + 'px'; ptr.ghost.style.top = e.clientY + 'px';
+  const over = zoneAt(e.clientX, e.clientY);
+  clearOver(); if (over && over !== ptr.z) zones[over].classList.add('over');
+}
+function onEnd(e){
+  if (!ptr || e.pointerId !== ptr.id) return;
+  window.removeEventListener('pointermove', onMove);
+  window.removeEventListener('pointerup', onEnd);
+  window.removeEventListener('pointercancel', onEnd);
+  const p = ptr; ptr = null;
+  el.stage.classList.remove('dragging');
+  if (p.dragging) performDrop(p.z, e.type === 'pointercancel' ? null : zoneAt(e.clientX, e.clientY), p.ghost, p.ball);
+  else tap(p.z);
+}
+document.addEventListener('pointerdown', e => { if (S.held && !el.inner.contains(e.target)) cancelHold('Hai rimesso giù la pallina.'); });
+Object.entries(zones).forEach(([z, node]) => node.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); tap(z); }
+}));
+
+/* ---------------- Moves & win ---------------- */
+function postMove(text, popTo){
+  S.moves++;
+  const { L, R } = weights(), bal = L === R;
+  render();
+  if (popTo === 'L' || popTo === 'R'){ const b = lastBall(itemsOf(popTo)); if (b) b.classList.add('pop'); }
+  if (bal){
+    feedback('ok', S.lastBalanced ? `${text}. La bilancia resta in equilibrio.` : `${text}. La bilancia è tornata in equilibrio!`);
+    addLog(text, 'ok', '⚖ in equilibrio');
+  } else {
+    feedback('tilt', S.lastBalanced
+      ? `${text}. Guarda: ora la bilancia pende ${dirText(L, R)}. Come potresti riportarla in equilibrio?`
+      : `${text}. La bilancia pende ancora ${dirText(L, R)}.`);
+    addLog(text, 'tilt', (L > R ? '↙' : '↘') + ' pende ' + dirText(L, R));
+    shake();
+  }
+  S.lastBalanced = bal;
+  if (bal && S.a === 1 && S.b === 0){ S.busy = true; setTimeout(() => { S.busy = false; win('isolate'); }, reduceMotion ? 200 : 1000); }
+}
+
+function win(mode, g){
+  if (S.solved) return;
+  S.solved = true; S.held = null; markHeld();
+  el.stage.classList.add('won');
+  el.itemsL.querySelectorAll('.box').forEach(b => { b.classList.remove('probe'); setBoxNum(b, S.x); b.classList.add('reveal'); });
+  applyTilt(0); updateStatus(0, 0); updateControls();
+  const [px, py] = centerOf($('.pivot'));
+  fx.burst(px, py, 30, { speed: 6, size: 12, life: 70 });
+  fx.confetti();
+  if (S.idx < CHALLENGE) S.unlocked = Math.max(S.unlocked, S.idx + 2);
+  store.set('bilancia.unlocked', S.unlocked);
+  renderLevels();
+  const w = plural(S.x, 'pallina', 'palline');
+  feedback('win', mode === 'isolate' ? `Una scatola da sola equilibra ${w}: hai scoperto quanto pesa!` : `Ipotesi confermata: con ${w} in ogni scatola la bilancia resta in equilibrio.`);
+  if (mode === 'isolate') addLog('Una scatola da sola sul piatto', 'win', `★ pesa quanto ${w}`);
+  el.winText.innerHTML = `Una scatola misteriosa pesa quanto <strong>${w}</strong>.`;
+  el.winSym.innerHTML = S.sym ? `In simboli: <strong style="font-family:var(--math);font-size:1.2rem"><i>x</i> = ${S.x}</strong>` : '';
+  el.winMoves.textContent = `Mosse usate: ${S.moves}.`;
+  el.winReflect.textContent = mode === 'isolate'
+    ? 'Prima di proseguire: quali mosse hanno lasciato la bilancia in equilibrio? Prova a spiegarlo a parole a un compagno.'
+    : 'La tua ipotesi funziona! Riusciresti anche a lasciare una sola scatola su un piatto, senza mai far pendere la bilancia?';
+  el.dlgNext.textContent = S.idx < 2 ? `Vai al Livello ${S.idx + 2} →` : S.idx === 2 ? 'Prova la Sfida ★' : 'Nuova sfida ★';
+  setTimeout(() => { if (S.solved && !el.dlg.open){ el.dlg.showModal(); el.dlgNext.focus(); } }, reduceMotion ? 300 : 1500);
+}
+
+/* ---------------- Division ---------------- */
+const GROUP_COLORS = ['#0f766e','#4338ca','#c2410c','#be185d','#7e22ce'];
+function splitPan(cont, boxes, balls, N){
+  cont.innerHTML = '';
+  cont.className = 'items split';
+  cont.style.setProperty('--k', N >= 4 ? .6 : N === 3 ? .7 : .8);
+  const pb = Math.floor(boxes / N), pl = Math.floor(balls / N), rb = boxes % N, rl = balls % N;
+  const mk = (cls, label, nb, nl, color) => {
+    const g = document.createElement('div');
+    g.className = 'grp ' + cls; g.dataset.label = label;
+    if (color) g.style.setProperty('--gc', color);
+    for (let i = 0; i < nb; i++) g.appendChild(makeBox());
+    for (let i = 0; i < nl; i++) g.appendChild(makeBall());
+    cont.appendChild(g);
+  };
+  for (let i = 0; i < N; i++) mk(i === 0 ? 'first' : '', String(i + 1), pb, pl, GROUP_COLORS[i]);
+  const left = rb + rl > 0;
+  if (left) mk('extra', 'avanza', rb, rl);
+  return !left;
+}
+function previewSplit(N){
+  if (S.busy || S.solved) return;
+  if (S.split === N){ cancelSplit(); return; }
+  cancelHold();
+  S.split = N;
+  el.stage.classList.add('splitting');
+  const okL = splitPan(el.itemsL, S.a, S.b, N);
+  const okR = splitPan(el.itemsR, 0, S.c, N);
+  el.btnKeep.disabled = !(okL && okR);
+  updateControls();
+  if (okL && okR){
+    feedback('info', `Ogni piatto si divide in ${N} parti identiche (guarda i numeri). Se tieni solo la parte 1 di ogni piatto, che cosa farà la bilancia?`);
+  } else {
+    const where = [!okL && 'sinistro', !okR && 'destro'].filter(Boolean).join(' e ');
+    feedback('error', `Con ${N} parti i gruppi non vengono tutti uguali: sul piatto ${where} avanza qualcosa (riquadro rosso).${!okL && S.a % N ? ' Le scatole non si possono aprire.' : ''} Prova un altro numero.`);
+  }
+}
+function cancelSplit(silent){
+  if (!S.split) return;
+  S.split = 0;
+  el.stage.classList.remove('splitting');
+  render();
+  if (!silent) feedback('info', 'Divisione annullata: i piatti sono tornati come prima.');
+}
+async function keepPart(){
+  if (!S.split || S.busy || el.btnKeep.disabled) return;
+  const N = S.split;
+  S.busy = true;
+  const gone = [...document.querySelectorAll('.items.split .grp:not(.first) .item')];
+  await fly(gone);
+  S.a /= N; S.b /= N; S.c /= N;
+  S.split = 0;
+  el.stage.classList.remove('splitting');
+  S.busy = false;
+  postMove(`Hai diviso ogni piatto in ${N} parti uguali e hai tenuto una parte per piatto`);
+}
+
+/* ---------------- Hypothesis ---------------- */
+async function verify(e){
+  e.preventDefault();
+  if (S.busy || S.solved || S.split) return;
+  const g = parseInt(el.guess.value, 10);
+  if (!Number.isInteger(g) || g < 0 || g > 99){ feedback('error', 'Scrivi un numero intero di palline (da 0 in su).'); el.guess.focus(); return; }
+  cancelHold();
+  const { L, R } = weights();
+  if (L !== R){ shake(); feedback('tilt', 'La bilancia adesso pende: con i piatti sbilanciati non puoi capire se la tua ipotesi funziona. Riportala prima in equilibrio.'); return; }
+  S.busy = true; S.moves++;
+  const boxes = [...el.itemsL.querySelectorAll('.box')];
+  boxes.forEach(b => { setBoxNum(b, g); b.classList.add('probe'); });
+  const Lh = S.a * g + S.b;
+  applyTilt(tiltFor(Lh, R));
+  const w = plural(g, 'pallina', 'palline');
+  if (Lh === R){
+    addLog(`Ipotesi: 1 scatola = ${w}`, 'win', '★ la bilancia resta in equilibrio');
+    await wait(900); S.busy = false; win('guess', g);
+  } else {
+    shake();
+    feedback('tilt', `Con ${w} in ogni scatola la bilancia pende ${dirText(Lh, R)}: le scatole sarebbero troppo ${Lh > R ? 'pesanti' : 'leggere'}.`);
+    addLog(`Ipotesi: 1 scatola = ${w}`, 'tilt', `${Lh > R ? '↙' : '↘'} penderebbe ${dirText(Lh, R)}`);
+    await wait(2300);
+    render(); S.busy = false;
+  }
+}
+
+/* ---------------- Levels ---------------- */
+function makeChallenge(){
+  for (;;){
+    const a = 2 + Math.floor(Math.random() * 3), x = 1 + Math.floor(Math.random() * 5), b = 1 + Math.floor(Math.random() * 8), c = a * x + b;
+    if (c <= 18) return { a, b, c, title:'Equazione a sorpresa', mission:'Una bilancia mai vista: metti alla prova la tua strategia!' };
+  }
+}
+function loadDef(def, idx){
+  S.idx = idx; S.def = def;
+  S.a = def.a; S.b = def.b; S.c = def.c; S.x = (def.c - def.b) / def.a;
+  S.solved = false; S.busy = false; S.moves = 0; S.lastBalanced = true; S.held = null; S.split = 0;
+  el.stage.classList.remove('won', 'splitting', 'holding', 'dragging');
+  el.mBadge.textContent = idx < CHALLENGE ? `Livello ${idx + 1}` : 'Sfida';
+  el.mTitle.textContent = def.title; el.mText.textContent = def.mission;
+  el.log.innerHTML = ''; el.logEmpty.hidden = false; el.logCount.textContent = '0';
+  el.guess.value = '';
+  renderLevels();
+  if (!reduceMotion){
+    el.inner.classList.add('no-anim'); applyTilt(-9); void el.beam.offsetWidth; el.inner.classList.remove('no-anim');
+    render({ pop: true, noTilt: true });
+    setTimeout(() => applyTilt(0), 80);
+  } else render();
+  feedback('info', 'La bilancia è in equilibrio. <strong>Trascina</strong> le palline (o toccane una e poi tocca dove metterla): dalla scorta ai piatti, tra i piatti, nel cestino. Osserva che cosa succede.');
+}
+function startLevel(i){
+  if (i + 1 > S.unlocked) return;
+  if (el.dlg.open) el.dlg.close();
+  loadDef(i === CHALLENGE ? makeChallenge() : LEVELS[i], i);
+}
+
+/* ---------------- Wiring ---------------- */
+el.pills.forEach(p => p.addEventListener('click', () => previewSplit(+p.dataset.n)));
+el.btnKeep.addEventListener('click', keepPart);
+$('#btnCancelSplit').addEventListener('click', () => cancelSplit());
+$('#verifyForm').addEventListener('submit', verify);
+$('#btnReset').addEventListener('click', () => { if (el.dlg.open) el.dlg.close(); loadDef(S.def, S.idx); });
+function setSym(on){ S.sym = on; document.body.classList.toggle('sym-on', on); el.sym.setAttribute('aria-checked', String(on)); store.set('bilancia.sym', on); }
+el.sym.addEventListener('click', () => setSym(!S.sym));
+$('#dlgStay').addEventListener('click', () => el.dlg.close());
+el.dlgNext.addEventListener('click', () => { el.dlg.close(); startLevel(S.idx < CHALLENGE ? S.idx + 1 : CHALLENGE); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || el.dlg.open) return;
+  if (S.held) cancelHold('Hai rimesso giù la pallina.');
+  else if (S.split) cancelSplit();
+});
+document.addEventListener('pointerdown', e => {
+  const host = e.target.closest('.btn, .pill');
+  if (!host || host.disabled || reduceMotion) return;
+  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
+  const sp = document.createElement('span');
+  sp.className = 'rip';
+  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
+  host.appendChild(sp);
+  setTimeout(() => sp.remove(), 600);
+});
+
+setSym(S.sym);
+S.unlocked = Math.max(1, Math.min(CHALLENGE + 1, S.unlocked | 0));
+loadDef(LEVELS[0], 0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dd — esperimenti</title>
+<meta name="description" content="Esperimenti interattivi di Carlo Pezzotti: giochi e milieu didattici, aggiunti man mano.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/_shared/dd.css">
+<style>
+body{min-height:100vh}
+.app{max-width:1180px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:18px}
+.topbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.logo span{color:#fff;font-weight:800;font-size:1.05rem;letter-spacing:-.04em;position:relative}
+.logo span::after{content:"";position:absolute;right:-7px;bottom:3px;width:6px;height:6px;border-radius:50%;background:#ffd166}
+.home{color:var(--muted);font-size:.86rem;font-weight:650;text-decoration:none}
+.home:hover{color:var(--primary-dark);text-decoration:underline}
+
+.intro{padding:clamp(18px,4vw,34px) clamp(18px,4vw,34px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 28px;align-items:end}
+.intro h2{margin:0;font-size:clamp(1.5rem,1.1rem + 1.6vw,2.2rem);letter-spacing:-.02em;line-height:1.1}
+.intro p{margin:8px 0 0;color:var(--muted);max-width:58ch}
+.stat{text-align:right;color:var(--muted);font-size:.84rem;font-weight:650}
+.stat b{display:block;font-size:2.2rem;line-height:1;color:var(--primary);letter-spacing:-.03em}
+@media (max-width:560px){.intro{grid-template-columns:1fr}.stat{text-align:left}}
+
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:10px 12px}
+.search{flex:1 1 240px;display:flex;align-items:center;gap:8px;min-width:0}
+.search input{flex:1;min-width:0;height:42px;border:2px solid var(--line);border-radius:12px;padding:0 12px;background:#fff;color:var(--ink)}
+.search input:focus{outline:none;border-color:var(--primary)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-weight:700;font-size:.84rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:6px 11px;border-radius:10px;cursor:pointer;transition:background .2s,transform .12s}
+.tag:hover{background:var(--primary-soft)}
+.tag:active{transform:scale(.96)}
+.tag[aria-pressed="true"]{background:var(--primary);color:#fff}
+.count{margin-left:auto;color:var(--muted);font-size:.84rem;font-weight:650;white-space:nowrap}
+
+.grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
+.exp{height:100%;display:flex;flex-direction:column;gap:10px;padding:18px;text-decoration:none;color:inherit;transition:transform .2s var(--wobble),box-shadow .2s,border-color .2s}
+.exp:hover,.exp:focus-visible{transform:translateY(-3px);border-color:#c9cdf6;box-shadow:0 1px 2px rgba(27,31,59,.06),0 16px 36px rgba(67,56,202,.16)}
+.exp-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.exp-date{color:var(--muted);font-size:.8rem;font-weight:600}
+.exp h3{margin:0;font-size:1.15rem;letter-spacing:-.01em;line-height:1.2}
+.exp p{margin:0;color:var(--muted);font-size:.9rem;flex:1}
+.exp-tags{display:flex;flex-wrap:wrap;gap:6px}
+.exp-go{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:2px solid var(--line);font-weight:750;color:var(--primary-dark);font-size:.9rem}
+.exp-go code{font:600 .8rem ui-monospace,"SF Mono",Menlo,monospace;color:var(--muted)}
+.exp:hover .exp-go .arr{transform:translateX(4px)}
+.arr{display:inline-block;transition:transform .2s var(--wobble)}
+
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.feedback code{font:600 .85rem ui-monospace,"SF Mono",Menlo,monospace}
+.feedback a{color:inherit;font-weight:750}
+footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:8px}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><span>dd</span></div>
+      <div>
+        <h1>Esperimenti dd</h1>
+        <p>Giochi e piccoli laboratori per scoprire provando.</p>
+      </div>
+    </div>
+    <a class="home" href="https://carlopezzotti.ch/">carlopezzotti.ch ↗</a>
+  </header>
+
+  <div class="feedback tilt" id="notFound" hidden role="status">
+    <span class="fb-ico" aria-hidden="true">?</span>
+    <div><strong>Indirizzo non trovato</strong><p id="nfText"></p></div>
+  </div>
+
+  <section class="card intro">
+    <div>
+      <h2>Scegli un esperimento</h2>
+      <p>Ogni esperimento è un ambiente che reagisce alle tue mosse: niente spiegazioni all’inizio, solo un problema, qualche strumento e quello che riesci a scoprire.</p>
+    </div>
+    <div class="stat" id="stat" hidden><b id="statN">0</b>esperimenti</div>
+  </section>
+
+  <div class="card controls" id="controls" hidden>
+    <div class="search">
+      <label class="sr-only" for="q">Cerca un esperimento</label>
+      <input id="q" type="search" placeholder="🔍  Cerca per titolo o argomento…" autocomplete="off">
+    </div>
+    <div class="tags" id="tags" role="group" aria-label="Filtra per argomento"></div>
+    <span class="count" id="count" aria-live="polite"></span>
+  </div>
+
+  <main>
+    <ol class="grid" id="list" aria-label="Esperimenti"></ol>
+    <p class="card empty" id="empty" hidden></p>
+  </main>
+
+  <footer><a href="https://carlopezzotti.ch/">Carlo Pezzotti</a> · dd.carlopezzotti.ch</footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const el = { list:$('#list'), empty:$('#empty'), q:$('#q'), tags:$('#tags'), count:$('#count'), controls:$('#controls'),
+  nf:$('#notFound'), nfText:$('#nfText'), stat:$('#stat'), statN:$('#statN') };
+const state = { all:[], q:'', tag:null };
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const fmtDate = d => { try { return new Date(d + 'T12:00:00').toLocaleDateString('it-CH', { day:'numeric', month:'long', year:'numeric' }); } catch(e){ return d; } };
+
+function render(){
+  const q = norm(state.q.trim());
+  const shown = state.all.filter(e =>
+    (!state.tag || e.tags.includes(state.tag)) &&
+    (!q || norm([e.title, e.description, e.slug, ...e.tags].join(' ')).includes(q)));
+  el.list.innerHTML = shown.map(e => `
+    <li><a class="card exp" href="${esc(e.path)}">
+      <div class="exp-head"><span class="dd-badge">N° ${String(state.all.indexOf(e) + 1).padStart(2, '0')}</span>${e.date ? `<span class="exp-date">${esc(fmtDate(e.date))}</span>` : ''}</div>
+      <h3>${esc(e.title)}</h3>
+      ${e.description ? `<p>${esc(e.description)}</p>` : '<p></p>'}
+      ${e.tags.length ? `<div class="exp-tags">${e.tags.map(t => `<span class="dd-chip">${esc(t)}</span>`).join('')}</div>` : ''}
+      <div class="exp-go"><span>Apri <span class="arr" aria-hidden="true">→</span></span><code>${esc(e.path)}</code></div>
+    </a></li>`).join('');
+  el.empty.hidden = shown.length > 0;
+  el.empty.textContent = 'Nessun esperimento corrisponde alla ricerca.';
+  el.count.textContent = shown.length === state.all.length ? '' : `${shown.length} di ${state.all.length}`;
+  [...el.tags.children].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tag === state.tag)));
+}
+
+function renderTags(){
+  const tags = [...new Set(state.all.flatMap(e => e.tags))].sort((a, b) => a.localeCompare(b, 'it'));
+  el.tags.innerHTML = tags.map(t => `<button class="tag" type="button" data-tag="${esc(t)}" aria-pressed="false">${esc(t)}</button>`).join('');
+  el.tags.hidden = !tags.length;
+}
+
+/* Gli esperimenti sono file statici: se il server risponde con questa pagina su un altro
+   percorso, quell'indirizzo non esiste. Suggerisce l'esperimento dal nome più simile. */
+function distance(a, b){
+  const d = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++){
+    let prev = d[0]; d[0] = i;
+    for (let j = 1; j <= b.length; j++){ const t = d[j]; d[j] = Math.min(d[j] + 1, d[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1)); prev = t; }
+  }
+  return d[b.length];
+}
+function checkRoute(){
+  const path = location.pathname.replace(/\/index\.html$/, '/');
+  if (path === '/') return;
+  const slug = norm(decodeURIComponent(path.split('/').filter(Boolean)[0] || ''));
+  const best = state.all.map(e => ({ e, d: distance(slug, norm(e.slug)) })).sort((a, b) => a.d - b.d)[0];
+  el.nfText.innerHTML = `<code>${esc(path)}</code> non esiste.` +
+    (best && best.d <= Math.max(2, slug.length / 3) ? ` Forse cercavi <a href="${esc(best.e.path)}">${esc(best.e.title)}</a>?` : ' Ecco tutti gli esperimenti disponibili.');
+  el.nf.hidden = false;
+  history.replaceState(null, '', '/');
+}
+
+el.q.addEventListener('input', () => { state.q = el.q.value; render(); });
+el.tags.addEventListener('click', e => {
+  const b = e.target.closest('.tag'); if (!b) return;
+  state.tag = state.tag === b.dataset.tag ? null : b.dataset.tag; render();
+});
+
+fetch('/experiments.json', { cache:'no-cache' })
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(data => {
+    state.all = (data.experiments || []).map(e => ({ ...e, tags: e.tags || [] }));
+    el.statN.textContent = state.all.length; el.stat.hidden = false;
+    if (!state.all.length){ el.empty.hidden = false; el.empty.textContent = 'Ancora nessun esperimento. Torna presto!'; }
+    else { el.controls.hidden = false; renderTags(); render(); }
+    checkRoute();
+  })
+  .catch(() => {
+    el.empty.hidden = false;
+    el.empty.textContent = 'Non riesco a caricare l’elenco degli esperimenti. Riprova tra poco.';
+  });
+})();
+</script>
+</body>
+</html>

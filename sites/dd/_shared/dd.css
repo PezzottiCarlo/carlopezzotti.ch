@@ -1,0 +1,87 @@
+/* ============================================================
+   dd.carlopezzotti.ch — stile comune a router ed esperimenti.
+   Nato dalla "Bilancia delle Equazioni": indaco come colore
+   d'azione, card bianche, sfondo con due aloni morbidi.
+   Le classi nuove hanno il prefisso dd- per non scontrarsi
+   con gli stili interni dei singoli esperimenti.
+   ============================================================ */
+:root{
+  --bg:#eef1fa; --card:#ffffff; --ink:#1b1f3b; --muted:#454b6b; --line:#d6dbee;
+  --primary:#4338ca; --primary-dark:#3730a3; --primary-soft:#ebeaff;
+  --ok:#0b6b62; --ok-soft:#dcf5f0; --ok-line:#2bb39f;
+  --tilt:#8a3c00; --tilt-soft:#fff2df; --tilt-line:#f0a24a;
+  --err:#a1190f; --err-soft:#fde8e6; --err-line:#e5675b;
+  --win:#6b3fd1; --win-soft:#f1ebff; --win-line:#9b7af5;
+  --radius:18px;
+  --shadow:0 1px 2px rgba(27,31,59,.06),0 10px 30px rgba(27,31,59,.08);
+  --wobble:cubic-bezier(.34,1.56,.64,1);
+  --font:Inter,"Segoe UI",Roboto,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --math:"Cambria Math","STIX Two Math","Latin Modern Math",Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+html{font-size:clamp(14px,.32vw + 11.5px,19px)}
+body{margin:0;font-family:var(--font);color:var(--ink);line-height:1.45;
+  background:radial-gradient(1200px 600px at 10% -10%,#e2e6ff 0%,transparent 60%),
+             radial-gradient(900px 500px at 110% 10%,#ffeedd 0%,transparent 55%),var(--bg);
+  background-attachment:fixed}
+[hidden]{display:none!important}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:8px}
+button,input{font:inherit}
+
+/* --- Marchio: tessera con icona + titolo --- */
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#5b50e6,#3a2fb8);display:grid;place-items:center;box-shadow:0 6px 16px rgba(67,56,202,.35);flex:none}
+.brand h1{font-size:1.2rem;margin:0;letter-spacing:-.01em;line-height:1.15}
+.brand p{margin:1px 0 0;color:var(--muted);font-size:.82rem}
+
+/* Ritorno all'indice di dd, uguale in ogni esperimento */
+.dd-back{flex:none;display:inline-flex;align-items:center;gap:6px;height:42px;padding:0 12px 0 10px;border-radius:13px;background:var(--card);box-shadow:var(--shadow);border:1px solid #e4e7f4;
+  color:var(--primary-dark);font-weight:800;font-size:.9rem;text-decoration:none;letter-spacing:-.01em;transition:background .2s,transform .12s}
+.dd-back:hover{background:var(--primary-soft)}
+.dd-back:active{transform:scale(.96)}
+.dd-back .arr{font-size:1rem;line-height:1}
+
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid #e4e7f4}
+
+/* --- Pulsanti --- */
+.btn{position:relative;overflow:hidden;font-weight:750;border-radius:12px;padding:9px 14px;border:2px solid var(--primary);background:var(--primary);color:#fff;cursor:pointer;transition:transform .12s,background .2s,box-shadow .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn:hover:not(:disabled){background:var(--primary-dark);box-shadow:0 6px 16px rgba(67,56,202,.25)}
+.btn:active:not(:disabled){transform:scale(.96)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost-btn{background:#fff;color:var(--primary-dark)}
+.btn.ghost-btn:hover:not(:disabled){background:var(--primary-soft)}
+.btn.grow{flex:1}
+.rip{position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,.4);animation:rip .55s ease-out forwards;pointer-events:none}
+.ghost-btn .rip,.pill .rip{background:rgba(67,56,202,.2)}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+
+/* --- Etichette --- */
+.dd-chip{display:inline-flex;align-items:center;font-weight:700;font-size:.78rem;padding:3px 10px;border-radius:999px;background:var(--primary-soft);color:var(--primary-dark)}
+.dd-badge{flex:none;background:var(--primary-soft);color:var(--primary-dark);font-weight:800;border-radius:10px;padding:4px 10px;font-size:.78rem;letter-spacing:.03em;text-transform:uppercase}
+
+/* --- Riquadro di feedback (osserva / bene / attento / errore / vittoria) --- */
+.feedback{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:14px;border-left:6px solid;font-size:.93rem;transition:background .3s,border-color .3s}
+.feedback .fb-ico{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:#fff;font-size:.9rem}
+.feedback.info{background:#eef0ff;border-color:var(--primary)} .feedback.info .fb-ico{background:var(--primary)}
+.feedback.ok{background:var(--ok-soft);border-color:var(--ok-line)} .feedback.ok .fb-ico{background:var(--ok)}
+.feedback.tilt{background:var(--tilt-soft);border-color:var(--tilt-line)} .feedback.tilt .fb-ico{background:#b45309}
+.feedback.error{background:var(--err-soft);border-color:var(--err-line)} .feedback.error .fb-ico{background:var(--err)}
+.feedback.win{background:var(--win-soft);border-color:var(--win-line)} .feedback.win .fb-ico{background:var(--win)}
+.feedback p{margin:2px 0 0}
+
+/* --- Dialogo di fine livello --- */
+dialog{border:none;border-radius:24px;padding:0;max-width:min(500px,92vw);box-shadow:0 30px 80px rgba(20,22,60,.35);color:var(--ink)}
+dialog::backdrop{background:rgba(20,22,50,.45);backdrop-filter:blur(3px)}
+dialog[open]{animation:dlg .45s var(--wobble)}
+@keyframes dlg{from{transform:scale(.85) translateY(20px);opacity:0}}
+.dlg-body{padding:24px 26px 20px;text-align:center}
+.trophy{width:76px;height:76px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fff7d6,#ffd166 60%,#f2a516);box-shadow:0 10px 30px rgba(242,165,22,.45)}
+.dlg-body h2{margin:4px 0;font-size:1.4rem}
+.dlg-body p{margin:7px 0;color:var(--muted)}
+.dlg-body .big{font-size:1.08rem;color:var(--ink)}
+.dlg-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}

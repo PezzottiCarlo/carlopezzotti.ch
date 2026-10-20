@@ -69,6 +69,44 @@
           ]
         }
       ]
+    },
+    {
+      "target": "dd",
+      "public": "sites/dd",
+      "ignore": [
+        "**/.*",
+        "**/node_modules/**",
+        "_*.html"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**/*.@(js|css|svg)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=3600"
+            }
+          ]
+        },
+        {
+          "source": "**/@(index.html|experiments.json)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=0, must-revalidate"
+            }
+          ]
+        }
+      ],
+      "predeploy": [
+        "node \"$PROJECT_DIR/scripts/build-dd-manifest.mjs\""
+      ]
     }
   ]
 }

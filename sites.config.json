@@ -40,6 +40,25 @@
       "folder": "sites/so",
       "siteId": "carlopezzotti-so",
       "domains": ["so.carlopezzotti.ch"]
+    },
+    {
+      "target": "dd",
+      "folder": "sites/dd",
+      "siteId": "carlopezzotti-dd",
+      "domains": ["dd.carlopezzotti.ch"],
+      "hosting": {
+        "predeploy": ["node \"$PROJECT_DIR/scripts/build-dd-manifest.mjs\""],
+        "headers": [
+          {
+            "source": "**/*.@(js|css|svg)",
+            "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
+          },
+          {
+            "source": "**/@(index.html|experiments.json)",
+            "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
+          }
+        ]
+      }
     }
   ]
 }
