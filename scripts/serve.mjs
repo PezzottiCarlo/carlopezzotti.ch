@@ -8,7 +8,7 @@
 //   - niente cache senza controllo: browser e Cloudflare richiedono ogni file con
 //     l'ETag e ricevono un 304 se non è cambiato. Così un push è online subito,
 //     senza dover svuotare la cache di Cloudflare (il token non ha quel permesso,
-//     e per i file con max-age Cloudflare impone 4 ore ai browser).
+//     e a qualsiasi max-age dei file statici sostituisce 4 ore per i browser).
 //
 // Aggiornamento: un webhook GitHub (evento push) chiama POST /_deploy su uno
 // qualsiasi degli hostname. Se la firma torna con il segreto, il server porta
@@ -83,7 +83,7 @@ function send(req, res, file, st, status = 200) {
   const ext = extname(file).toLowerCase();
   const etag = `"${st.size.toString(36)}-${Math.floor(st.mtimeMs).toString(36)}"`;
   res.setHeader("Content-Type", TYPES[ext] ?? "application/octet-stream");
-  res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+  res.setHeader("Cache-Control", "no-cache");
   res.setHeader("ETag", etag);
   res.setHeader("Last-Modified", st.mtime.toUTCString());
   res.setHeader("X-Content-Type-Options", "nosniff");
