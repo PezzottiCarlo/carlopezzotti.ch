@@ -5,7 +5,10 @@
 // Regole, come le aveva Firebase Hosting:
 //   - i file che iniziano con "." e gli "_*.html" non vengono mai serviti;
 //   - un percorso che non esiste risponde con l'index.html del sito (SPA);
-//   - html e json non vanno in cache, js/css/svg/immagini per un'ora.
+//   - niente cache senza controllo: browser e Cloudflare richiedono ogni file con
+//     l'ETag e ricevono un 304 se non è cambiato. Così un push è online subito,
+//     senza dover svuotare la cache di Cloudflare (il token non ha quel permesso,
+//     e per i file con max-age Cloudflare impone 4 ore ai browser).
 //
 // Aggiornamento: un webhook GitHub (evento push) chiama POST /_deploy su uno
 // qualsiasi degli hostname. Se la firma torna con il segreto, il server porta
@@ -80,10 +83,7 @@ function send(req, res, file, st, status = 200) {
   const ext = extname(file).toLowerCase();
   const etag = `"${st.size.toString(36)}-${Math.floor(st.mtimeMs).toString(36)}"`;
   res.setHeader("Content-Type", TYPES[ext] ?? "application/octet-stream");
-  res.setHeader(
-    "Cache-Control",
-    ext === ".html" || ext === ".json" ? "public, max-age=0, must-revalidate" : "public, max-age=3600",
-  );
+  res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
   res.setHeader("ETag", etag);
   res.setHeader("Last-Modified", st.mtime.toUTCString());
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -146,9 +146,16 @@ const run = promisify(execFile);
 const git = (...a) => run("git", a, { cwd: ROOT });
 const buildManifest = () => run(process.execPath, [join(ROOT, "scripts", "build-dd-manifest.mjs")], { cwd: ROOT });
 
+// File letti solo all'avvio: se cambiano, il processo esce e pm2 lo riavvia.
+const RESTART_ON = ["scripts/serve.mjs", "sites.config.json"];
+
 let updating = false;
+let again = false;
 async function update() {
-  if (updating) return;
+  if (updating) {
+    again = true; // un push arrivato durante l'aggiornamento: si ricontrolla dopo
+    return;
+  }
   updating = true;
   try {
     await git("fetch", "--quiet", "origin", "main");
@@ -161,10 +168,19 @@ async function update() {
     await buildManifest();
     const { stdout } = await git("log", "-1", "--format=%h %s");
     console.log(`[${new Date().toISOString()}] aggiornato a ${stdout.trim()}`);
+    const { stdout: changed } = await git("diff", "--name-only", head.trim(), remote.trim());
+    if (changed.split("\n").some((f) => RESTART_ON.includes(f))) {
+      console.log("server o configurazione cambiati: riavvio");
+      setTimeout(() => process.exit(0), 200);
+    }
   } catch (e) {
     console.error(`[${new Date().toISOString()}] aggiornamento fallito: ${e.stderr || e.message}`);
   } finally {
     updating = false;
+    if (again) {
+      again = false;
+      update();
+    }
   }
 }
 

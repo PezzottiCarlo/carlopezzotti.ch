@@ -58,7 +58,9 @@ const target = `${tunnel.id}.cfargotunnel.com`;
 const conf = (await cf("GET", `/accounts/${acc}/cfd_tunnel/${tunnel.id}/configurations`))?.config ?? {};
 const others = (conf.ingress ?? []).filter((r) => r.hostname && !hosts.includes(r.hostname));
 const ingress = [...others, ...hosts.map((hostname) => ({ hostname, service })), { service: "http_status:404" }];
-const same = JSON.stringify(ingress) === JSON.stringify(conf.ingress);
+// Cloudflare restituisce le regole con campi in più: si confrontano solo hostname e servizio.
+const key = (rules) => JSON.stringify((rules ?? []).map((r) => [r.hostname ?? "", r.service]));
+const same = key(ingress) === key(conf.ingress);
 if (same) log(`ingress del tunnel ${tunnel.name}: già a posto`);
 else {
   await write("PUT", `/accounts/${acc}/cfd_tunnel/${tunnel.id}/configurations`, { config: { ...conf, ingress } });
