@@ -83,7 +83,7 @@ function send(req, res, file, st, status = 200) {
   const ext = extname(file).toLowerCase();
   const etag = `"${st.size.toString(36)}-${Math.floor(st.mtimeMs).toString(36)}"`;
   res.setHeader("Content-Type", TYPES[ext] ?? "application/octet-stream");
-  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Cache-Control", "private, no-cache");
   res.setHeader("ETag", etag);
   res.setHeader("Last-Modified", st.mtime.toUTCString());
   res.setHeader("X-Content-Type-Options", "nosniff");
