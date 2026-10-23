@@ -1,64 +1,19 @@
 {
   "domain": "carlopezzotti.ch",
-  "defaultProject": "carlopezzotti-34e0a",
-  "cloudflare": { "proxied": false },
-  "hosting": {
-    "ignore": ["**/.*", "**/node_modules/**", "_*.html"],
-    "rewrites": [{ "source": "**", "destination": "/index.html" }],
-    "headers": [
-      {
-        "source": "**/*.@(js|css|svg)",
-        "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
-      },
-      {
-        "source": "/index.html",
-        "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
-      }
-    ]
-  },
+  "server": { "port": 8090, "bind": "127.0.0.1" },
+  "tunnel": "carlo.pezzotti",
   "sites": [
     {
-      "target": "",
       "folder": "sites/www",
-      "siteId": "carlopezzotti-34e0a",
-      "domains": ["carlopezzotti.ch"]
+      "hosts": ["carlopezzotti.ch", "www.carlopezzotti.ch", "web.carlopezzotti.ch"]
     },
     {
-      "target": "www",
-      "folder": "sites/www",
-      "siteId": "carlopezzotti-34e0a",
-      "domains": ["www.carlopezzotti.ch"]
-    },
-    {
-      "target": "web",
-      "folder": "sites/www",
-      "siteId": "carlopezzotti-34e0a",
-      "domains": ["web.carlopezzotti.ch"]
-    },
-    {
-      "target": "so",
       "folder": "sites/so",
-      "siteId": "carlopezzotti-so",
-      "domains": ["so.carlopezzotti.ch"]
+      "hosts": ["so.carlopezzotti.ch"]
     },
     {
-      "target": "dd",
       "folder": "sites/dd",
-      "siteId": "carlopezzotti-dd",
-      "domains": ["dd.carlopezzotti.ch"],
-      "hosting": {
-        "predeploy": ["node \"$PROJECT_DIR/scripts/build-dd-manifest.mjs\""],
-        "headers": [
-          {
-            "source": "**/*.@(js|css|svg)",
-            "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
-          },
-          {
-            "source": "**/@(index.html|experiments.json)",
-            "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
-          }
-        ]
-      }
+      "hosts": ["dd.carlopezzotti.ch"]
     }
   ]
 }

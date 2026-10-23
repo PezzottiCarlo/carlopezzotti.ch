@@ -10,8 +10,8 @@
 //   <meta name="dd:hidden">           → esclude l'esperimento dall'indice (facoltativo)
 // Le cartelle che iniziano con "_" o "." vengono ignorate.
 //
-// Viene eseguito in automatico prima di ogni deploy (predeploy in firebase.json e
-// workflow GitHub), quindi il file generato non va committato.
+// Lo esegue in automatico scripts/serve.mjs all'avvio e dopo ogni aggiornamento,
+// quindi il file generato non va committato.
 //
 // Uso: node scripts/build-dd-manifest.mjs [--check]
 
