@@ -5,10 +5,10 @@
 // Regole, come le aveva Firebase Hosting:
 //   - i file che iniziano con "." e gli "_*.html" non vengono mai serviti;
 //   - un percorso che non esiste risponde con l'index.html del sito (SPA);
-//   - niente cache senza controllo: browser e Cloudflare richiedono ogni file con
-//     l'ETag e ricevono un 304 se non è cambiato. Così un push è online subito,
-//     senza dover svuotare la cache di Cloudflare (il token non ha quel permesso,
-//     e a qualsiasi max-age dei file statici sostituisce 4 ore per i browser).
+//   - "private, no-cache": il browser ricontrolla ogni file con l'ETag e riceve un
+//     304 se non è cambiato, così un push è online subito. "private" serve perché
+//     Cloudflare non metta i file nella sua cache e non sostituisca l'header con
+//     le sue 4 ore (non c'è un token con il permesso di svuotarla).
 //
 // Aggiornamento: un webhook GitHub (evento push) chiama POST /_deploy su uno
 // qualsiasi degli hostname. Se la firma torna con il segreto, il server porta
