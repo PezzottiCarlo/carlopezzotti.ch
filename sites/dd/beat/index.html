@@ -1,0 +1,1105 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le funzioni suonano</title>
+<meta name="description" content="Un beat trap, uno drill e uno hard techno costruiti solo con funzioni: ogni strumento è un'equazione da vedere, ascoltare e modificare, e il beat è la loro somma.">
+<meta name="dd:tags" content="funzioni, musica, grafici, esponenziale">
+<meta name="dd:date" content="2026-10-23">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/_shared/dd.css">
+<style>
+:root{ --lw:180px; --console:#151831; --console-2:#1e2245; --console-line:rgba(255,255,255,.07); }
+
+.app{min-height:100vh;min-height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:12px;padding:10px 16px 16px}
+.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.topbar .brand{flex:1 1 320px;min-width:0}
+.beats{display:flex;gap:6px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
+.beat-tab{border:0;background:transparent;color:var(--ink);border-radius:10px;padding:6px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;font-weight:800;font-size:.95rem;transition:background .2s,transform .12s}
+.beat-tab small{font-weight:650;font-size:.72rem;color:var(--muted)}
+.beat-tab:hover{background:var(--primary-soft)}
+.beat-tab:active{transform:scale(.96)}
+.beat-tab.active{background:var(--primary);color:#fff}
+.beat-tab.active small{color:#d9d8ff}
+.top-tools{display:flex;align-items:center;gap:10px}
+.icon-btn{width:46px;height:46px;padding:0;font-size:1.25rem}
+.play{height:46px;padding:0 20px 0 16px;font-size:1rem;border-radius:14px}
+.play .pi{width:0;height:0;border-style:solid;border-width:8px 0 8px 13px;border-color:transparent transparent transparent currentColor}
+.play.on{background:#b42318;border-color:#b42318}
+.play.on:hover:not(:disabled){background:#912018}
+.play.on .pi{width:13px;height:13px;border:0;background:currentColor;border-radius:2px}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) clamp(330px,31vw,470px);gap:14px;align-items:start}
+.mix{padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.mix-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.mix-head h2{margin:0;font-size:1.15rem}
+.mix-head p{margin:2px 0 0;color:var(--muted);font-size:.9rem;max-width:68ch}
+.small-btn{padding:6px 12px;font-size:.88rem}
+
+/* La somma, scritta come equazione */
+.sumf{display:flex;flex-wrap:wrap;align-items:center;gap:6px 6px;font-family:var(--math);font-size:1.22rem;padding:10px 12px;background:#f6f7fd;border:1px solid var(--line);border-radius:14px}
+.sumf .yt{font-weight:700;margin-right:2px}
+.sumf .plus{color:var(--muted)}
+.term{font:inherit;font-size:1.06rem;color:var(--ink);cursor:pointer;border:2px solid var(--c);border-radius:10px;padding:1px 9px;background:color-mix(in srgb,var(--c) 13%,#fff);transition:opacity .2s,background .2s,transform .12s}
+.term:hover{background:color-mix(in srgb,var(--c) 24%,#fff)}
+.term:active{transform:scale(.96)}
+.term .co{font-weight:700}
+.term.off{opacity:.42;border-style:dashed;background:#fff;text-decoration:line-through;text-decoration-thickness:2px}
+.term.sel{box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 30%,transparent)}
+.solo-note{width:100%;font-family:var(--font);font-size:.82rem;color:var(--tilt);font-weight:700}
+
+/* La console con le tracce */
+.console{position:relative;background:var(--console);border-radius:16px;padding:10px 10px 4px;color:#e9ebff;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.rows{position:relative;display:grid;grid-template-columns:var(--lw) minmax(0,1fr);row-gap:6px;align-items:stretch}
+.lab{display:flex;align-items:center;gap:6px;padding:0 8px 0 2px;min-width:0;border-radius:10px;transition:background .2s}
+.lab.sel{background:rgba(255,255,255,.08)}
+.led{flex:none;width:12px;height:12px;border-radius:50%;background:color-mix(in srgb,var(--c) calc(25% + var(--g,0) * 75%),#2c3058);box-shadow:0 0 calc(var(--g,0) * 16px) var(--c)}
+.nm{flex:1;min-width:0;text-align:left;border:0;background:none;color:inherit;font-weight:750;font-size:.9rem;cursor:pointer;padding:6px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:8px}
+.nm:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.nm small{display:block;font-weight:600;font-size:.7rem;color:#a7acd6;font-family:var(--math);font-style:italic}
+.tg,.so{flex:none;border:1.5px solid #4a4f7d;background:transparent;color:#c9cdf3;font-weight:800;font-size:.72rem;border-radius:8px;height:26px;min-width:30px;padding:0 6px;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.tg:hover,.so:hover{border-color:#8d93c8}
+.tg[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#0f1124}
+.so[aria-pressed="true"]{background:#ffd166;border-color:#ffd166;color:#3d2a00}
+.lane{display:block;width:100%;height:54px;border-radius:9px;background:var(--console-2);cursor:copy;touch-action:manipulation}
+.lane.sel{box-shadow:0 0 0 2px var(--c)}
+.lab.sum{font-family:var(--math);font-weight:700;font-size:1.05rem;padding-left:6px}
+.lab.sum small{display:block;font-family:var(--font);font-weight:600;font-size:.7rem;color:#a7acd6}
+.lane.sum{height:92px;cursor:default;background:#0f1126}
+.ph{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 10px rgba(255,255,255,.8);left:calc(var(--lw) + (100% - var(--lw)) * var(--x,0));pointer-events:none;opacity:0;transition:opacity .2s}
+.console.playing .ph{opacity:.9}
+.axis{position:relative;height:22px;margin-left:var(--lw);font-size:.7rem;color:#9ea3cf}
+.axis span{position:absolute;top:4px;transform:translateX(-50%);white-space:nowrap}
+.axis span:first-child{transform:none}
+.axis .unit{left:calc(8px - var(--lw))!important;transform:none;font-style:italic;font-family:var(--math)}
+.hint{margin:-4px 0 0;font-size:.82rem;color:var(--muted)}
+.tips{display:grid;gap:6px;padding:10px 14px;border-radius:14px;background:var(--tilt-soft);border-left:6px solid var(--tilt-line)}
+.tips h3{margin:0;font-size:.95rem}
+.tips ul{margin:0;padding-left:1.1em;font-size:.9rem}
+.tips li{margin:2px 0}
+
+/* Il dettaglio dello strumento */
+.detail{--c:var(--primary);padding:16px;display:flex;flex-direction:column;gap:12px;position:sticky;top:10px;max-height:calc(100dvh - 20px);overflow:auto;min-width:0}
+.dhead{display:flex;align-items:center;gap:10px}
+.dhead .dot{flex:none;width:16px;height:16px;border-radius:50%;background:var(--c);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 20%,transparent)}
+.dhead h2{margin:0;font-size:1.25rem;line-height:1.15}
+.dhead p{margin:1px 0 0;font-size:.85rem;color:var(--muted)}
+.dhead .grow{flex:1;min-width:0}
+.dbtns{display:flex;gap:6px}
+.pill{position:relative;overflow:hidden;border:2px solid var(--line);background:#fff;color:var(--ink);font-weight:800;font-size:.82rem;border-radius:10px;padding:6px 10px;cursor:pointer;transition:background .2s,border-color .2s}
+.pill:hover{border-color:var(--c)}
+.pill.tgl[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.pill.sol[aria-pressed="true"]{background:#ffd166;border-color:#e0a800;color:#3d2a00}
+.detail h3{margin:2px 0 -4px;font-size:.92rem}
+.formula{font-family:var(--math);font-size:1.2rem;line-height:1.75;background:#f6f7fd;border:1px solid var(--line);border-left:6px solid var(--c);border-radius:14px;padding:10px 14px}
+.formula .ln{display:block}
+.formula .ln + .ln{font-size:.92em;color:#2a2f55}
+.formula sup{font-size:.68em;line-height:0}
+.formula sub{font-size:.68em;line-height:0}
+.pv{font-style:normal;font-weight:700;border-radius:6px;padding:0 3px;background:color-mix(in srgb,var(--c) 18%,#fff);transition:background .35s,color .35s}
+.pv.flash{background:var(--c);color:#fff;transition:none}
+.fr{font-size:.85em}
+.nb{white-space:nowrap}
+.vars{margin:-4px 0 0;font-size:.82rem;color:var(--muted)}
+.vars i{font-family:var(--math);font-size:1.05em;color:var(--ink)}
+.plot-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.seg{display:inline-flex;background:#eef0fa;border-radius:11px;padding:3px}
+.seg button{border:0;background:transparent;border-radius:8px;padding:5px 10px;font-weight:750;font-size:.8rem;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(27,31,59,.15)}
+.plotwrap{position:relative}
+.plotwrap canvas{display:block;width:100%;height:190px}
+#plot{border-radius:12px;background:#fbfbff;border:1px solid var(--line)}
+#plotCur{position:absolute;inset:0;pointer-events:none}
+.sliders{display:grid;gap:10px}
+.sl label{display:flex;justify-content:space-between;gap:8px;font-weight:700;font-size:.88rem}
+.sl label .val{font-family:var(--math);font-weight:700}
+.sl label i{font-family:var(--math)}
+.sl input{width:100%;accent-color:var(--c);margin:4px 0 0}
+.sl.vol{padding-top:8px;border-top:1px dashed var(--line)}
+.legend{margin:0;display:grid;gap:8px}
+.legend div{display:grid;gap:2px}
+.legend dt{font-family:var(--math);font-size:1.02rem}
+.legend dd{margin:0;font-size:.88rem;color:#2d3254}
+.legend dd i,.legend dt i{font-family:var(--math)}
+.when{font-size:.88rem;color:#2d3254;display:grid;gap:6px}
+.when p{margin:0}
+.notes{display:flex;flex-wrap:wrap;gap:5px}
+.nt{display:inline-flex;align-items:baseline;gap:4px;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--c) 12%,#fff);border:1px solid color-mix(in srgb,var(--c) 35%,#fff);font-size:.78rem;white-space:nowrap}
+.nt b{font-family:var(--math)}
+.nt small{color:var(--muted)}
+.steps{font-family:var(--math);font-size:1rem}
+
+@media (max-width:1040px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .detail{position:static;max-height:none}
+}
+@media (max-width:640px){
+  :root{--lw:118px}
+  .app{padding:8px 10px 14px}
+  .brand p{display:none}
+  .lab{flex-wrap:wrap;align-content:center;gap:3px 4px}
+  .nm{flex-basis:calc(100% - 18px);padding:2px}
+  .nm small{display:none}
+  .tg,.so{height:22px;min-width:26px;font-size:.66rem}
+  .lane{height:58px}
+  .sumf{font-size:1.05rem}
+  .term{font-size:.95rem}
+  .formula{font-size:1.06rem}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <a class="dd-back" href="/" aria-label="Tutti gli esperimenti dd" title="Tutti gli esperimenti"><span class="arr" aria-hidden="true">←</span>dd</a>
+      <div class="logo" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 34 34" fill="none">
+          <path d="M3 17c2.5-9 5.5-9 8 0s5.5 9 8 0 5.5-9 8 0" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          <rect x="27" y="6" width="3" height="22" rx="1.5" fill="#ffd166"/>
+          <rect x="3" y="27" width="21" height="3" rx="1.5" fill="#ffd166" opacity=".55"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Le funzioni suonano</h1>
+        <p>Ogni strumento è una funzione del tempo. Il beat è la loro somma.</p>
+      </div>
+    </div>
+    <nav class="beats" id="beats" aria-label="Scegli il beat"></nav>
+    <div class="top-tools">
+      <button class="btn play" id="play" type="button" aria-pressed="false"><span class="pi" aria-hidden="true"></span><span id="playTxt">Suona</span></button>
+      <button class="btn ghost-btn icon-btn" id="reset" type="button" title="Rimetti il beat com'era all'inizio" aria-label="Rimetti il beat com'era all'inizio">↺</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="card mix" aria-labelledby="mixTitle">
+      <div class="mix-head">
+        <div><h2 id="mixTitle">Il beat è una somma di funzioni</h2><p id="beatDesc"></p></div>
+        <button class="btn ghost-btn small-btn" id="all" type="button">Tutti insieme</button>
+      </div>
+      <div class="sumf" id="sumf"></div>
+      <div class="console" id="console">
+        <div class="rows" id="rows"><div class="ph" aria-hidden="true"></div></div>
+        <div class="axis" id="axis" aria-hidden="true"></div>
+      </div>
+      <p class="hint">Ogni traccia è il grafico della funzione di uno strumento nel tempo; l'ultima è la somma, cioè quello che senti. Clicca su una traccia per aggiungere o togliere un colpo in quel punto.</p>
+      <div class="tips" id="tips"></div>
+    </section>
+
+    <aside class="card detail" id="detail" aria-label="Lo strumento scelto"></aside>
+  </main>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const params = new URLSearchParams(location.search);
+
+// Tutto il suono viene calcolato qui, un campione alla volta, dalle stesse
+// funzioni che la pagina mostra: 44100 valori di y per ogni secondo.
+const SR = 44100;
+const TWO_PI = 2 * Math.PI;
+
+const fmt = (x, d = 3) => {
+  const r = Math.round(x * 10 ** d) / 10 ** d;
+  return String(r).replace('.', ',').replace('-', '−');
+};
+const fmtStep = n => {
+  const w = Math.floor(n + 1e-6), f = n - w;
+  if (f < .01) return String(w);
+  if (Math.abs(f - .5) < .01) return w + '½';
+  if (Math.abs(f - 1 / 3) < .01) return w + '⅓';
+  if (Math.abs(f - 2 / 3) < .01) return w + '⅔';
+  return fmt(n, 2);
+};
+
+// Rumore: un numero "a caso" tra −1 e 1 per ogni campione j, sempre lo stesso per lo stesso j.
+const noise = j => { const x = Math.sin(j * 12.9898 + 78.233) * 43758.5453; return (x - Math.floor(x)) * 2 - 1; };
+const noteF = (inst, s) => inst.base * 2 ** (s / 12);
+const NAMES = ['Do', 'Do♯', 'Re', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
+const noteName = (inst, s) => NAMES[((Math.round(69 + 12 * Math.log2(inst.base / 440)) + s) % 12 + 12) % 12];
+
+// Scrittura delle formule
+const I = s => `<i>${s}</i>`;
+const T = I('τ');
+const ex = s => `e<sup>${s}</sup>`;
+const noteLine = inst => `${I('f')} = ${inst.base} · 2<sup>${I('s')}/12</sup>`;
+const LEG_NOTE = inst => [noteLine(inst), `La nota diventa frequenza. ${I('s')} conta i semitoni, cioè i tasti del pianoforte, bianchi e neri. Ogni 12 semitoni la frequenza raddoppia: è una funzione esponenziale.`];
+const LEG_DECAY = [ex(`−${I('k')}${T}`), `Il volume: parte da 1 e scende verso 0, così il suono si spegne. Più ${I('k')} è grande, prima si spegne.`];
+const LEG_SIN = [`sin(2π · ${I('f')} · ${T})`, `L'onda che fa muovere l'altoparlante: sale e scende ${I('f')} volte al secondo. Più ${I('f')} è grande, più il suono è acuto.`];
+
+/* ------------------------------------------------------------------
+   Le voci: ogni voce è una funzione y(τ), dove τ sono i secondi passati
+   dall'inizio del colpo. params: [nome, min, max, passo, unità]
+   ------------------------------------------------------------------ */
+const VOICES = {
+  kick: {
+    params: { k: ['Durata', 3, 20, .5], f1: ['Nota finale', 35, 90, 1, 'Hz'], d: ['Schiocco', 0, 250, 5, 'Hz'] },
+    fn: p => t => Math.exp(-p.k * t) * Math.sin(TWO_PI * (p.f1 + p.d * Math.exp(-35 * t)) * t),
+    env: p => t => Math.exp(-p.k * t),
+    len: p => 7 / p.k,
+    zoom: () => .05,
+    formula: P => [
+      `${I('y')}(${T}) = ${I('A')} · ${ex(`−${P('k')}${T}`)} · sin(2π · ${I('f')}(${T}) · ${T})`,
+      `${I('f')}(${T}) = ${P('f1')} + ${P('d')} · ${ex(`−35${T}`)}`],
+    legend: P => [LEG_DECAY, LEG_SIN,
+      [`${I('f')}(${T})`, `Anche la frequenza scende: parte da ${P('f1')} + ${P('d')} Hz (lo schiocco) e arriva a ${P('f1')} Hz, il «bum» profondo.`]],
+  },
+  kickHard: {
+    params: { D: ['Distorsione', 1, 10, .5], k: ['Durata', 3, 14, .5], f1: ['Nota finale', 40, 70, 1, 'Hz'] },
+    fn: p => t => Math.tanh(p.D * Math.exp(-p.k * t) * Math.sin(TWO_PI * (p.f1 + 170 * Math.exp(-30 * t)) * t)),
+    env: p => t => Math.tanh(p.D * Math.exp(-p.k * t)),
+    len: p => Math.log(1000 * p.D) / p.k,
+    zoom: () => .06,
+    formula: P => [
+      `${I('y')}(${T}) = ${I('A')} · tanh( ${P('D')} · ${ex(`−${P('k')}${T}`)} · sin(2π · ${I('f')}(${T}) · ${T}) )`,
+      `${I('f')}(${T}) = ${P('f1')} + 170 · ${ex(`−30${T}`)}`],
+    legend: P => [
+      ['tanh( … )', `Una funzione che «schiaccia» tutti i valori tra −1 e 1. Se dentro c'è un'onda alta (${I('D')} grande), le cime vengono tagliate e l'onda diventa quasi quadrata: è la distorsione che rende la cassa dura.`],
+      [ex(`−${I('k')}${T}`), `Il volume che si spegne. Finché ${I('D')} · ${ex(`−${I('k')}${T}`)} resta sopra 1, la tanh lo tiene al massimo: per questo la cassa distorta sembra più lunga.`],
+      [`${I('f')}(${T})`, `La frequenza scende da ${P('f1')} + 170 Hz fino a ${P('f1')} Hz.`]],
+  },
+  b808: {
+    params: { k: ['Durata', .3, 4, .1], S: ['Saturazione', 1, 6, .25] },
+    melodic: true,
+    fn: (p, h, prev, inst) => { const f = noteF(inst, h.s); return t => Math.tanh(p.S * Math.exp(-p.k * t) * Math.sin(TWO_PI * f * t)); },
+    env: p => t => Math.tanh(p.S * Math.exp(-p.k * t)),
+    len: p => Math.log(1000 * p.S) / p.k,
+    zoom: (p, inst, h) => 3 / noteF(inst, h.s),
+    formula: (P, p, inst) => [
+      `${I('y')}(${T}) = ${I('A')} · tanh( ${P('S')} · ${ex(`−${P('k')}${T}`)} · sin(2π · ${I('f')} · ${T}) )`, noteLine(inst)],
+    legend: (P, p, inst) => [LEG_NOTE(inst),
+      [`tanh( ${I('S')} · … )`, `Schiaccia l'onda: nascono suoni più acuti (gli armonici) e il basso si sente anche dalle casse di un telefono.`],
+      [ex(`−${I('k')}${T}`), `Con ${I('k')} piccolo la nota dura a lungo. Quando arriva la nota dopo, questa si interrompe.`]],
+  },
+  slide808: {
+    params: { k: ['Durata', .3, 4, .1], S: ['Saturazione', 1, 6, .25], g: ['Scivolo', 4, 40, 1] },
+    melodic: true, slides: true,
+    fn: (p, h, prev, inst) => {
+      const f2 = noteF(inst, h.s), f1 = h.slide && prev ? noteF(inst, prev.s) : f2;
+      return t => Math.tanh(p.S * Math.exp(-p.k * t) * Math.sin(TWO_PI * (f2 + (f1 - f2) * Math.exp(-p.g * t)) * t));
+    },
+    env: p => t => Math.tanh(p.S * Math.exp(-p.k * t)),
+    len: p => Math.log(1000 * p.S) / p.k,
+    zoom: (p, inst, h) => 3 / noteF(inst, h.s),
+    formula: (P, p, inst) => [
+      `${I('y')}(${T}) = ${I('A')} · tanh( ${P('S')} · ${ex(`−${P('k')}${T}`)} · sin(2π · ${I('f')}(${T}) · ${T}) )`,
+      `${I('f')}(${T}) = ${I('f')}<sub>2</sub> + (${I('f')}<sub>1</sub> − ${I('f')}<sub>2</sub>) · ${ex(`−${P('g')}${T}`)}`, noteLine(inst)],
+    legend: (P, p, inst) => [
+      [`${I('f')}(${T})`, `Lo scivolo tipico della drill: la frequenza parte dalla nota di prima (${I('f')}<sub>1</sub>) e si avvicina alla nota nuova (${I('f')}<sub>2</sub>). È la stessa curva esponenziale del volume, usata per l'altezza. Più ${I('g')} è grande, più lo scivolo è veloce.`],
+      LEG_NOTE(inst),
+      [`tanh( ${I('S')} · … )`, `Schiaccia l'onda: nascono gli armonici e il basso si sente anche da casse piccole.`]],
+  },
+  noise: {
+    params: { k: ['Durata', 8, 250, 1] },
+    fn: p => (t, j) => noise(j) * Math.exp(-p.k * t),
+    env: p => t => Math.exp(-p.k * t),
+    len: p => 7 / p.k,
+    zoom: () => .004,
+    formula: P => [`${I('y')}(${T}) = ${I('A')} · ${I('r')}(${T}) · ${ex(`−${P('k')}${T}`)}`],
+    legend: () => [
+      [`${I('r')}(${T})`, `Il rumore: a ogni istante un numero a caso tra −1 e 1. Non è una nota, è un fruscio, come «sss». Guardalo da vicino!`],
+      [ex(`−${I('k')}${T}`), `Con ${I('k')} grande il fruscio dura un attimo (hi-hat chiuso); con ${I('k')} piccolo resta aperto (open hat, clap). Sono la stessa funzione: cambia solo ${I('k')}.`]],
+  },
+  clapTail: {
+    params: { k: ['Colpo', 20, 80, 1], c: ['Coda', 0, .6, .05] },
+    fn: p => (t, j) => noise(j) * (Math.exp(-p.k * t) + p.c * Math.exp(-8 * t)),
+    env: p => t => Math.exp(-p.k * t) + p.c * Math.exp(-8 * t),
+    len: p => Math.max(7 / p.k, p.c > 0 ? Math.log(1000 * p.c) / 8 : 0),
+    zoom: () => .004,
+    formula: P => [`${I('y')}(${T}) = ${I('A')} · ${I('r')}(${T}) · ( ${ex(`−${P('k')}${T}`)} + ${P('c')} · ${ex(`−8${T}`)} )`],
+    legend: P => [
+      [`${ex(`−${I('k')}${T}`)} + ${I('c')} · ${ex(`−8${T}`)}`, `Due curve sommate: la prima cade subito (il colpo delle mani), la seconda scende piano (la coda, come l'eco di una stanza). Con ${I('c')} = 0 la coda sparisce.`],
+      [`${I('r')}(${T})`, `Il rumore: a ogni istante un numero a caso tra −1 e 1.`]],
+  },
+  snare: {
+    params: { k: ['Durata', 8, 40, 1], f: ['Corpo', 150, 320, 5, 'Hz'], T: ['Peso del corpo', 0, 1.5, .05] },
+    fn: p => (t, j) => Math.exp(-p.k * t) * (p.T * Math.sin(TWO_PI * p.f * t) + noise(j)),
+    env: p => t => Math.exp(-p.k * t) * (p.T + 1),
+    len: p => 7 / p.k,
+    zoom: () => .02,
+    formula: P => [`${I('y')}(${T}) = ${I('A')} · ${ex(`−${P('k')}${T}`)} · ( ${P('T')} · sin(2π · ${P('f')} · ${T}) + ${I('r')}(${T}) )`],
+    legend: () => [
+      [`${I('T')} · sin(2π · ${I('f')} · ${T})`, `Il corpo del tamburo: una nota bassa, la pelle che vibra.`],
+      [`${I('r')}(${T})`, `Il fruscio della cordiera, le molle sotto il rullante.`],
+      ['( … + … )', `Il rullante è una somma: onda più rumore. Con ${I('T')} = 0 resta solo il fruscio.`]],
+  },
+  perc: {
+    params: { k: ['Durata', 15, 80, 1], f: ['Frequenza', 400, 1600, 10, 'Hz'] },
+    fn: p => t => Math.exp(-p.k * t) * Math.sin(TWO_PI * p.f * t),
+    env: p => t => Math.exp(-p.k * t),
+    len: p => 7 / p.k,
+    zoom: p => 4 / p.f,
+    formula: P => [`${I('y')}(${T}) = ${I('A')} · ${ex(`−${P('k')}${T}`)} · sin(2π · ${P('f')} · ${T})`],
+    legend: () => [
+      [`${ex(`−${I('k')}${T}`)} · sin(2π · ${I('f')} · ${T})`, `La funzione più semplice di tutte: un'onda che si spegne. Tutti gli altri strumenti partono da qui e aggiungono qualcosa.`],
+      LEG_SIN],
+  },
+  bell: {
+    params: { k: ['Durata', .8, 6, .1], I: ['Metallo', 0, 5, .1] },
+    melodic: true, poly: true,
+    fn: (p, h, prev, inst) => { const f = noteF(inst, h.s); return t => Math.exp(-p.k * t) * Math.sin(TWO_PI * f * t + p.I * Math.sin(TWO_PI * 3.5 * f * t)); },
+    env: p => t => Math.exp(-p.k * t),
+    len: p => Math.min(7 / p.k, 3),
+    zoom: (p, inst, h) => 3 / noteF(inst, h.s),
+    formula: (P, p, inst) => [
+      `${I('y')}(${T}) = ${I('A')} · ${ex(`−${P('k')}${T}`)} · sin( 2π · ${I('f')} · ${T} + ${P('I')} · sin(2π · 3,5 · ${I('f')} · ${T}) )`, noteLine(inst)],
+    legend: (P, p, inst) => [
+      [`sin( … + ${I('I')} · sin( … ) )`, `Una funzione dentro un'altra: la seconda onda spinge avanti e indietro la prima. Con ${I('I')} = 0 senti un fischio puro; alzando ${I('I')} diventa una campanella metallica.`],
+      [noteLine(inst), `${I('s')} = 0 è il La del diapason (440 Hz); ${I('s')} = 12 è il La un'ottava sopra (880 Hz): il doppio.`],
+      LEG_DECAY],
+  },
+  piano: {
+    params: { k: ['Durata', .6, 5, .1], N: ['Armoniche', 1, 8, 1] },
+    melodic: true, poly: true,
+    fn: (p, h, prev, inst) => {
+      const f = noteF(inst, h.s), N = Math.round(p.N);
+      return t => {
+        // sin(m·x) per m = 1…N, ognuno dal precedente: sin(m·x) = 2cos(x)·sin((m−1)·x) − sin((m−2)·x)
+        const x = TWO_PI * f * t, c = 2 * Math.cos(x);
+        let a = 0, b = Math.sin(x), sum = b;
+        for (let m = 2; m <= N; m++) { const nb = c * b - a; a = b; b = nb; sum += b / m; }
+        return Math.exp(-p.k * t) * sum;
+      };
+    },
+    env: p => { let s = 0; for (let m = 1; m <= Math.round(p.N); m++) s += 1 / m; return t => s * Math.exp(-p.k * t); },
+    len: p => Math.min(7 / p.k, 2.5),
+    zoom: (p, inst, h) => 2 / noteF(inst, h.s),
+    formula: (P, p, inst) => {
+      const N = Math.round(p.N);
+      const term = m => m === 1 ? `sin(2π · ${I('f')} · ${T})` : `<span class="fr">${m === 2 ? '½' : m === 3 ? '⅓' : '1/' + m}</span> · sin(2π · ${m}${I('f')} · ${T})`;
+      const sum = N <= 3 ? Array.from({ length: N }, (_, m) => term(m + 1)).join(' + ') : `${term(1)} + ${term(2)} + … + ${term(N)}`;
+      return [`${I('y')}(${T}) = ${I('A')} · ${ex(`−${P('k')}${T}`)} · [ ${sum} ]`, `${P('N')} onde · ${noteLine(inst)}`];
+    },
+    legend: (P, p, inst) => [
+      ['[ … + … + … ]', `Una somma di onde: la nota ${I('f')} e le sue armoniche 2${I('f')}, 3${I('f')}, 4${I('f')}…, ognuna più debole (½, ⅓, ¼…). Con ${I('N')} = 1 resta un fischio; più armoniche, suono più ricco.`],
+      LEG_NOTE(inst), LEG_DECAY],
+  },
+  bassRoll: {
+    params: { k: ['Durata', 5, 40, 1], D: ['Grinta', 1, 8, .5] },
+    melodic: true,
+    fn: (p, h, prev, inst) => { const f = noteF(inst, h.s); return t => Math.exp(-p.k * t) * Math.tanh(p.D * Math.sin(TWO_PI * f * t)); },
+    env: p => t => Math.exp(-p.k * t) * Math.tanh(p.D),
+    len: p => 7 / p.k,
+    zoom: (p, inst, h) => 3 / noteF(inst, h.s),
+    formula: (P, p, inst) => [`${I('y')}(${T}) = ${I('A')} · ${ex(`−${P('k')}${T}`)} · tanh( ${P('D')} · sin(2π · ${I('f')} · ${T}) )`, noteLine(inst)],
+    legend: (P, p, inst) => [
+      [`tanh( ${I('D')} · sin( … ) )`, `Un'onda schiacciata dalla tanh diventa quasi quadrata: un basso che ronza. Guardalo da vicino con ${I('D')} = 1 e con ${I('D')} = 8.`],
+      [ex(`−${I('k')}${T}`), `Con ${I('k')} grande le note sono corte e secche e lasciano spazio alla cassa.`],
+      LEG_NOTE(inst)],
+  },
+  acid: {
+    params: { k: ['Durata', 4, 30, 1], I: ['Asprezza', 0, 10, .5] },
+    melodic: true,
+    fn: (p, h, prev, inst) => { const f = noteF(inst, h.s); return t => Math.exp(-p.k * t) * Math.sin(TWO_PI * f * t + p.I * Math.exp(-12 * t) * Math.sin(TWO_PI * f * t)); },
+    env: p => t => Math.exp(-p.k * t),
+    len: p => 7 / p.k,
+    zoom: (p, inst, h) => 3 / noteF(inst, h.s),
+    formula: (P, p, inst) => [`${I('y')}(${T}) = ${I('A')} · ${ex(`−${P('k')}${T}`)} · sin( 2π · ${I('f')} · ${T} + ${P('I')} · ${ex(`−12${T}`)} · sin(2π · ${I('f')} · ${T}) )`, noteLine(inst)],
+    legend: (P, p, inst) => [
+      [`${I('I')} · ${ex(`−12${T}`)} · sin( … )`, `Dentro la nota c'è un'altra onda che si spegne in fretta: all'inizio il suono è aspro, poi si addolcisce. È il verso «acido» della techno. Con ${I('I')} = 0 resta un'onda liscia.`],
+      LEG_NOTE(inst), LEG_DECAY],
+  },
+};
+
+/* ------------------------------------------------------------------
+   I tre beat. Un passo = un sedicesimo di battuta; 32 passi = 2 battute.
+   hits: n = passo, v = forza A, s = semitoni, slide = scivola dalla nota prima
+   ------------------------------------------------------------------ */
+const H = (n, v = 1, s, slide) => ({ n, v, s, slide: !!slide });
+const notes = (list, v = 1) => list.map(([n, s, sl]) => H(n, v, s, sl));
+
+function trapHats(){
+  const out = [];
+  for (let n = 0; n < 32; n += 2) if (![6, 14, 22, 28, 30].includes(n)) out.push(H(n, n % 4 ? .6 : .9));
+  [6, 6 + 2 / 3, 6 + 4 / 3].forEach((n, i) => out.push(H(n, [.8, .5, .65][i])));       // terzina
+  [14, 14.5, 15, 15.5].forEach((n, i) => out.push(H(n, .45 + i * .15)));              // trentaduesimi
+  out.push(H(22, .8), H(23, .55));
+  for (let i = 0; i < 8; i++) out.push(H(28 + i / 2, .35 + i * .09));                  // rullata che cresce
+  return out;
+}
+function drillHats(){
+  const out = [], pat = [0, 3, 6, 8, 11, 14], v = [.9, .55, .7, .9, .55, .7];
+  for (const bar of [0, 16]) pat.forEach((n, i) => { if (!(bar && n === 14)) out.push(H(bar + n, v[i])); });
+  [29 + 1 / 3, 30, 30 + 2 / 3, 31 + 1 / 3].forEach((n, i) => out.push(H(n, .45 + i * .17)));
+  return out;
+}
+const range = f => Array.from({ length: 32 }, (_, n) => f(n)).filter(Boolean);
+const ACID = [[0, 0, 12, 0, 3, null, 12, 10, 0, 0, 7, null, 12, 3, 0, 5], [0, 0, 12, 0, 3, null, 15, 12, 0, 0, 7, 10, 12, 15, 12, 7]].flat();
+
+const BEATS = [
+  { id:'trap', name:'Trap', bpm:140,
+    desc:'140 battiti al minuto, ma il clap cade sul terzo tempo e il ritmo sembra lento. Cassa e 808 vanno insieme, gli hi-hat fanno rullate velocissime.',
+    tips:[
+      'Metti in solo l\'<b>hi-hat</b>: trovi le rullate? Guarda dove i colpi si fanno fitti nella traccia.',
+      'Ascolta solo l\'<b>808</b> e alza la saturazione <i>S</i>: l\'onda diventa quasi quadrata e il basso si sente anche dal telefono.',
+      'Porta a 0 il «metallo» <i>I</i> della <b>melodia</b>: che cosa resta della campanella?'],
+    inst:[
+      { name:'Cassa', fn:'cassa', color:'#e5484d', voice:'kick', p:{ k:9, f1:50, d:140 }, mix:.9,
+        role:'Il battito: segna il tempo insieme all\'808.', hits:[0, 10, 16, 24, 27].map(n => H(n)) },
+      { name:'808', fn:'basso', color:'#f2891d', voice:'b808', base:55, p:{ k:1.1, S:2.5 }, mix:.4,
+        role:'Il basso lunghissimo della trap: una nota grave che vibra e si spegne piano.',
+        hits:notes([[0, 0], [10, 0], [13, 3], [16, -4], [24, -5], [27, -5], [30, 7]]) },
+      { name:'Clap', fn:'clap', color:'#d9a400', voice:'noise', ranges:{ k:[8, 40] }, p:{ k:18 }, mix:.85,
+        role:'Batte sul terzo tempo di ogni battuta.', hits:[H(8), H(24)] },
+      { name:'Hi-hat', fn:'hihat', color:'#14a394', voice:'noise', ranges:{ k:[40, 250] }, p:{ k:90 }, mix:.45,
+        role:'Il ticchettio, con le rullate tipiche della trap.', hits:trapHats() },
+      { name:'Melodia', fn:'melodia', color:'#8e4ee0', voice:'bell', base:440, p:{ k:2.6, I:1.8 }, mix:.17,
+        role:'Una campanella in La minore.',
+        hits:notes([[0, 12], [3, 7], [6, 3], [8, 10], [10, 7], [12, 8], [14, 7], [16, 12], [19, 7], [22, 3], [24, 5], [26, 3], [28, 2], [30, -1]], .85) },
+    ] },
+  { id:'drill', name:'Drill', bpm:142,
+    desc:'Hi-hat a gruppi 3 + 3 + 2, rullante sul terzo tempo con un colpo in anticipo, e un 808 che scivola da una nota all\'altra.',
+    tips:[
+      'Lascia acceso solo l\'<b>808</b>: senti le note che scivolano? Cambia la velocità dello scivolo <i>g</i>.',
+      'Nel <b>piano</b>, porta le armoniche <i>N</i> da 1 a 8: come cambia il suono? E il grafico?',
+      'Nel <b>rullante</b>, porta il peso del corpo <i>T</i> a 0: resta solo il rumore.'],
+    inst:[
+      { name:'Cassa', fn:'cassa', color:'#e5484d', voice:'kick', p:{ k:11, f1:52, d:160 }, mix:.85,
+        role:'Pochi colpi, fuori dal tempo.', hits:[0, 11, 16].map(n => H(n)) },
+      { name:'808', fn:'basso', color:'#f2891d', voice:'slide808', base:55, p:{ k:.7, S:3, g:14 }, mix:.36,
+        role:'Il basso che scivola da una nota all\'altra: il marchio della drill.',
+        hits:notes([[0, 0], [6, 3, 1], [11, 0], [16, -4], [22, 1, 1], [27, 0, 1]]) },
+      { name:'Rullante', fn:'rullante', color:'#d9a400', voice:'snare', p:{ k:16, f:190, T:.8 }, mix:.55,
+        role:'Sul terzo tempo, più un colpo in anticipo che fa «rimbalzare» il ritmo.', hits:[H(8), H(21, .3), H(24), H(30, .75)] },
+      { name:'Hi-hat', fn:'hihat', color:'#14a394', voice:'noise', ranges:{ k:[40, 250] }, p:{ k:110 }, mix:.45,
+        role:'Gruppi da 3 + 3 + 2 passi: il ritmo zoppo della drill.', rhythm:'In ogni battuta: 0, 3, 6, 8, 11, 14 → salti di 3, 3, 2, 3, 3, 2.', hits:drillHats() },
+      { name:'Perc', fn:'perc', color:'#d6409f', voice:'perc', p:{ k:40, f:820 }, mix:.35,
+        role:'Un legnetto che riempie i buchi.', hits:[[3, .7], [13, .5], [19, .7], [26, .5], [29, .6]].map(([n, v]) => H(n, v)) },
+      { name:'Piano', fn:'piano', color:'#8e4ee0', voice:'piano', base:220, p:{ k:1.4, N:4 }, mix:.15,
+        role:'Una melodia scura, con il Si bemolle.',
+        hits:notes([[0, 7], [3, 8], [6, 7], [8, 3], [11, 1], [14, 0], [16, 7], [19, 8], [22, 12], [24, 10], [27, 8], [30, 7]], .8) },
+    ] },
+  { id:'techno', name:'Hard techno', bpm:150,
+    desc:'Una cassa distorta su ogni tempo, il basso in controtempo e una linea acida che gira. A 150 battiti al minuto ogni passo dura esattamente 0,1 secondi.',
+    tips:[
+      'Metti in solo la <b>cassa</b> e alza la distorsione <i>D</i>: guarda il grafico diventare quadrato.',
+      '<b>Hi-hat</b> e <b>open hat</b> sono la stessa funzione: confronta i loro <i>k</i>.',
+      'Clicca sulle tracce per aggiungere o togliere colpi: la somma cambia subito.'],
+    inst:[
+      { name:'Cassa', fn:'cassa', color:'#e5484d', voice:'kickHard', p:{ D:4, k:8, f1:48 }, mix:.7,
+        role:'Quattro colpi per battuta, sempre: «four on the floor».',
+        rhythm:'n = 0, 4, 8, 12, … : un colpo quando n mod 4 = 0 (il resto di n diviso 4 è 0).', hits:range(n => n % 4 === 0 && H(n)) },
+      { name:'Basso', fn:'basso', color:'#f2891d', voice:'bassRoll', base:55, p:{ k:18, D:3 }, mix:.5,
+        role:'Risponde alla cassa nel controtempo.', rhythm:'Quando n mod 4 = 2 (forte) e n mod 4 = 3 (piano).',
+        hits:range(n => n % 4 > 1 && H(n, n % 4 === 2 ? 1 : .6, n >= 28 ? 3 : 0)) },
+      { name:'Hi-hat', fn:'hihat', color:'#14a394', voice:'noise', ranges:{ k:[40, 250] }, p:{ k:120 }, mix:.4,
+        role:'Un sedicesimo dopo l\'altro.', rhythm:'Tutti i passi, tranne quelli con n mod 4 = 2.',
+        hits:range(n => n % 4 !== 2 && H(n, n % 2 ? .55 : .35)) },
+      { name:'Open hat', fn:'openhat', color:'#2f7fd9', voice:'noise', ranges:{ k:[6, 40] }, p:{ k:14 }, mix:.3,
+        role:'Il «tss» in controtempo.', rhythm:'n mod 4 = 2: a metà tra due casse.', hits:range(n => n % 4 === 2 && H(n, .9)) },
+      { name:'Clap', fn:'clap', color:'#d9a400', voice:'clapTail', p:{ k:45, c:.3 }, mix:.6,
+        role:'Sul secondo e sul quarto tempo.', hits:[4, 12, 20, 28].map(n => H(n)) },
+      { name:'Acido', fn:'acido', color:'#3fae4a', voice:'acid', base:110, p:{ k:10, I:5 }, mix:.3,
+        role:'Una linea acida di sedicesimi che gira in loop.',
+        hits:ACID.map((s, n) => s === null ? null : H(n, s >= 12 ? 1 : .65, s)).filter(Boolean) },
+    ] },
+];
+const clone = o => JSON.parse(JSON.stringify(o));
+const PRISTINE = clone(BEATS);
+const prepare = b => { b.on = b.inst.map(() => true); b.solo = null; b.sel = 0; return b; };
+BEATS.forEach(prepare);
+
+/* ------------------------------------------------------------------ stato */
+const S = { bi:0, playing:false, ctx:null, master:null, t0:0, nodes:[], buf:[], N:0, sorted:[], zoom:false, plotWin:1, hover:null };
+const el = { beats:$('#beats'), play:$('#play'), playTxt:$('#playTxt'), reset:$('#reset'), all:$('#all'), desc:$('#beatDesc'),
+  sumf:$('#sumf'), console:$('#console'), rows:$('#rows'), axis:$('#axis'), tips:$('#tips'), detail:$('#detail') };
+let lanes = [], leds = [], labs = [], sumLane = null, envs = [];
+
+const beat = () => BEATS[S.bi];
+const stepDur = () => 60 / beat().bpm / 4;
+const audible = i => beat().solo !== null ? beat().solo === i : beat().on[i];
+const dpr = () => Math.min(2, window.devicePixelRatio || 1);
+const sortHits = inst => [...inst.hits].sort((a, b) => a.n - b.n);
+
+/* ------------------------------------------------------------------ calcolo del suono */
+function renderInst(i){
+  const b = beat(), inst = b.inst[i], V = VOICES[inst.voice], p = inst.p, N = S.N;
+  const out = new Float32Array(N), hits = S.sorted[i] = sortHits(inst), sd = stepDur();
+  const maxLen = Math.max(1, Math.round(Math.min(V.len(p), N / SR) * SR));
+  const fade = Math.round(.004 * SR);
+  hits.forEach((h, k) => {
+    const start = Math.round(h.n * sd * SR);
+    let len = maxLen;
+    if (!V.poly) { // uno strumento suona una nota alla volta: il colpo dopo interrompe questo
+      const next = k + 1 < hits.length ? hits[k + 1].n : hits[0].n + b.steps;
+      len = Math.min(len, Math.round(next * sd * SR) - start);
+    }
+    if (len <= 0) return;
+    const fn = V.fn(p, h, hits[(k - 1 + hits.length) % hits.length], inst);
+    const cut = len < maxLen;
+    for (let j = 0; j < len; j++) {
+      let y = h.v * fn(j / SR, j);
+      if (cut && j >= len - fade) y *= (len - j) / fade;
+      out[(start + j) % N] += y;
+    }
+  });
+  return out;
+}
+function renderAll(){
+  const b = beat();
+  b.steps = 32;
+  S.N = Math.round(b.steps * stepDur() * SR);
+  S.buf = b.inst.map((_, i) => renderInst(i));
+}
+
+/* ------------------------------------------------------------------ audio */
+function ensureCtx(){
+  if (S.ctx) return S.ctx;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const ctx = new AC();
+  const comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -12; comp.knee.value = 8; comp.ratio.value = 5; comp.attack.value = .003; comp.release.value = .15;
+  const master = ctx.createGain();
+  master.gain.value = .75;
+  // Limitatore morbido in uscita: lineare fino a 0,7, poi curva verso 1 con una tanh.
+  // Il WaveShaper legge l'ingresso tra −1 e 1, quindi prima si dimezza (u = x/2).
+  const half = ctx.createGain(), shaper = ctx.createWaveShaper(), curve = new Float32Array(2049);
+  half.gain.value = .5;
+  for (let q = 0; q < curve.length; q++) {
+    const x = (q / (curve.length - 1) * 2 - 1) * 2, a = Math.abs(x);
+    curve[q] = Math.sign(x) * (a < .7 ? a : .7 + .3 * Math.tanh((a - .7) / .3));
+  }
+  shaper.curve = curve; shaper.oversample = '2x';
+  master.connect(comp); comp.connect(half); half.connect(shaper); shaper.connect(ctx.destination);
+  S.ctx = ctx; S.master = master;
+  return ctx;
+}
+function audioBuf(i){
+  const ab = S.ctx.createBuffer(1, S.N, SR);
+  ab.copyToChannel(S.buf[i], 0);
+  return ab;
+}
+const gainOf = i => audible(i) ? beat().inst[i].mix : 0;
+function startAudio(){
+  const ctx = ensureCtx();
+  ctx.resume();
+  S.t0 = ctx.currentTime + .08;
+  S.nodes = beat().inst.map((_, i) => {
+    const g = ctx.createGain();
+    g.gain.value = gainOf(i);
+    g.connect(S.master);
+    const src = ctx.createBufferSource();
+    src.buffer = audioBuf(i); src.loop = true; src.connect(g); src.start(S.t0);
+    return { g, src };
+  });
+  S.playing = true;
+}
+function stopAudio(){
+  if (!S.ctx) return;
+  const t = S.ctx.currentTime;
+  S.nodes.forEach(({ g, src }) => { g.gain.setTargetAtTime(0, t, .012); src.stop(t + .08); });
+  S.nodes = [];
+  S.playing = false;
+}
+// Sostituisce il suono di uno strumento senza perdere il tempo
+function swap(i){
+  if (!S.playing) return;
+  const ctx = S.ctx, when = ctx.currentTime + .03, loop = S.N / SR;
+  const off = (((when - S.t0) % loop) + loop) % loop;
+  const src = ctx.createBufferSource();
+  src.buffer = audioBuf(i); src.loop = true; src.connect(S.nodes[i].g); src.start(when, off);
+  S.nodes[i].src.stop(when);
+  S.nodes[i].src = src;
+}
+function applyGains(){
+  if (!S.playing) return;
+  const t = S.ctx.currentTime;
+  S.nodes.forEach(({ g }, i) => g.gain.setTargetAtTime(gainOf(i), t, .015));
+}
+function setPlaying(on){
+  if (on) startAudio(); else stopAudio();
+  el.play.classList.toggle('on', on);
+  el.play.setAttribute('aria-pressed', String(on));
+  el.playTxt.textContent = on ? 'Ferma' : 'Suona';
+  el.console.classList.toggle('playing', on);
+  if (!on) { el.rows.style.setProperty('--x', 0); leds.forEach(l => l.style.setProperty('--g', 0)); clearCursor(); }
+}
+
+/* ------------------------------------------------------------------ disegno delle tracce */
+function fitCanvas(cv){
+  const r = dpr(), w = Math.max(1, Math.round(cv.clientWidth * r)), h = Math.max(1, Math.round(cv.clientHeight * r));
+  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+  return [w, h, r];
+}
+function envelope(buf, W, coef){
+  const lo = new Float32Array(W), hi = new Float32Array(W), N = S.N;
+  let peak = 0;
+  for (let x = 0; x < W; x++) {
+    const a = Math.floor(x * N / W), b = Math.max(a + 1, Math.floor((x + 1) * N / W));
+    let mn = 0, mx = 0;
+    for (let j = a; j < b; j++) {
+      let v = 0;
+      if (coef) { for (let i = 0; i < buf.length; i++) if (coef[i]) v += coef[i] * buf[i][j]; }
+      else v = buf[j];
+      if (v < mn) mn = v; if (v > mx) mx = v;
+    }
+    lo[x] = mn; hi[x] = mx;
+    peak = Math.max(peak, -mn, mx);
+  }
+  return { lo, hi, peak };
+}
+function drawGrid(g, W, H, r){
+  const steps = beat().steps;
+  for (let n = 1; n < steps; n++) {
+    const x = Math.round(n / steps * W) + .5;
+    g.fillStyle = n % 16 === 0 ? 'rgba(255,255,255,.3)' : n % 4 === 0 ? 'rgba(255,255,255,.13)' : 'rgba(255,255,255,.045)';
+    g.fillRect(x, 0, n % 16 === 0 ? 2 * r : r, H);
+  }
+  g.fillStyle = 'rgba(255,255,255,.08)';
+  g.fillRect(0, Math.round(H / 2), W, r);
+}
+function drawWave(g, env, W, H, color, scale){
+  const mid = H / 2, k = (H / 2 - 5) * scale;
+  g.fillStyle = color;
+  for (let x = 0; x < W; x++) {
+    const top = mid - env.hi[x] * k, bot = mid - env.lo[x] * k;
+    g.fillRect(x, top, 1, Math.max(1, bot - top));
+  }
+}
+function drawLane(i){
+  const cv = lanes[i]; if (!cv) return;
+  const [W, H, r] = fitCanvas(cv), g = cv.getContext('2d');
+  const inst = beat().inst[i], on = audible(i);
+  if (!envs[i] || envs[i].lo.length !== W) envs[i] = envelope(S.buf[i], W);
+  g.clearRect(0, 0, W, H);
+  drawGrid(g, W, H, r);
+  drawWave(g, envs[i], W, H, on ? inst.color : '#4b5079', 1 / Math.max(1, envs[i].peak));
+  // i colpi: un triangolino in alto, alto quanto la forza A
+  const steps = beat().steps;
+  g.fillStyle = on ? '#fff' : '#6b7099';
+  for (const h of inst.hits) {
+    const x = h.n / steps * W, s = (3 + 4 * h.v) * r;
+    g.beginPath(); g.moveTo(x, 0); g.lineTo(x + s, 0); g.lineTo(x, s * 1.3); g.closePath(); g.fill();
+  }
+  if (S.hover && S.hover.i === i) {
+    const x = S.hover.n / steps * W;
+    g.fillStyle = 'rgba(255,255,255,.18)';
+    g.fillRect(x, 0, W / steps, H);
+  }
+}
+function drawSum(){
+  if (!sumLane) return;
+  const [W, H, r] = fitCanvas(sumLane), g = sumLane.getContext('2d');
+  const coef = beat().inst.map((inst, i) => audible(i) ? inst.mix : 0);
+  const env = envelope(S.buf, W, coef);
+  g.clearRect(0, 0, W, H);
+  drawGrid(g, W, H, r);
+  const grad = g.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#c9c4ff'); grad.addColorStop(.5, '#ffffff'); grad.addColorStop(1, '#c9c4ff');
+  drawWave(g, env, W, H, grad, 1 / Math.max(1, env.peak));
+}
+function drawLanes(){ envs = []; beat().inst.forEach((_, i) => drawLane(i)); drawSum(); }
+
+/* ------------------------------------------------------------------ interfaccia */
+function buildTabs(){
+  el.beats.innerHTML = BEATS.map((b, i) => `<button class="beat-tab ${i === S.bi ? 'active' : ''}" type="button" data-b="${i}" aria-pressed="${i === S.bi}">${esc(b.name)}<small>${b.bpm} BPM</small></button>`).join('');
+}
+function buildRows(){
+  const b = beat();
+  el.rows.querySelectorAll('.lab, .lane').forEach(n => n.remove());
+  const frag = document.createDocumentFragment();
+  lanes = []; leds = []; labs = [];
+  b.inst.forEach((inst, i) => {
+    const lab = document.createElement('div');
+    lab.className = 'lab';
+    lab.style.setProperty('--c', inst.color);
+    lab.innerHTML = `<span class="led" aria-hidden="true"></span>
+      <button class="nm" type="button" data-act="sel" data-i="${i}" title="Mostra la funzione">${esc(inst.name)}<small>${esc(inst.fn)}(t)</small></button>
+      <button class="tg" type="button" data-act="tog" data-i="${i}" aria-label="Accendi o spegni ${esc(inst.name)}" title="Accendi o spegni">On</button>
+      <button class="so" type="button" data-act="solo" data-i="${i}" aria-label="Ascolta solo ${esc(inst.name)}" title="Ascolta solo questo">S</button>`;
+    const cv = document.createElement('canvas');
+    cv.className = 'lane';
+    cv.style.setProperty('--c', inst.color);
+    cv.dataset.i = i;
+    cv.setAttribute('role', 'img');
+    cv.setAttribute('aria-label', `Grafico di ${inst.fn}(t) nel tempo`);
+    frag.append(lab, cv);
+    lanes.push(cv); leds.push(lab.querySelector('.led')); labs.push(lab);
+  });
+  const lab = document.createElement('div');
+  lab.className = 'lab sum';
+  lab.innerHTML = '<div><i>y</i>(<i>t</i>)<small>la somma</small></div>';
+  sumLane = document.createElement('canvas');
+  sumLane.className = 'lane sum';
+  sumLane.setAttribute('role', 'img');
+  sumLane.setAttribute('aria-label', 'Grafico della somma y(t)');
+  frag.append(lab, sumLane);
+  el.rows.append(frag);
+  const loop = b.steps * stepDur(), ticks = [];
+  for (let t = 0; t < loop - .2; t += .5) ticks.push(`<span style="left:${t / loop * 100}%">${fmt(t, 1)}</span>`);
+  el.axis.innerHTML = ticks.join('') + '<span class="unit">t (secondi)</span>';
+}
+function refreshStates(){
+  const b = beat();
+  b.inst.forEach((inst, i) => {
+    labs[i].classList.toggle('sel', i === b.sel);
+    lanes[i].classList.toggle('sel', i === b.sel);
+    labs[i].querySelector('.tg').setAttribute('aria-pressed', String(b.on[i]));
+    labs[i].querySelector('.so').setAttribute('aria-pressed', String(b.solo === i));
+  });
+  const terms = b.inst.map((inst, i) => `${i ? '<span class="plus">+</span>' : ''}<button class="term ${audible(i) ? '' : 'off'} ${i === b.sel ? 'sel' : ''}" type="button" style="--c:${inst.color}" data-i="${i}" aria-pressed="${audible(i)}" title="${audible(i) ? 'Togli' : 'Aggiungi'} ${esc(inst.name)}"><span class="co">${fmt(inst.mix, 2)}</span> · ${esc(inst.fn)}(${I('t')})</button>`).join('');
+  const soloNote = b.solo !== null ? `<span class="solo-note">Stai ascoltando solo ${esc(b.inst[b.solo].name)}: la somma ha un termine solo.</span>` : '';
+  el.sumf.innerHTML = `<span class="yt">${I('y')}(${I('t')}) =</span>${terms}${soloNote}`;
+  el.all.disabled = b.solo === null && b.on.every(Boolean);
+  const d = el.detail.querySelector('.dbtns');
+  if (d) {
+    d.querySelector('.tgl').setAttribute('aria-pressed', String(b.on[b.sel]));
+    d.querySelector('.sol').setAttribute('aria-pressed', String(b.solo === b.sel));
+  }
+}
+// Accende o spegne; se c'era un solo, si parte da quello
+function toggleOn(i){
+  const b = beat();
+  if (b.solo !== null) { b.on = b.inst.map((_, k) => k === b.solo); b.solo = null; }
+  b.on[i] = !b.on[i];
+  mixChanged();
+}
+function toggleSolo(i){
+  const b = beat();
+  b.solo = b.solo === i ? null : i;
+  if (b.solo !== null) b.sel = i;
+  mixChanged(true);
+}
+function mixChanged(selChanged){
+  applyGains();
+  refreshStates();
+  beat().inst.forEach((_, i) => drawLane(i));
+  drawSum();
+  if (selChanged) buildDetail();
+}
+function select(i){
+  if (beat().sel === i) return;
+  beat().sel = i;
+  refreshStates();
+  buildDetail();
+}
+
+/* --- il dettaglio dello strumento scelto --- */
+function rangeOf(inst, key){
+  const [label, min, max, step, unit] = VOICES[inst.voice].params[key];
+  const r = inst.ranges?.[key];
+  return { label, min:r ? r[0] : min, max:r ? r[1] : max, step, unit:unit || '' };
+}
+const makeP = inst => key => `<span class="pv" data-k="${key}">${fmt(inst.p[key])}</span>`;
+function buildDetail(){
+  const b = beat(), i = b.sel, inst = b.inst[i], V = VOICES[inst.voice];
+  el.detail.style.setProperty('--c', inst.color);
+  const sliders = Object.keys(V.params).map(key => {
+    const r = rangeOf(inst, key);
+    return `<div class="sl"><label for="sl-${key}"><span>${r.label} <i>${key === 'f1' ? 'f<sub>1</sub>' : key}</i></span><span class="val" id="val-${key}">${fmt(inst.p[key])}${r.unit ? ' ' + r.unit : ''}</span></label>
+      <input type="range" id="sl-${key}" data-k="${key}" min="${r.min}" max="${r.max}" step="${r.step}" value="${inst.p[key]}"></div>`;
+  }).join('');
+  el.detail.innerHTML = `
+    <div class="dhead"><span class="dot" aria-hidden="true"></span>
+      <div class="grow"><h2>${esc(inst.name)}</h2><p>${esc(inst.role)}</p></div>
+      <div class="dbtns"><button class="pill tgl" type="button" data-act="tog">On</button><button class="pill sol" type="button" data-act="solo">Solo</button></div></div>
+    <h3>La funzione</h3>
+    <div class="formula" id="formula"></div>
+    <p class="vars"><i>A</i> = forza del colpo, da 0 a 1 · <i>τ</i> = secondi passati dall'inizio del colpo: a ogni colpo riparte da 0.</p>
+    <div class="plot-head"><h3>Il grafico di un colpo</h3>
+      <div class="seg" role="group" aria-label="Zoom del grafico"><button type="button" data-zoom="0" aria-pressed="${!S.zoom}">Tutto il colpo</button><button type="button" data-zoom="1" aria-pressed="${S.zoom}">Da vicino</button></div></div>
+    <div class="plotwrap"><canvas id="plot" role="img" aria-label="Grafico di y in funzione di τ"></canvas><canvas id="plotCur" aria-hidden="true"></canvas></div>
+    <h3>Prova a cambiare</h3>
+    <div class="sliders">${sliders}
+      <div class="sl vol"><label for="sl-mix"><span>Volume nella somma</span><span class="val" id="val-mix">${fmt(inst.mix, 2)}</span></label>
+        <input type="range" id="sl-mix" data-k="mix" min="0" max="1.5" step="0.05" value="${inst.mix}"></div></div>
+    <h3>Che cosa vuol dire</h3>
+    <dl class="legend" id="legend"></dl>
+    <h3>Quando suona</h3>
+    <div class="when" id="when"></div>`;
+  refreshStates();
+  updateFormula();
+  updateWhen();
+  drawPlot();
+}
+function updateFormula(flashKey){
+  const inst = beat().inst[beat().sel], V = VOICES[inst.voice], P = makeP(inst);
+  const keep = l => l.replace(/sin\(2π · .*? · <i>τ<\/i>\)/g, m => `<span class="nb">${m}</span>`);
+  $('#formula').innerHTML = V.formula(P, inst.p, inst).map(l => `<span class="ln">${keep(l)}</span>`).join('');
+  $('#legend').innerHTML = V.legend(P, inst.p, inst).map(([t, d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join('');
+  if (flashKey) el.detail.querySelectorAll(`.pv[data-k="${flashKey}"]`).forEach(n => {
+    n.classList.add('flash');
+    requestAnimationFrame(() => requestAnimationFrame(() => n.classList.remove('flash')));
+  });
+}
+function updateWhen(){
+  const b = beat(), inst = b.inst[b.sel], V = VOICES[inst.voice], hits = sortHits(inst);
+  const sd = fmt(stepDur(), 3);
+  let html = `<p>Un passo dura ${sd} s (un sedicesimo di battuta). Il colpo al passo <i>n</i> arriva a <i>t</i> = <i>n</i> · ${sd} s, e lì <i>τ</i> riparte da 0.</p>`;
+  if (!hits.length) return void ($('#when').innerHTML = html + '<p><b>Nessun colpo:</b> clicca sulla sua traccia per aggiungerne.</p>');
+  if (inst.rhythm && !inst.edited) html += `<p><b>Ritmo:</b> ${esc(inst.rhythm)}</p>`;
+  if (V.melodic) {
+    html += `<p>Ogni colpo ha la sua nota <i>s</i>:</p><div class="notes">${hits.map(h => {
+      const f = noteF(inst, h.s);
+      return `<span class="nt" title="passo ${fmtStep(h.n)}"><b>${fmtStep(h.n)}</b> ${noteName(inst, h.s)}${h.slide ? ' ↝' : ''} <small><i>s</i> = ${fmt(h.s)} · ${fmt(f, 1)} Hz</small></span>`;
+    }).join('')}</div>`;
+    if (V.slides) html += '<p>↝ = la nota scivola da quella di prima.</p>';
+  } else {
+    html += `<p class="steps"><i>n</i> = ${hits.map(h => fmtStep(h.n)).join(', ')}</p>`;
+  }
+  $('#when').innerHTML = html;
+}
+
+/* --- grafico di un colpo --- */
+function repHit(inst){
+  const hits = sortHits(inst), V = VOICES[inst.voice];
+  if (!hits.length) return { h:H(0, 1, 0), prev:null };
+  let k = V.slides ? hits.findIndex(h => h.slide) : 0;
+  if (k < 0) k = 0;
+  return { h:{ ...hits[k], v:1 }, prev:hits[(k - 1 + hits.length) % hits.length] };
+}
+function drawPlot(){
+  const cv = $('#plot'); if (!cv) return;
+  const [W, H, r] = fitCanvas(cv), g = cv.getContext('2d');
+  const inst = beat().inst[beat().sel], V = VOICES[inst.voice], p = inst.p;
+  const { h, prev } = repHit(inst);
+  const win = S.plotWin = S.zoom ? V.zoom(p, inst, h) : Math.min(V.len(p), 1.6);
+  const fn = V.fn(p, h, prev, inst), env = V.env ? V.env(p, h, inst) : null;
+  const M = Math.max(2, Math.ceil(win * SR));
+  const vals = new Float32Array(M);
+  let peak = env ? env(0) : 0;
+  for (let j = 0; j < M; j++) { vals[j] = fn(j / SR, j); peak = Math.max(peak, Math.abs(vals[j])); }
+  const padL = 30 * r, padR = 8 * r, padT = 10 * r, padB = 22 * r;
+  const pw = W - padL - padR, ph = H - padT - padB, mid = padT + ph / 2, k = ph / 2 / Math.max(1, peak) * .94;
+  const X = j => padL + j / (M - 1) * pw;
+  g.clearRect(0, 0, W, H);
+  g.font = `${11 * r}px Inter, system-ui, sans-serif`;
+  g.fillStyle = '#5a6080'; g.textBaseline = 'middle'; g.textAlign = 'right';
+  for (const v of [1, 0, -1]) {
+    const y = mid - v * k;
+    g.fillText(v === 1 ? '1' : v === 0 ? '0' : '−1', padL - 6 * r, y);
+    g.fillStyle = v === 0 ? 'rgba(27,31,59,.35)' : 'rgba(27,31,59,.1)';
+    g.fillRect(padL, Math.round(y), pw, r);
+    g.fillStyle = '#5a6080';
+  }
+  g.textBaseline = 'top';
+  for (let q = 0; q <= 4; q++) {
+    const x = padL + q / 4 * pw;
+    g.textAlign = q === 0 ? 'left' : q === 4 ? 'right' : 'center';
+    g.fillText(fmt(win * q / 4, win < .05 ? 4 : win < .5 ? 3 : 2) + (q === 4 ? ' s' : ''), x, padT + ph + 6 * r);
+    if (q) { g.fillStyle = 'rgba(27,31,59,.06)'; g.fillRect(Math.round(x), padT, r, ph); g.fillStyle = '#5a6080'; }
+  }
+  g.save();
+  g.beginPath(); g.rect(padL, padT - 2 * r, pw, ph + 4 * r); g.clip();
+  g.fillStyle = g.strokeStyle = inst.color;
+  if (M / pw > 2.5) {
+    for (let x = 0; x < pw; x++) {
+      const a = Math.floor(x / pw * M), b2 = Math.max(a + 1, Math.floor((x + 1) / pw * M));
+      let mn = Infinity, mx = -Infinity;
+      for (let j = a; j < Math.min(b2, M); j++) { if (vals[j] < mn) mn = vals[j]; if (vals[j] > mx) mx = vals[j]; }
+      if (mn > mx) continue;
+      g.fillRect(padL + x, mid - mx * k, 1, Math.max(r, (mx - mn) * k));
+    }
+  } else {
+    g.lineWidth = 2 * r; g.lineJoin = 'round';
+    g.beginPath();
+    for (let j = 0; j < M; j++) { const x = X(j), y = mid - vals[j] * k; j ? g.lineTo(x, y) : g.moveTo(x, y); }
+    g.stroke();
+  }
+  if (env) { // la curva che fa da «busta»: il volume nel tempo
+    g.setLineDash([6 * r, 5 * r]); g.lineWidth = 1.6 * r; g.strokeStyle = '#1b1f3b';
+    for (const sgn of [1, -1]) {
+      g.beginPath();
+      for (let q = 0; q <= 200; q++) { const t = q / 200 * win, x = padL + q / 200 * pw, y = mid - sgn * env(t) * k; q ? g.lineTo(x, y) : g.moveTo(x, y); }
+      g.stroke();
+    }
+  }
+  g.restore();
+  S.plotGeom = { padL, pw, padT, ph };
+}
+function clearCursor(){
+  const c = $('#plotCur'); if (!c) return;
+  const [W, H] = fitCanvas(c);
+  c.getContext('2d').clearRect(0, 0, W, H);
+}
+// Mentre suona, il grafico si «riempie»: τ che scorre dentro al colpo
+function drawCursor(posSteps){
+  const c = $('#plotCur'); if (!c || !S.plotGeom) return;
+  const [W, H, r] = fitCanvas(c), g = c.getContext('2d');
+  g.clearRect(0, 0, W, H);
+  const b = beat(), i = b.sel, hits = S.sorted[i];
+  if (!audible(i) || !hits?.length) return;
+  let last = hits[hits.length - 1].n - b.steps;
+  for (const h of hits) if (h.n <= posSteps) last = h.n;
+  const tau = (posSteps - last) * stepDur();
+  if (tau > S.plotWin) return;
+  const { padL, pw, padT, ph } = S.plotGeom, x = padL + tau / S.plotWin * pw;
+  g.fillStyle = 'rgba(67,56,202,.08)';
+  g.fillRect(padL, padT, x - padL, ph);
+  g.fillStyle = '#4338ca';
+  g.fillRect(x - r, padT, 2 * r, ph);
+}
+
+/* ------------------------------------------------------------------ eventi */
+function loadBeat(i){
+  const was = S.playing;
+  if (was) stopAudio();
+  S.bi = i;
+  S.hover = null;
+  renderAll();
+  buildTabs();
+  buildRows();
+  el.desc.textContent = `${beat().name} · ${beat().desc}`;
+  el.tips.innerHTML = `<h3>💡 Prova a…</h3><ul>${beat().tips.map(t => `<li>${t}</li>`).join('')}</ul>`;
+  refreshStates();
+  drawLanes();
+  buildDetail();
+  const u = new URL(location.href); u.searchParams.set('beat', beat().id); history.replaceState(null, '', u);
+  if (was) setPlaying(true);
+}
+// Ricalcola uno strumento (dopo un cursore o un colpo aggiunto), al massimo ~20 volte al secondo
+const pending = new Set();
+let pendTimer = 0;
+function rerender(i){
+  pending.add(i);
+  if (pendTimer) return;
+  pendTimer = setTimeout(() => {
+    pendTimer = 0;
+    for (const k of pending) { S.buf[k] = renderInst(k); envs[k] = null; swap(k); drawLane(k); }
+    pending.clear();
+    drawSum();
+    drawPlot();
+  }, 45);
+}
+
+el.beats.addEventListener('click', e => {
+  const t = e.target.closest('[data-b]');
+  if (t && +t.dataset.b !== S.bi) loadBeat(+t.dataset.b);
+});
+el.play.addEventListener('click', () => setPlaying(!S.playing));
+el.reset.addEventListener('click', () => {
+  BEATS[S.bi] = prepare(clone(PRISTINE[S.bi]));
+  loadBeat(S.bi);
+});
+el.all.addEventListener('click', () => { const b = beat(); b.on = b.inst.map(() => true); b.solo = null; mixChanged(); });
+el.sumf.addEventListener('click', e => {
+  const t = e.target.closest('.term');
+  if (t) { toggleOn(+t.dataset.i); select(+t.dataset.i); }
+});
+el.rows.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]');
+  if (!t) return;
+  const i = +t.dataset.i;
+  if (t.dataset.act === 'sel') select(i);
+  if (t.dataset.act === 'tog') toggleOn(i);
+  if (t.dataset.act === 'solo') toggleSolo(i);
+});
+const laneStep = (cv, e) => {
+  const r = cv.getBoundingClientRect(), steps = beat().steps;
+  return Math.max(0, Math.min(steps - 1, Math.floor((e.clientX - r.left) / r.width * steps)));
+};
+el.rows.addEventListener('pointermove', e => {
+  const cv = e.target.closest('canvas.lane:not(.sum)');
+  const hv = cv && e.pointerType === 'mouse' ? { i:+cv.dataset.i, n:laneStep(cv, e) } : null;
+  if (JSON.stringify(hv) === JSON.stringify(S.hover)) return;
+  const old = S.hover; S.hover = hv;
+  if (old) drawLane(old.i);
+  if (hv && (!old || old.i !== hv.i)) drawLane(hv.i);
+  else if (hv) drawLane(hv.i);
+});
+el.rows.addEventListener('pointerleave', () => { const old = S.hover; S.hover = null; if (old) drawLane(old.i); });
+el.rows.addEventListener('click', e => {
+  const cv = e.target.closest('canvas.lane:not(.sum)');
+  if (!cv) return;
+  const i = +cv.dataset.i, n = laneStep(cv, e), inst = beat().inst[i];
+  const inCell = inst.hits.filter(h => h.n >= n - .001 && h.n < n + .999);
+  if (inCell.length) inst.hits = inst.hits.filter(h => !inCell.includes(h));
+  else {
+    const before = sortHits(inst).filter(h => h.n < n);
+    const ref = before[before.length - 1] || sortHits(inst)[0];
+    const vs = inst.hits.map(h => h.v);
+    inst.hits.push(H(n, vs.length ? Math.max(...vs) : 1, ref ? ref.s : 0, false));
+  }
+  inst.edited = true;
+  select(i);
+  rerender(i);
+  if (beat().sel === i) updateWhen();
+});
+el.detail.addEventListener('click', e => {
+  const t = e.target.closest('[data-act], [data-zoom]');
+  if (!t) return;
+  if (t.dataset.zoom !== undefined) {
+    S.zoom = t.dataset.zoom === '1';
+    el.detail.querySelectorAll('[data-zoom]').forEach(b => b.setAttribute('aria-pressed', String(b === t)));
+    drawPlot();
+    return;
+  }
+  if (t.dataset.act === 'tog') toggleOn(beat().sel);
+  if (t.dataset.act === 'solo') toggleSolo(beat().sel);
+});
+el.detail.addEventListener('input', e => {
+  const t = e.target.closest('input[type=range]');
+  if (!t) return;
+  const b = beat(), i = b.sel, inst = b.inst[i], key = t.dataset.k, v = Number(t.value);
+  if (key === 'mix') {
+    inst.mix = v;
+    $('#val-mix').textContent = fmt(v, 2);
+    applyGains();
+    refreshStates();
+    drawSum();
+    return;
+  }
+  inst.p[key] = v;
+  const r = rangeOf(inst, key);
+  $(`#val-${key}`).textContent = fmt(v) + (r.unit ? ' ' + r.unit : '');
+  updateFormula(key);
+  rerender(i);
+});
+document.addEventListener('keydown', e => {
+  if (e.code !== 'Space' || e.target.closest('button, input, a, textarea')) return;
+  e.preventDefault();
+  setPlaying(!S.playing);
+});
+document.addEventListener('pointerdown', e => {
+  const host = e.target.closest('.btn, .pill');
+  if (!host || host.disabled || reduceMotion) return;
+  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
+  const sp = document.createElement('span');
+  sp.className = 'rip';
+  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
+  host.appendChild(sp);
+  setTimeout(() => sp.remove(), 600);
+});
+// Ridisegna solo se cambia davvero la larghezza delle tracce o del grafico
+let resizeTimer = 0, lastW = 0, lastPW = 0;
+new ResizeObserver(() => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const w = el.rows.clientWidth, pw = $('#plot')?.clientWidth || 0;
+    if (w !== lastW) { lastW = w; drawLanes(); }
+    if (pw !== lastPW) { lastPW = pw; drawPlot(); }
+  }, 60);
+}).observe(document.body);
+
+// Il cursore, le lucine e il grafico che si riempie seguono l'audio
+function frame(){
+  requestAnimationFrame(frame);
+  if (!S.playing) return;
+  const ctx = S.ctx, loop = S.N / SR;
+  const t = ctx.currentTime - S.t0 - (ctx.outputLatency || 0);
+  if (t < 0) return;
+  const x = (t % loop) / loop, pos = Math.floor(x * S.N);
+  el.rows.style.setProperty('--x', x.toFixed(4));
+  beat().inst.forEach((_, i) => {
+    let m = 0;
+    if (audible(i)) { const b = S.buf[i]; for (let j = Math.max(0, pos - 900); j < pos; j += 3) { const a = Math.abs(b[j]); if (a > m) m = a; } }
+    leds[i].style.setProperty('--g', Math.min(1, m * 1.2).toFixed(2));
+  });
+  drawCursor(x * beat().steps);
+}
+requestAnimationFrame(frame);
+
+if (params.has('debug')) window.__beat = { S, BEATS, VOICES, renderInst, beat, setPlaying };
+
+const start = BEATS.findIndex(b => b.id === params.get('beat'));
+loadBeat(start >= 0 ? start : 0);
+})();
+</script>
+</body>
+</html>
