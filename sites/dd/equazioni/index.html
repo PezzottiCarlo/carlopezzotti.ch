@@ -8,56 +8,16 @@
 <meta name="dd:tags" content="algebra, equazioni, Brousseau">
 <meta name="dd:date" content="2026-10-20">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/_shared/dd.css">
+<link rel="stylesheet" href="/_lab/lab.css">
 <style>
-:root{
-  --bg:#eef1fa; --card:#ffffff; --ink:#1b1f3b; --muted:#454b6b; --line:#d6dbee;
-  --primary:#4338ca; --primary-dark:#3730a3; --primary-soft:#ebeaff;
-  --ok:#0b6b62; --ok-soft:#dcf5f0; --ok-line:#2bb39f;
-  --tilt:#8a3c00; --tilt-soft:#fff2df; --tilt-line:#f0a24a;
-  --err:#a1190f; --err-soft:#fde8e6; --err-line:#e5675b;
-  --win:#6b3fd1; --win-soft:#f1ebff; --win-line:#9b7af5;
-  --radius:18px;
-  --shadow:0 1px 2px rgba(27,31,59,.06),0 10px 30px rgba(27,31,59,.08);
-  --wobble:cubic-bezier(.34,1.56,.64,1);
-  --font:Inter,"Segoe UI",Roboto,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
-  --math:"Cambria Math","STIX Two Math","Latin Modern Math",Georgia,"Times New Roman",serif;
-}
-*{box-sizing:border-box}
-html{font-size:clamp(14px,.32vw + 11.5px,19px);height:100%}
-body{margin:0;height:100%;overflow:hidden;font-family:var(--font);color:var(--ink);line-height:1.45;
-  background:radial-gradient(1200px 600px at 10% -10%,#e2e6ff 0%,transparent 60%),
-             radial-gradient(900px 500px at 110% 10%,#ffeedd 0%,transparent 55%),var(--bg)}
-.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-:focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:8px}
-button{font:inherit}
-
-/* ---------- App frame: everything fits the viewport ---------- */
-.app{height:100vh;height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding:10px 16px 14px}
-.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#5b50e6,#3a2fb8);display:grid;place-items:center;box-shadow:0 6px 16px rgba(67,56,202,.35);flex:none}
-.brand h1{font-size:1.2rem;margin:0;letter-spacing:-.01em;line-height:1.15}
-.brand p{margin:1px 0 0;color:var(--muted);font-size:.82rem}
-@media (max-height:760px){.brand p{display:none}}
-.levels{display:flex;gap:6px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
-.lvl{font-weight:700;font-size:.88rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:7px 12px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s,transform .12s}
-.lvl:hover:not(:disabled){background:var(--primary-soft)}
-.lvl:active:not(:disabled){transform:scale(.96)}
-.lvl.active{background:var(--primary);color:#fff}
-.lvl:disabled{color:#6b7090;cursor:not-allowed;background:#f3f4f9}
-.lvl .done{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:.7rem}
-.lvl.active .done{background:rgba(255,255,255,.25);color:#fff}
-.top-tools{display:flex;align-items:center;gap:12px}
-.switch-row{display:flex;align-items:center;gap:8px;font-weight:650;font-size:.9rem}
-
-.layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(290px,25vw,370px);gap:14px}
-.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid #e4e7f4}
-.stage-card{display:flex;flex-direction:column;gap:10px;padding:14px;min-height:0}
-.mission{flex:none;display:flex;gap:12px;align-items:baseline}
-.mission-badge{flex:none;background:var(--primary-soft);color:var(--primary-dark);font-weight:800;border-radius:10px;padding:4px 10px;font-size:.78rem;letter-spacing:.03em;text-transform:uppercase}
-.mission h2{display:inline;margin:0 6px 0 0;font-size:1.05rem}
-.mission p{display:inline;margin:0;color:var(--muted);font-size:.92rem}
+/* La bilancia occupa sempre tutta la finestra; scorre solo sugli schermi piccoli. */
+:root{ --panel-w:clamp(290px,25vw,370px); }
+html{height:100%}
+body{height:100%;overflow:hidden;background-attachment:scroll}
+.app{height:100vh;height:100dvh}
+.topbar .brand{flex:0 1 auto}
+.lvl{font-size:.88rem;padding:7px 12px}
+.stage-card{gap:10px}
 
 .stage-area{flex:1;min-height:0;container-type:size;display:grid;place-items:center}
 .stage{position:relative;width:min(100cqw,calc(100cqh * 1.389));aspect-ratio:100/72;container-type:inline-size;border-radius:16px;overflow:hidden;
@@ -183,87 +143,38 @@ body.sym-on .eqbox .nosym{display:none}
 .eq .rel.ne{color:var(--tilt)} .eq .rel.eqs{color:var(--ok)}
 .nosym{margin:0;color:var(--muted);font-size:.85rem}
 
-/* ---------- Panel ---------- */
-.panel{min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
-.feedback{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:14px;border-left:6px solid;font-size:.93rem;transition:background .3s,border-color .3s;min-height:92px}
-.feedback .fb-ico{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:#fff;font-size:.9rem}
-.feedback.info{background:#eef0ff;border-color:var(--primary)} .feedback.info .fb-ico{background:var(--primary)}
-.feedback.ok{background:var(--ok-soft);border-color:var(--ok-line)} .feedback.ok .fb-ico{background:var(--ok)}
-.feedback.tilt{background:var(--tilt-soft);border-color:var(--tilt-line)} .feedback.tilt .fb-ico{background:#b45309}
-.feedback.error{background:var(--err-soft);border-color:var(--err-line)} .feedback.error .fb-ico{background:var(--err)}
-.feedback.win{background:var(--win-soft);border-color:var(--win-line)} .feedback.win .fb-ico{background:var(--win)}
-.feedback p{margin:2px 0 0}
-.tool{border:2px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
-.tool h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px}
-.tool .sub{margin:0;font-size:.84rem;color:var(--muted)}
+/* ---------- Pannello ---------- */
+.panel .feedback{min-height:92px}
 .pills{display:flex;gap:6px}
-.pill{flex:1;height:42px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:800;font-size:1.05rem;color:var(--ink);cursor:pointer;transition:transform .12s,border-color .2s,background .2s}
-.pill:hover:not(:disabled){border-color:var(--primary)}
-.pill:active:not(:disabled){transform:scale(.94)}
-.pill[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
-.pill:disabled{opacity:.5;cursor:not-allowed}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn{position:relative;overflow:hidden;font-weight:750;border-radius:12px;padding:9px 14px;border:2px solid var(--primary);background:var(--primary);color:#fff;cursor:pointer;transition:transform .12s,background .2s,box-shadow .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.btn:hover:not(:disabled){background:var(--primary-dark);box-shadow:0 6px 16px rgba(67,56,202,.25)}
-.btn:active:not(:disabled){transform:scale(.96)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn.ghost-btn{background:#fff;color:var(--primary-dark)}
-.btn.ghost-btn:hover:not(:disabled){background:var(--primary-soft)}
-.btn.grow{flex:1}
-.num-input{font:800 1.1rem var(--font);width:76px;height:42px;border:2px solid var(--line);border-radius:12px;text-align:center;color:var(--ink);background:#fff;-moz-appearance:textfield}
-.num-input:focus{border-color:var(--primary)}
-input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.switch{position:relative;width:54px;height:30px;border-radius:999px;border:2px solid #8a91b1;background:#e5e8f4;cursor:pointer;flex:none;transition:background .25s,border-color .25s;padding:0}
-.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .25s var(--wobble)}
-.switch[aria-checked="true"]{background:var(--primary);border-color:var(--primary)}
-.switch[aria-checked="true"]::after{transform:translateX(24px)}
-.switch .st{position:absolute;font:800 .58rem var(--font);top:50%;transform:translateY(-50%);color:#454b6b}
-.switch .st.on{left:6px;color:#fff;display:none}.switch .st.off{right:5px}
-.switch[aria-checked="true"] .st.on{display:block}.switch[aria-checked="true"] .st.off{display:none}
-details.diario{border:2px solid var(--line);border-radius:14px;padding:0 12px}
-details.diario summary{cursor:pointer;font-weight:750;font-size:.95rem;padding:10px 0;display:flex;align-items:center;gap:8px;list-style:none}
-details.diario summary::-webkit-details-marker{display:none}
-details.diario summary::before{content:"▸";transition:transform .2s;color:var(--primary)}
-details.diario[open] summary::before{transform:rotate(90deg)}
-.count{margin-left:auto;background:var(--primary-soft);color:var(--primary-dark);border-radius:99px;padding:1px 9px;font-size:.8rem}
-.log{list-style:none;margin:0 0 10px;padding:0;max-height:min(30vh,240px);overflow:auto;display:flex;flex-direction:column;gap:6px}
-.log li{display:flex;gap:9px;align-items:flex-start;font-size:.84rem;padding:7px 9px;border-radius:10px;background:#f7f8fd;border:1px solid #e6e9f5}
+.pills > .pill{flex:1;height:42px;min-height:0;font-weight:800;font-size:1.05rem}
+.log{gap:6px}
+.log li{display:flex;gap:9px;align-items:flex-start;font-size:.84rem;padding:7px 9px;border-radius:10px}
 .log .n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--primary-soft);color:var(--primary-dark);font-weight:800;display:grid;place-items:center;font-size:.75rem}
 .log .res{font-weight:750}
 .log .res.ok{color:var(--ok)} .log .res.tilt{color:var(--tilt)} .log .res.win{color:var(--win)}
 .log .sym{display:none;font-family:var(--math);font-size:.95rem;color:#3a2b8f}
 body.sym-on .log .sym{display:block}
-.log-empty{color:var(--muted);font-size:.84rem;margin:0 0 10px}
 .legend{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:.82rem;margin-top:auto}
 .legend span{display:inline-flex;align-items:center;gap:8px}
 .lg-box{width:20px;height:17px;border-radius:4px;background:linear-gradient(160deg,#8f72f7,#5634cf);border:1.5px solid #351a9c;flex:none}
 .lg-ball{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff1cf 0 14%,#ffb547 42%,#e07000 100%);border:1px solid #9a4a00;flex:none}
 
-.rip{position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,.4);animation:rip .55s ease-out forwards;pointer-events:none}
-.ghost-btn .rip,.pill .rip{background:rgba(67,56,202,.2)}
-@keyframes rip{to{transform:scale(1);opacity:0}}
-
-/* ---------- Dialog ---------- */
-dialog{border:none;border-radius:24px;padding:0;max-width:min(500px,92vw);box-shadow:0 30px 80px rgba(20,22,60,.35);color:var(--ink)}
-dialog::backdrop{background:rgba(20,22,50,.45);backdrop-filter:blur(3px)}
-dialog[open]{animation:dlg .45s var(--wobble)}
-@keyframes dlg{from{transform:scale(.85) translateY(20px);opacity:0}}
-.dlg-body{padding:24px 26px 20px;text-align:center}
-.trophy{width:76px;height:76px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fff7d6,#ffd166 60%,#f2a516);box-shadow:0 10px 30px rgba(242,165,22,.45)}
-.dlg-body h2{margin:4px 0;font-size:1.4rem}
-.dlg-body p{margin:7px 0;color:var(--muted)}
-.dlg-body .big{font-size:1.08rem;color:var(--ink)}
-.reflect{background:var(--primary-soft);border-radius:14px;padding:11px 13px;text-align:left;color:#2c2780!important;font-weight:600}
-.dlg-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-#fx{position:fixed;inset:0;pointer-events:none;z-index:70;width:100vw;height:100vh}
+dialog{max-width:min(500px,92vw)}
+.dlg-body .reflect{background:var(--primary-soft);border-radius:14px;padding:11px 13px;text-align:left;color:#2c2780;font-weight:600;font-size:inherit}
 
 /* ---------- Responsive ---------- */
 @media (max-width:920px){
-  .layout{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
-  .panel{display:grid;grid-template-columns:1fr 1fr;max-height:40vh;align-content:start}
+  .layout{grid-template-rows:minmax(0,1fr) auto}
+  .panel{display:grid;grid-template-columns:1fr 1fr;max-height:40vh;align-content:start;overflow:auto}
   .panel .feedback,.panel details.diario{grid-column:1/-1}
   .legend{display:none}
-  .feedback{min-height:0}
+  .panel .feedback{min-height:0}
+}
+@media (max-width:620px){
+  .app{padding:10px 16px 14px}
+  .levels{width:auto;flex-wrap:wrap;overflow:visible}
+  .top-tools{width:auto;justify-content:flex-start}
+  .mission{flex-wrap:nowrap}
 }
 @media (max-width:620px),(max-height:520px){
   body{overflow:auto}
@@ -274,7 +185,6 @@ dialog[open]{animation:dlg .45s var(--wobble)}
   .mission p{display:block}
 }
 @media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.15s!important}
   .beam,.pan{transition:transform .25s ease!important}
 }
 </style>
@@ -299,20 +209,14 @@ dialog[open]{animation:dlg .45s var(--wobble)}
     </div>
     <nav class="levels" id="levels" aria-label="Livelli"></nav>
     <div class="top-tools">
-      <div class="switch-row">
-        <span id="symLbl">Simboli</span>
-        <button class="switch" id="symToggle" type="button" role="switch" aria-checked="false" aria-labelledby="symLbl"><span class="st on" aria-hidden="true">SÌ</span><span class="st off" aria-hidden="true">NO</span></button>
-      </div>
-      <button class="btn ghost-btn" type="button" id="btnReset">↺ Azzera livello</button>
+      <div id="sym"></div>
+      <button class="btn ghost-btn" type="button" id="reset">↺ Azzera livello</button>
     </div>
   </header>
 
   <main class="layout">
     <section class="card stage-card" aria-labelledby="missionTitle">
-      <div class="mission">
-        <span class="mission-badge" id="missionBadge">Livello 1</span>
-        <div><h2 id="missionTitle"></h2><p id="missionText"></p></div>
-      </div>
+      <div class="mission" id="mission"></div>
 
       <div class="stage-area">
         <div class="stage" id="stage" data-state="ok">
@@ -386,10 +290,7 @@ dialog[open]{animation:dlg .45s var(--wobble)}
     </section>
 
     <aside class="card panel" aria-label="Strumenti">
-      <div class="feedback info" id="feedback">
-        <span class="fb-ico" aria-hidden="true" id="fbIco">i</span>
-        <div><strong id="fbTitle">Osserva</strong><p id="fbText"></p></div>
-      </div>
+      <div class="feedback info" id="feedback"></div>
 
       <section class="tool" aria-labelledby="divTitle">
         <h3 id="divTitle">✂ Dividi i piatti</h3>
@@ -416,11 +317,7 @@ dialog[open]{animation:dlg .45s var(--wobble)}
         </form>
       </section>
 
-      <details class="diario" id="diario">
-        <summary>Diario delle mosse <span class="count" id="logCount">0</span></summary>
-        <p class="log-empty" id="logEmpty">Nessuna mossa ancora.</p>
-        <ol class="log" id="log"></ol>
-      </details>
+      <details class="diario" id="diario" data-title="Diario delle mosse" data-empty="Nessuna mossa ancora."></details>
 
       <div class="legend">
         <span><i class="lg-box" aria-hidden="true"></i>Scatola misteriosa: sigillata, tutte pesano uguale</span>
@@ -430,29 +327,8 @@ dialog[open]{animation:dlg .45s var(--wobble)}
   </main>
 </div>
 
-<dialog id="winDlg" aria-labelledby="winTitle" aria-describedby="winText">
-  <div class="dlg-body">
-    <div class="trophy" aria-hidden="true">
-      <svg width="42" height="42" viewBox="0 0 46 46"><path d="M23 4l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5L23 32.7l-11.3 5.9 2.2-12.5-9.1-8.9 12.6-1.8z" fill="#fff" stroke="#b9790c" stroke-width="2" stroke-linejoin="round"/></svg>
-    </div>
-    <h2 id="winTitle">Equilibrio trovato!</h2>
-    <p class="big" id="winText"></p>
-    <p id="winSym"></p>
-    <p id="winMoves"></p>
-    <p class="reflect" id="winReflect"></p>
-    <div class="dlg-actions">
-      <button class="btn ghost-btn" type="button" id="dlgStay">Rivedi la bilancia</button>
-      <button class="btn" type="button" id="dlgNext">Livello successivo →</button>
-    </div>
-  </div>
-</dialog>
-
-<canvas id="fx" aria-hidden="true"></canvas>
-<div class="sr-only" aria-live="polite" id="sr"></div>
-
-<script>
-(() => {
-'use strict';
+<script type="module">
+import { lab, $, fx, plural, wait, reduceMotion } from '/_lab/lab.js';
 
 const LEVELS = [
   { a:1, b:3, c:7,  title:'La scatola misteriosa',
@@ -465,33 +341,20 @@ const LEVELS = [
 const CHALLENGE = 3;
 const MAX = 20;
 
-const $ = s => document.querySelector(s);
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const wait = ms => new Promise(r => setTimeout(r, reduceMotion ? Math.min(ms, 150) : ms));
-
 const el = {
   stage:$('#stage'), inner:$('#stageInner'), scale:$('#scale'), beam:$('#beam'),
   panL:$('#panL'), panR:$('#panR'), itemsL:$('#itemsL'), itemsR:$('#itemsR'),
   supply:$('#supply'), trash:$('#trash'),
-  status:$('#status'), eq:$('#eqSym'), fb:$('#feedback'), fbIco:$('#fbIco'), fbTitle:$('#fbTitle'), fbText:$('#fbText'),
-  log:$('#log'), logCount:$('#logCount'), logEmpty:$('#logEmpty'), levels:$('#levels'),
-  mBadge:$('#missionBadge'), mTitle:$('#missionTitle'), mText:$('#missionText'),
-  guess:$('#guess'), btnGuess:$('#btnGuess'), sym:$('#symToggle'), sr:$('#sr'),
-  pills:[...document.querySelectorAll('.pill')], splitActions:$('#splitActions'), btnKeep:$('#btnKeep'),
-  dlg:$('#winDlg'), winText:$('#winText'), winSym:$('#winSym'), winMoves:$('#winMoves'), winReflect:$('#winReflect'), dlgNext:$('#dlgNext')
+  status:$('#status'), eq:$('#eqSym'), guess:$('#guess'), btnGuess:$('#btnGuess'),
+  pills:[...document.querySelectorAll('.pill')], splitActions:$('#splitActions'), btnKeep:$('#btnKeep')
 };
 const zones = { L: el.panL, R: el.panR, supply: el.supply, trash: el.trash };
 
-const store = {
-  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
-  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
-};
+const app = lab({ id:'bilancia', sym:true });
 
-const S = { idx:0, def:null, a:0, b:0, c:0, x:0, busy:false, solved:false, moves:0, lastBalanced:true,
-  held:null, split:0, unlocked: store.get('bilancia.unlocked', 1), sym: store.get('bilancia.sym', false) };
+const S = { def:null, a:0, b:0, c:0, x:0, busy:false, solved:false, moves:0, lastBalanced:true, held:null, split:0 };
 
 /* ---------------- Helpers ---------------- */
-const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 const weights = () => ({ L: S.a * S.x + S.b, R: S.c });
 const sideName = z => z === 'L' ? 'sinistro' : 'destro';
 const itemsOf = z => z === 'L' ? el.itemsL : el.itemsR;
@@ -578,81 +441,15 @@ const FB = {
 };
 function feedback(type, html){
   const f = FB[type];
-  el.fb.className = 'feedback ' + (type === 'hold' ? 'info' : type);
-  el.fbIco.textContent = f.ico; el.fbTitle.textContent = f.title; el.fbText.innerHTML = html;
-  el.sr.textContent = '';
-  setTimeout(() => { el.sr.textContent = f.title + '. ' + el.fbText.textContent; }, 30);
+  app.say(type === 'hold' ? 'info' : type, f.title, html, { icon: f.ico });
 }
 
 function addLog(what, resCls, resTxt){
-  el.logEmpty.hidden = true;
-  const { L, R } = weights();
-  const li = document.createElement('li');
-  li.innerHTML = `<span class="n">${el.log.children.length + 1}</span><div><div>${what}</div><div class="res ${resCls}">${resTxt}</div><div class="sym">${sideTxt(S.a, S.b)} ${relOf(L, R)} ${sideTxt(0, S.c)}</div></div>`;
-  el.log.appendChild(li);
-  el.logCount.textContent = el.log.children.length;
-  el.log.scrollTop = el.log.scrollHeight;
-}
-
-function renderLevels(){
-  el.levels.innerHTML = '';
-  for (let i = 0; i <= CHALLENGE; i++){
-    const locked = i + 1 > S.unlocked, done = i < CHALLENGE && S.unlocked > i + 1;
-    const name = i < CHALLENGE ? `Livello ${i + 1}` : 'Sfida ★';
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'lvl' + (i === S.idx ? ' active' : ''); b.disabled = locked;
-    if (i === S.idx) b.setAttribute('aria-current', 'step');
-    b.setAttribute('aria-label', name + (locked ? ', bloccato' : '') + (done ? ', completato' : ''));
-    b.innerHTML = (locked ? '<svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="6" width="10" height="7" rx="1.5" fill="currentColor"/><path d="M4.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>' : '')
-      + `<span>${name}</span>` + (done ? '<span class="done" aria-hidden="true">✓</span>' : '');
-    b.addEventListener('click', () => startLevel(i));
-    el.levels.appendChild(b);
-  }
+  const { L, R } = weights(), n = document.querySelectorAll('#diario .log li').length + 1;
+  app.log(`<span class="n">${n}</span><div><div>${what}</div><div class="res ${resCls}">${resTxt}</div><div class="sym">${sideTxt(S.a, S.b)} ${relOf(L, R)} ${sideTxt(0, S.c)}</div></div>`);
 }
 
 /* ---------------- Effects ---------------- */
-const fx = (() => {
-  const c = $('#fx'), ctx = c.getContext('2d');
-  let W = 0, H = 0, parts = [], raf = 0;
-  const COLS = ['#4338ca','#7c5cf0','#ff9f1c','#0f9d8a','#ef476f','#ffd166','#06aed5'];
-  function size(){ const d = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d,0,0,d,0,0); }
-  size(); addEventListener('resize', size);
-  function star(s){ ctx.beginPath(); for (let i = 0; i < 10; i++){ const r = i % 2 ? s * .22 : s * .55, a = i * Math.PI / 5 - Math.PI / 2; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); ctx.fill(); }
-  function tick(){
-    ctx.clearRect(0, 0, W, H);
-    parts = parts.filter(p => p.life > 0 && p.y < H + 40);
-    for (const p of parts){
-      p.vy += p.g; p.vx *= p.drag; p.vy *= p.drag; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life--;
-      ctx.save(); ctx.globalAlpha = Math.min(1, p.life / 30); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.col;
-      if (p.shape === 'rect') ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
-      else if (p.shape === 'star') star(p.s);
-      else { ctx.beginPath(); ctx.arc(0, 0, p.s / 2, 0, 7); ctx.fill(); }
-      ctx.restore();
-    }
-    if (parts.length) raf = requestAnimationFrame(tick); else { raf = 0; ctx.clearRect(0, 0, W, H); }
-  }
-  const go = () => { if (!raf) raf = requestAnimationFrame(tick); };
-  function burst(x, y, n = 10, o = {}){
-    if (reduceMotion) return;
-    for (let i = 0; i < n; i++){
-      const a = Math.random() * Math.PI * 2, v = (o.speed || 3) * (.5 + Math.random());
-      parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - (o.lift || 1), g: o.g ?? .08, drag: .96, rot: Math.random() * 6, vr: (Math.random() - .5) * .3,
-        s: o.size || (6 + Math.random() * 6), life: o.life || (40 + Math.random() * 25), col: o.col || COLS[Math.random() * COLS.length | 0], shape: o.shape || 'star' });
-    }
-    go();
-  }
-  function confetti(){
-    if (reduceMotion) return;
-    for (let i = 0; i < 190; i++){
-      parts.push({ x: Math.random() * W, y: -20 - Math.random() * H * .5, vx: (Math.random() - .5) * 3, vy: 2 + Math.random() * 3, g: .05, drag: .995,
-        rot: Math.random() * 6, vr: (Math.random() - .5) * .25, s: 8 + Math.random() * 8, life: 170 + Math.random() * 90,
-        col: COLS[Math.random() * COLS.length | 0], shape: Math.random() < .75 ? 'rect' : 'circle' });
-    }
-    go();
-  }
-  return { burst, confetti };
-})();
-
 function fly(nodes){
   nodes.forEach((n, i) => {
     n.style.setProperty('--dx', (Math.random() * 8 - 4).toFixed(1) + 'cqi');
@@ -844,21 +641,24 @@ function win(mode, g){
   applyTilt(0); updateStatus(0, 0); updateControls();
   const [px, py] = centerOf($('.pivot'));
   fx.burst(px, py, 30, { speed: 6, size: 12, life: 70 });
-  fx.confetti();
-  if (S.idx < CHALLENGE) S.unlocked = Math.max(S.unlocked, S.idx + 2);
-  store.set('bilancia.unlocked', S.unlocked);
-  renderLevels();
+  fx.rain();
+  if (app.idx < CHALLENGE) app.complete();
   const w = plural(S.x, 'pallina', 'palline');
   feedback('win', mode === 'isolate' ? `Una scatola da sola equilibra ${w}: hai scoperto quanto pesa!` : `Ipotesi confermata: con ${w} in ogni scatola la bilancia resta in equilibrio.`);
   if (mode === 'isolate') addLog('Una scatola da sola sul piatto', 'win', `★ pesa quanto ${w}`);
-  el.winText.innerHTML = `Una scatola misteriosa pesa quanto <strong>${w}</strong>.`;
-  el.winSym.innerHTML = S.sym ? `In simboli: <strong style="font-family:var(--math);font-size:1.2rem"><i>x</i> = ${S.x}</strong>` : '';
-  el.winMoves.textContent = `Mosse usate: ${S.moves}.`;
-  el.winReflect.textContent = mode === 'isolate'
-    ? 'Prima di proseguire: quali mosse hanno lasciato la bilancia in equilibrio? Prova a spiegarlo a parole a un compagno.'
-    : 'La tua ipotesi funziona! Riusciresti anche a lasciare una sola scatola su un piatto, senza mai far pendere la bilancia?';
-  el.dlgNext.textContent = S.idx < 2 ? `Vai al Livello ${S.idx + 2} →` : S.idx === 2 ? 'Prova la Sfida ★' : 'Nuova sfida ★';
-  setTimeout(() => { if (S.solved && !el.dlg.open){ el.dlg.showModal(); el.dlgNext.focus(); } }, reduceMotion ? 300 : 1500);
+  const dialog = {
+    title: 'Equilibrio trovato!',
+    text: `Una scatola misteriosa pesa quanto <strong>${w}</strong>.`,
+    extra: `<p>${app.sym ? `In simboli: <strong style="font-family:var(--math);font-size:1.2rem"><i>x</i> = ${S.x}</strong>` : ''}</p><p>Mosse usate: ${S.moves}.</p>`,
+    reflect: mode === 'isolate'
+      ? 'Prima di proseguire: quali mosse hanno lasciato la bilancia in equilibrio? Prova a spiegarlo a parole a un compagno.'
+      : 'La tua ipotesi funziona! Riusciresti anche a lasciare una sola scatola su un piatto, senza mai far pendere la bilancia?',
+    next: app.idx < 2 ? `Vai al Livello ${app.idx + 2} →` : app.idx === 2 ? 'Prova la Sfida ★' : 'Nuova sfida ★',
+    stay: 'Rivedi la bilancia',
+    then: () => app.go(app.idx < CHALLENGE ? app.idx + 1 : CHALLENGE),
+    confetti: false, focus: 'next'
+  };
+  setTimeout(() => { if (S.solved && !app.dialog.open) app.win(dialog); }, reduceMotion ? 300 : 1500);
 }
 
 /* ---------------- Division ---------------- */
@@ -952,16 +752,14 @@ function makeChallenge(){
     if (c <= 18) return { a, b, c, title:'Equazione a sorpresa', mission:'Una bilancia mai vista: metti alla prova la tua strategia!' };
   }
 }
-function loadDef(def, idx){
-  S.idx = idx; S.def = def;
+function loadDef(def){
+  S.def = def;
   S.a = def.a; S.b = def.b; S.c = def.c; S.x = (def.c - def.b) / def.a;
   S.solved = false; S.busy = false; S.moves = 0; S.lastBalanced = true; S.held = null; S.split = 0;
   el.stage.classList.remove('won', 'splitting', 'holding', 'dragging');
-  el.mBadge.textContent = idx < CHALLENGE ? `Livello ${idx + 1}` : 'Sfida';
-  el.mTitle.textContent = def.title; el.mText.textContent = def.mission;
-  el.log.innerHTML = ''; el.logEmpty.hidden = false; el.logCount.textContent = '0';
+  app.mission({ title: def.title, text: def.mission });
+  app.clearLog();
   el.guess.value = '';
-  renderLevels();
   if (!reduceMotion){
     el.inner.classList.add('no-anim'); applyTilt(-9); void el.beam.offsetWidth; el.inner.classList.remove('no-anim');
     render({ pop: true, noTilt: true });
@@ -969,42 +767,30 @@ function loadDef(def, idx){
   } else render();
   feedback('info', 'La bilancia è in equilibrio. <strong>Trascina</strong> le palline (o toccane una e poi tocca dove metterla): dalla scorta ai piatti, tra i piatti, nel cestino. Osserva che cosa succede.');
 }
-function startLevel(i){
-  if (i + 1 > S.unlocked) return;
-  if (el.dlg.open) el.dlg.close();
-  loadDef(i === CHALLENGE ? makeChallenge() : LEVELS[i], i);
-}
+// I livelli del laboratorio: "Azzera livello" ricarica la stessa bilancia, anche nella sfida.
+const LABS = [...LEVELS, null].map((def, i) => ({
+  nav: i < CHALLENGE ? `Livello ${i + 1}` : 'Sfida ★',
+  challenge: i === CHALLENGE,
+  enter(){ loadDef(i === CHALLENGE ? makeChallenge() : def); },
+  restart(){ app.closeDialog(); loadDef(S.def); }
+}));
 
 /* ---------------- Wiring ---------------- */
 el.pills.forEach(p => p.addEventListener('click', () => previewSplit(+p.dataset.n)));
 el.btnKeep.addEventListener('click', keepPart);
 $('#btnCancelSplit').addEventListener('click', () => cancelSplit());
 $('#verifyForm').addEventListener('submit', verify);
-$('#btnReset').addEventListener('click', () => { if (el.dlg.open) el.dlg.close(); loadDef(S.def, S.idx); });
-function setSym(on){ S.sym = on; document.body.classList.toggle('sym-on', on); el.sym.setAttribute('aria-checked', String(on)); store.set('bilancia.sym', on); }
-el.sym.addEventListener('click', () => setSym(!S.sym));
-$('#dlgStay').addEventListener('click', () => el.dlg.close());
-el.dlgNext.addEventListener('click', () => { el.dlg.close(); startLevel(S.idx < CHALLENGE ? S.idx + 1 : CHALLENGE); });
 document.addEventListener('keydown', e => {
-  if (e.key !== 'Escape' || el.dlg.open) return;
+  if (e.key !== 'Escape' || app.dialog.open) return;
   if (S.held) cancelHold('Hai rimesso giù la pallina.');
   else if (S.split) cancelSplit();
 });
-document.addEventListener('pointerdown', e => {
-  const host = e.target.closest('.btn, .pill');
-  if (!host || host.disabled || reduceMotion) return;
-  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
-  const sp = document.createElement('span');
-  sp.className = 'rip';
-  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
-  host.appendChild(sp);
-  setTimeout(() => sp.remove(), 600);
-});
-
-setSym(S.sym);
-S.unlocked = Math.max(1, Math.min(CHALLENGE + 1, S.unlocked | 0));
-loadDef(LEVELS[0], 0);
-})();
+// Prima del laboratorio la Bilancia ricordava solo i livelli sbloccati: i ✓ si ricavano da lì.
+if (app.store.get('done') === undefined){
+  app.store.set('done', Array.from({ length: Math.max(0, Math.min(CHALLENGE, app.store.get('unlocked', 1) - 1)) }, (_, i) => i));
+}
+app.debug({ S });
+app.start(LABS);
 </script>
 </body>
 </html>

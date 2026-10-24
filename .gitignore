@@ -71,5 +71,3 @@ node_modules/
 # for macOS
 .DS_Store
 
-# Generato a ogni deploy da scripts/build-dd-manifest.mjs
-sites/dd/experiments.json

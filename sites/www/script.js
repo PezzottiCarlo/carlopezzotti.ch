@@ -193,19 +193,15 @@
     tickClock();
     setInterval(tickClock, 15000);
 
-    /* Temperatura reale: open-meteo, senza chiave, fallisce in silenzio.
-       Metti SITE.showWeather = false per togliere la chiamata. */
+    /* Temperatura reale: la chiede il nostro server a open-meteo (/api/weather, con cache),
+       fallisce in silenzio. Metti SITE.showWeather = false per togliere la chiamata. */
     if (SITE.showWeather) {
-        const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat +
-            '&longitude=' + lon + '&current=temperature_2m,weather_code&timezone=' + SITE.timeZone;
-
-        fetch(url)
+        fetch('/api/weather')
             .then(r => r.ok ? r.json() : Promise.reject(r.status))
             .then(data => {
-                const temp = data && data.current && data.current.temperature_2m;
-                if (typeof temp !== 'number') return;
-                $('#r-temp').textContent = Math.round(temp) + '°C';
-                $('#r-sky').textContent = skyWord(data.current.weather_code);
+                if (typeof data.temp !== 'number') return;
+                $('#r-temp').textContent = Math.round(data.temp) + '°C';
+                $('#r-sky').textContent = skyWord(data.code);
                 $('#r-temp-cell').hidden = false;
             })
             .catch(() => { /* il quadrante resta nascosto */ });
@@ -418,8 +414,9 @@
 
     /* ========================================================
        GITHUB
-       Una sola chiamata, messa in cache per 30 minuti: il limite
-       anonimo e' 60 richieste all'ora per indirizzo IP.
+       I repository arrivano dal nostro server (/api/github/repos), che li
+       chiede a GitHub una volta ogni 15 minuti per tutti i visitatori.
+       Qui restano in cache 30 minuti.
        ======================================================== */
     const CACHE_KEY = 'repos:' + SITE.githubUser;
     const CACHE_TTL = 30 * 60 * 1000;
@@ -457,8 +454,7 @@
         }
 
         try {
-            const res = await fetch('https://api.github.com/users/' + SITE.githubUser +
-                '/repos?sort=pushed&direction=desc&per_page=100&type=owner');
+            const res = await fetch('/api/github/repos');
             if (!res.ok) throw new Error('HTTP ' + res.status);
 
             const all = await res.json();
@@ -467,11 +463,11 @@
                 .filter(r => !r.fork && !r.archived)
                 .map(r => ({
                     name: r.name,
-                    desc: r.description || '',
-                    lang: r.language || '',
-                    stars: r.stargazers_count || 0,
-                    pushed: r.pushed_at,
-                    url: r.html_url
+                    desc: r.desc,
+                    lang: r.lang,
+                    stars: r.stars,
+                    pushed: r.pushed,
+                    url: r.url
                 }))
                 /* Prima le piu' apprezzate, poi le piu' recenti */
                 .sort((a, b) => b.stars - a.stars || new Date(b.pushed) - new Date(a.pushed));

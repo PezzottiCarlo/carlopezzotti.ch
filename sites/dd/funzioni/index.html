@@ -8,38 +8,10 @@
 <meta name="dd:tags" content="funzioni, grafici, Brousseau">
 <meta name="dd:date" content="2026-10-20">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/_shared/dd.css">
+<link rel="stylesheet" href="/_lab/lab.css">
 <style>
 :root{ --mil:#c2560c; }
-
-.app{min-height:100vh;min-height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding:10px 16px 14px}
-.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
-.topbar .brand{flex:1 1 300px;min-width:0}
-@media (max-height:760px){.brand p{display:none}}
-.levels{display:flex;gap:6px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
-.lvl{font-weight:700;font-size:.86rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:7px 11px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s,transform .12s}
-.lvl:hover:not(:disabled){background:var(--primary-soft)}
-.lvl:active:not(:disabled){transform:scale(.96)}
-.lvl.active{background:var(--primary);color:#fff}
-.lvl:disabled{color:#6b7090;cursor:not-allowed;background:#f3f4f9}
-.lvl .done{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:.7rem}
-.lvl.active .done{background:rgba(255,255,255,.25);color:#fff}
-.top-tools{display:flex;align-items:center;gap:12px}
-.switch-row{display:flex;align-items:center;gap:8px;font-weight:650;font-size:.9rem}
-.icon-btn{width:42px;height:42px;padding:0;font-size:1.25rem}
-.switch{position:relative;width:54px;height:30px;border-radius:999px;border:2px solid #8a91b1;background:#e5e8f4;cursor:pointer;flex:none;transition:background .25s,border-color .25s;padding:0}
-.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .25s var(--wobble)}
-.switch[aria-checked="true"]{background:var(--primary);border-color:var(--primary)}
-.switch[aria-checked="true"]::after{transform:translateX(24px)}
-.switch .st{position:absolute;font:800 .58rem var(--font);top:50%;transform:translateY(-50%);color:#454b6b}
-.switch .st.on{left:6px;color:#fff;display:none}.switch .st.off{right:5px}
-.switch[aria-checked="true"] .st.on{display:block}.switch[aria-checked="true"] .st.off{display:none}
-
-.layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,26vw,380px);gap:14px}
-.stage-card{position:relative;display:flex;flex-direction:column;gap:10px;padding:14px;min-height:0}
-.mission{flex:none;display:flex;gap:12px;align-items:baseline}
-.mission h2{display:inline;margin:0 6px 0 0;font-size:1.05rem}
-.mission p{display:inline;margin:0;color:var(--muted);font-size:.92rem}
+.stage-card{gap:10px}
 
 /* ---------- Banco: macchina + registro | piano ---------- */
 .bench{flex:1;min-height:0;display:grid;grid-template-columns:clamp(190px,19vw,240px) minmax(0,1fr);gap:12px}
@@ -131,33 +103,14 @@ table.mini td{font-weight:800}
 .btn.light:hover:not(:disabled){background:#f1efff}
 
 /* ---------- Pannello ---------- */
-.panel{min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
-.feedback{min-height:84px}
-.tools{display:flex;flex-direction:column;gap:12px}
-.tool{border:2px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
-.tool h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px}
-.tool .sub{margin:0;font-size:.84rem;color:var(--muted)}
-.tool p{margin:0}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.txt-input:focus,.f-input:focus,textarea.msg:focus{outline:none;border-color:var(--primary)}
 .lbl{font-weight:650}
 .big-n{font-size:1.25rem}
-.num-input{font:800 1.1rem var(--font);width:76px;height:42px;border:2px solid var(--line);border-radius:12px;text-align:center;color:var(--ink);background:#fff;-moz-appearance:textfield}
-.num-input::-webkit-inner-spin-button,.num-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
-.num-input:focus,.txt-input:focus,.f-input:focus,textarea.msg:focus{outline:none;border-color:var(--primary)}
-.seg{display:flex;gap:6px}
-.pill{flex:1;min-height:44px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:750;font-size:.9rem;color:var(--ink);cursor:pointer;transition:transform .12s,border-color .2s,background .2s;position:relative;overflow:hidden}
-.pill:hover:not(:disabled){border-color:var(--primary)}
-.pill:active:not(:disabled){transform:scale(.95)}
-.pill[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
-.coins{display:flex;gap:6px;flex-wrap:wrap}
-.coin{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff7d6,#ffd166 60%,#f2a516);box-shadow:inset 0 -2px 0 rgba(0,0,0,.12)}
-.coin.used{background:#eceef7;box-shadow:inset 0 0 0 2px #d6dbee}
 .answers{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px}
 .answers li{font-size:.86rem;padding:6px 9px;border-radius:10px;background:#f7f8fd;border:1px solid #e6e9f5}
 .answers li.ok{background:var(--ok-soft);border-color:var(--ok-line)}
 .answers li.err{background:var(--err-soft);border-color:var(--err-line)}
 .rule{font-size:1rem;line-height:1.45}
-.math{font-family:var(--math);font-size:1.2rem;color:#3a2b8f;white-space:nowrap}
 .math.big{font-size:1.6rem}
 .mchips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .mchip{height:46px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:850;font-size:1.05rem;cursor:pointer;color:var(--ink);transition:transform .12s,border-color .2s}
@@ -182,53 +135,22 @@ textarea.msg{width:100%;min-height:84px;border:2px solid var(--line);border-radi
 .formula-row{display:flex;align-items:center;gap:8px}
 .formula-row label{font:italic 700 1.3rem var(--math);white-space:nowrap}
 .f-input{flex:1;min-width:0;height:46px;border:2px solid var(--line);border-radius:12px;padding:0 10px;font:600 1.25rem var(--math);color:var(--ink)}
-.goal{font-size:1.4rem;letter-spacing:3px;color:#f2a516}
 .rounds{display:flex;gap:6px}
 .rounds i{flex:1;height:8px;border-radius:999px;background:#e5e8f4}
 .rounds i.on{background:var(--ok-line)}
 .rounds i.cur{background:var(--primary)}
 
-details.diario{border:2px solid var(--line);border-radius:14px;padding:0 12px}
-details.diario summary{cursor:pointer;font-weight:750;font-size:.95rem;padding:10px 0;display:flex;align-items:center;gap:8px;list-style:none}
-details.diario summary::-webkit-details-marker{display:none}
-details.diario summary::before{content:"▸";transition:transform .2s;color:var(--primary)}
-details.diario[open] summary::before{transform:rotate(90deg)}
-details.diario .count{margin-left:auto;background:var(--primary-soft);color:var(--primary-dark);border-radius:999px;padding:1px 9px;font-size:.78rem}
-.log{list-style:none;margin:0 0 10px;padding:0;max-height:min(30vh,240px);overflow:auto;display:flex;flex-direction:column;gap:5px}
-.log li{font-size:.82rem;padding:5px 9px;border-radius:9px;background:#f7f8fd;border:1px solid #e6e9f5}
-.log-empty{color:var(--muted);font-size:.84rem;margin:0 0 10px}
-
-dialog{max-width:min(560px,94vw)}
-.dlg-body .reflect{background:#f7f8fd;border-radius:12px;padding:10px 12px;color:var(--ink);text-align:left;font-size:.92rem}
-.dlg-list{list-style:none;padding:0;margin:8px 0;display:flex;flex-direction:column;gap:6px;text-align:left}
-.dlg-list li{background:#f7f8fd;border-radius:10px;padding:7px 10px;font-weight:650}
-.idcard{text-align:left;border:2px solid var(--primary);border-radius:16px;padding:12px 14px;margin:10px 0;background:#fbfbff}
-.idcard .math{display:block;text-align:center;font-size:1.7rem;margin-bottom:6px}
-.idcard ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:.92rem;color:var(--ink)}
-#fx{position:fixed;inset:0;pointer-events:none;z-index:70;width:100vw;height:100vh}
-
-/* Desktop grande: tutto nello schermo, il pannello scorre. */
+/* Desktop grande: il piano prende tutto lo spazio che resta. */
 @media (min-width:921px) and (min-height:680px){
-  body{height:100vh;height:100dvh;overflow:hidden}
-  .app{height:100vh;height:100dvh}
   .plane-wrap{flex:1;min-height:0;aspect-ratio:auto}
 }
 @media (max-width:920px){
-  .layout{grid-template-columns:1fr}
   .bench{grid-template-columns:1fr}
   .machine-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
   .registro{max-height:170px}
-  .panel{overflow:visible}
 }
 @media (max-width:620px){
-  .app{padding:8px 10px 12px}
-  .mission{flex-wrap:wrap}
-  .levels{width:100%}
-  .lvl{flex:1;justify-content:center;padding:7px 6px;font-size:.8rem}
-  .top-tools{width:100%;justify-content:space-between}
-  .levels{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
-  .levels::-webkit-scrollbar{display:none}
-  .lvl{flex:none;white-space:nowrap}
+  .lvl{padding:7px 6px;font-size:.8rem}
   .machine{padding:8px 9px 10px}
   .m-body{gap:4px}
   .m-val{font-size:1.15rem}
@@ -241,7 +163,7 @@ dialog{max-width:min(560px,94vw)}
 }
 </style>
 </head>
-<body>
+<body class="fit">
 <div class="app">
   <header class="topbar">
     <div class="brand">
@@ -260,20 +182,14 @@ dialog{max-width:min(560px,94vw)}
     </div>
     <nav class="levels" id="levels" aria-label="Livelli"></nav>
     <div class="top-tools">
-      <div class="switch-row">
-        <span id="symLbl">Simboli</span>
-        <button class="switch" id="symToggle" type="button" role="switch" aria-checked="false" aria-labelledby="symLbl"><span class="st on" aria-hidden="true">SÌ</span><span class="st off" aria-hidden="true">NO</span></button>
-      </div>
-      <button class="btn ghost-btn icon-btn" type="button" id="btnReset" title="Ricomincia il livello" aria-label="Ricomincia il livello">↺</button>
+      <div id="sym"></div>
+      <button class="btn ghost-btn icon-btn" type="button" id="reset"></button>
     </div>
   </header>
 
   <main class="layout">
     <section class="card stage-card" aria-labelledby="missionTitle">
-      <div class="mission">
-        <span class="dd-badge" id="missionBadge">Livello 1</span>
-        <div><h2 id="missionTitle"></h2><p id="missionText"></p></div>
-      </div>
+      <div class="mission" id="mission"></div>
 
       <div class="bench" id="bench">
         <div class="machine-col">
@@ -303,76 +219,29 @@ dialog{max-width:min(560px,94vw)}
     </section>
 
     <aside class="card panel" aria-label="Strumenti">
-      <div class="feedback info" id="feedback">
-        <span class="fb-ico" aria-hidden="true" id="fbIco">i</span>
-        <div><strong id="fbTitle">Osserva</strong><p id="fbText"></p></div>
-      </div>
+      <div class="feedback info" id="feedback"></div>
       <div class="tools" id="tool"></div>
-      <details class="diario" id="diario">
-        <summary>Diario <span class="count" id="logCount">0</span></summary>
-        <p class="log-empty" id="logEmpty">Ancora niente.</p>
-        <ol class="log" id="log"></ol>
-      </details>
+      <details class="diario" id="diario"></details>
     </aside>
   </main>
 </div>
 
-<dialog id="winDlg" aria-labelledby="winTitle" aria-describedby="winText">
-  <div class="dlg-body">
-    <div class="trophy" aria-hidden="true">
-      <svg width="42" height="42" viewBox="0 0 46 46"><path d="M23 4l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5L23 32.7l-11.3 5.9 2.2-12.5-9.1-8.9 12.6-1.8z" fill="#fff" stroke="#b9790c" stroke-width="2" stroke-linejoin="round"/></svg>
-    </div>
-    <h2 id="winTitle"></h2>
-    <p class="big" id="winText"></p>
-    <div id="winExtra"></div>
-    <p class="reflect" id="winReflect"></p>
-    <div class="dlg-actions">
-      <button class="btn ghost-btn" type="button" id="dlgStay">Resta qui</button>
-      <button class="btn" type="button" id="dlgNext">Livello successivo →</button>
-    </div>
-  </div>
-</dialog>
-
-<canvas id="fx" aria-hidden="true"></canvas>
-<div class="sr-only" aria-live="polite" id="sr"></div>
-
-<script>
-(() => {
-'use strict';
+<script type="module">
+import { lab, $, esc, plural, rnd, pick, shuffle, wait, fmt, replay } from '/_lab/lab.js';
 
 /* La Fabbrica delle Funzioni.
    Ogni macchina trasforma il numero che entra (x) nel numero che esce (y).
    Il milieu valida sempre con le conseguenze: la macchina risponde, le palline
    cadono o no sul binario, il righello regge o no la prova. */
 
-const $ = s => document.querySelector(s);
-const params = new URLSearchParams(location.search);
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const wait = ms => new Promise(r => setTimeout(r, reduceMotion ? Math.min(ms, 60) : ms));
-const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
-const pick = a => a[Math.floor(Math.random() * a.length)];
-const shuffle = arr => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const EPS = 1e-6;
 const same = (a, b) => Math.abs(a - b) < EPS;
 const XS = Array.from({ length: 11 }, (_, i) => i);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-
-function fmt(n){
-  if (!Number.isFinite(n)) return '—';
-  const r = Math.round(n * 100) / 100;
-  return (Number.isInteger(r) ? String(r) : String(r).replace('.', ',')).replace('-', '−');
-}
 const pt = (x, y) => `(${fmt(x)}; ${fmt(y)})`;
 function readNum(v){
   const s = String(v).trim().replace(',', '.').replace(/[−–]/g, '-');
   return /^-?\d+(\.\d+)?$/.test(s) ? parseFloat(s) : null;
 }
-
-const store = {
-  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
-  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
-};
 
 /* ---------------- Macchine ---------------- */
 const lin = (a, b) => ({ kind:'lin', a, b, f: x => a * x + b });
@@ -480,50 +349,33 @@ function parseFormula(src){
 
 /* ---------------- Elementi ---------------- */
 const el = {
-  levels:$('#levels'), mBadge:$('#missionBadge'), mTitle:$('#missionTitle'), mText:$('#missionText'),
   bench:$('#bench'), machine:$('#machine'), mName:$('#mName'), mIn:$('#mIn'), mOut:$('#mOut'), mInLbl:$('#mInLbl'), mOutLbl:$('#mOutLbl'),
-  regBody:$('#regBody'), regEmpty:$('#regEmpty'), thX:$('#thX'), thY:$('#thY'), story:$('#story'), cover:$('#cover'),
-  fb:$('#feedback'), fbIco:$('#fbIco'), fbTitle:$('#fbTitle'), fbText:$('#fbText'), tool:$('#tool'),
-  log:$('#log'), logCount:$('#logCount'), logEmpty:$('#logEmpty'), sym:$('#symToggle'), sr:$('#sr'),
-  dlg:$('#winDlg'), winTitle:$('#winTitle'), winText:$('#winText'), winExtra:$('#winExtra'), winReflect:$('#winReflect'), dlgNext:$('#dlgNext')
+  regBody:$('#regBody'), regEmpty:$('#regEmpty'), thX:$('#thX'), thY:$('#thY'), story:$('#story'), cover:$('#cover'), tool:$('#tool')
 };
 
-const S = {
-  idx:0, gen:0, busy:false, L:{}, onNext:null,
-  sym: store.get('fabbrica.sym', false),
-  unlocked: params.has('tutti') ? 5 : Math.max(1, Math.min(5, store.get('fabbrica.unlocked', 1) | 0))
-};
+const app = lab({
+  id:'fabbrica',
+  sym:{ onChange(){ applyNames(); if (app.idx < 3) app.level.render?.(); } },
+  onLevel(i, L){
+    el.cover.hidden = true; el.story.hidden = true;
+    el.bench.classList.toggle('no-machine', !!L.noMachine);
+    reg.clear(); plane.clear(); applyNames();
+  }
+});
 
-function feedback(type, title, html){
-  el.fb.className = 'feedback ' + type;
-  el.fbIco.textContent = { info:'i', ok:'✓', tilt:'!', error:'✕', win:'★' }[type];
-  el.fbTitle.textContent = title;
-  el.fbText.innerHTML = html;
-  el.sr.textContent = title + '. ' + el.fbText.textContent;
-}
-function log(text){
-  const li = document.createElement('li');
-  li.innerHTML = text;
-  el.log.appendChild(li);
-  el.logCount.textContent = el.log.children.length;
-  el.logEmpty.hidden = true;
-  el.log.scrollTop = el.log.scrollHeight;
-}
-function clearLog(){ el.log.innerHTML = ''; el.logCount.textContent = '0'; el.logEmpty.hidden = false; }
 const coins = (n, max) => '<i class="coin"></i>'.repeat(n) + '<i class="coin used"></i>'.repeat(Math.max(0, max - n));
-function bump(node){ node.classList.remove('bump'); void node.offsetWidth; node.classList.add('bump'); }
 function focusFirst(){
   if (!matchMedia('(pointer: fine)').matches) return;
   el.tool.querySelector('input:not([disabled]),textarea')?.focus({ preventScroll:true });
 }
-const names = () => (S.sym || S.idx >= 3) ? ['x', 'y'] : ['entra', 'esce'];
+const names = () => (app.sym || app.idx >= 3) ? ['x', 'y'] : ['entra', 'esce'];
 function applyNames(){
   const [a, b] = names();
-  plane.setNames(S.sym || S.idx >= 3 ? 'entra (x)' : 'entra', S.sym || S.idx >= 3 ? 'esce (y)' : 'esce');
-  el.thX.textContent = S.sym ? 'entra · x' : 'entra';
-  el.thY.textContent = S.sym ? 'esce · y' : 'esce';
-  el.mInLbl.textContent = S.sym ? 'entra · x' : 'entra';
-  el.mOutLbl.textContent = S.sym ? 'esce · y' : 'esce';
+  plane.setNames(app.sym || app.idx >= 3 ? 'entra (x)' : 'entra', app.sym || app.idx >= 3 ? 'esce (y)' : 'esce');
+  el.thX.textContent = app.sym ? 'entra · x' : 'entra';
+  el.thY.textContent = app.sym ? 'esce · y' : 'esce';
+  el.mInLbl.textContent = app.sym ? 'entra · x' : 'entra';
+  el.mOutLbl.textContent = app.sym ? 'esce · y' : 'esce';
   return [a, b];
 }
 
@@ -693,12 +545,12 @@ const plane = (() => {
 const machine = {
   show(name){ el.mName.textContent = name; el.mIn.textContent = '?'; el.mOut.textContent = '?'; },
   async run(x, y, ms = 650){
-    el.mIn.textContent = fmt(x); bump(el.mIn);
+    el.mIn.textContent = fmt(x); replay(el.mIn, 'bump');
     el.mOut.textContent = '…';
     el.machine.classList.add('busy');
     await wait(ms);
     el.machine.classList.remove('busy');
-    el.mOut.textContent = fmt(y); bump(el.mOut);
+    el.mOut.textContent = fmt(y); replay(el.mOut, 'bump');
   }
 };
 const reg = {
@@ -736,21 +588,21 @@ const L1 = {
     { tokens:2, gen: () => lin(rnd(2, 6), rnd(0, 10)) },
     { tokens:2, gen: () => { const a = -rnd(2, 3); return lin(a, rnd(-10 * a, -10 * a + 10)); } }
   ],
-  enter(){ S.L.round = 0; S.L.history = []; L1.load(); },
+  enter(){ app.L.round = 0; app.L.history = []; L1.load(); },
   load(){
-    const L = S.L, R = L1.ROUNDS[L.round];
+    const L = app.L, R = L1.ROUNDS[L.round];
     Object.assign(L, { m:R.gen(), tokens:R.tokens, max:R.tokens, shown:[], tested:[], phase:'test', quiz:[], qi:0, won:false });
     machine.show(`Macchina ${L.round + 1} di 3`); reg.clear(); plane.setDots([]); plane.fit([]);
     L1.render();
-    feedback('info', 'Osserva', L.round === 0
+    app.say('info', 'Osserva', L.round === 0
       ? `Scrivi un numero da 0 a 10 e premi <strong>Prova</strong>. Ogni prova costa un gettone e ne hai ${L.tokens}. Usali bene: dopo sarà la macchina a farti le domande.`
       : `Una macchina nuova, e questa volta hai solo ${plural(L.tokens, 'gettone', 'gettoni')}. Scegli bene che cosa provare.`);
   },
   answers(){
-    return `<ol class="answers">${S.L.quiz.filter(q => q.ans !== null).map(q => `<li class="${same(q.ans, q.y) ? 'ok' : 'err'}">Entra <b>${q.x}</b>: hai detto ${fmt(q.ans)}, la macchina dà <b>${fmt(q.y)}</b> ${same(q.ans, q.y) ? '✓' : '✕'}</li>`).join('')}</ol>`;
+    return `<ol class="answers">${app.L.quiz.filter(q => q.ans !== null).map(q => `<li class="${same(q.ans, q.y) ? 'ok' : 'err'}">Entra <b>${q.x}</b>: hai detto ${fmt(q.ans)}, la macchina dà <b>${fmt(q.y)}</b> ${same(q.ans, q.y) ? '✓' : '✕'}</li>`).join('')}</ol>`;
   },
   render(){
-    const L = S.L;
+    const L = app.L;
     if (L.phase === 'test'){
       el.tool.innerHTML = `<section class="tool"><h3>🪙 Prove</h3>
         <div class="coins" aria-label="Gettoni rimasti: ${L.tokens}">${coins(L.tokens, L.max)}</div>
@@ -769,7 +621,7 @@ const L1 = {
     focusFirst();
   },
   startQuiz(){
-    const L = S.L, tested = new Set(L.tested);
+    const L = app.L, tested = new Set(L.tested);
     const free = XS.filter(x => !tested.has(x));
     // Il milieu sceglie i numeri più lontani da quelli che hai provato.
     const dist = x => L.tested.length ? Math.min(...L.tested.map(t => Math.abs(t - x))) : Math.random();
@@ -783,74 +635,71 @@ const L1 = {
     L.quiz = xs.map(x => ({ x, y:L.m.f(x), ans:null }));
     L.qi = 0; L.phase = 'quiz';
     L1.render();
-    feedback('info', 'Tocca alla macchina', `Basta prove: ora la macchina ti chiede che cosa esce con ${plural(xs.length, 'numero', 'numeri')} che sceglie lei.`);
-    log('Inizia la sfida della macchina');
+    app.say('info', 'Tocca alla macchina', `Basta prove: ora la macchina ti chiede che cosa esce con ${plural(xs.length, 'numero', 'numeri')} che sceglie lei.`);
+    app.log('Inizia la sfida della macchina');
   },
   finish(){
-    const L = S.L, ok = L.quiz.every(q => same(q.ans, q.y));
-    const f = S.sym ? ` Era la macchina <span class="math">${formula(L.m)}</span>.` : '';
+    const L = app.L, ok = L.quiz.every(q => same(q.ans, q.y));
+    const f = app.sym ? ` Era la macchina <span class="math">${formula(L.m)}</span>.` : '';
     L.phase = 'done'; L.won = ok;
     if (ok) L.history.push(L.m);
     L1.render();
     if (!ok){
-      feedback('error', 'Ha vinto la macchina', `Qualche risposta non tornava.${f} Ti aspetta una macchina nuova: prima di rispondere, guarda bene il registro.`);
-      log('Sconfitta: si cambia macchina');
+      app.say('error', 'Ha vinto la macchina', `Qualche risposta non tornava.${f} Ti aspetta una macchina nuova: prima di rispondere, guarda bene il registro.`);
+      app.log('Sconfitta: si cambia macchina');
       return;
     }
-    log(`Macchina ${L.round + 1} battuta`);
-    if (L.round < 2) return feedback('win', 'Macchina battuta!', `Hai previsto tutto giusto.${f}`);
-    feedback('win', 'Tre macchine battute!', 'Hai previsto anche numeri che non avevi mai provato.');
-    markDone(0);
-    showDialog('Tre macchine battute!', 'Hai previsto anche numeri che non avevi mai provato.',
-      S.sym ? `<ul class="dlg-list">${L.history.map((m, i) => `<li>Macchina ${i + 1}: <span class="math">${formula(m)}</span></li>`).join('')}</ul>` : '',
-      'Come facevi a sapere che cosa esce con 50 o con 100, senza provarlo? Quali <b>due cose</b> ti basta sapere di una macchina per prevedere qualunque numero?',
-      'Livello successivo →', () => startLevel(1));
+    app.log(`Macchina ${L.round + 1} battuta`);
+    if (L.round < 2) return app.say('win', 'Macchina battuta!', `Hai previsto tutto giusto.${f}`);
+    app.say('win', 'Tre macchine battute!', 'Hai previsto anche numeri che non avevi mai provato.');
+    app.complete(0);
+    app.win({ title: 'Tre macchine battute!', text: 'Hai previsto anche numeri che non avevi mai provato.', extra: app.sym ? `<ul class="dlg-list">${L.history.map((m, i) => `<li>Macchina ${i + 1}: <span class="math">${formula(m)}</span></li>`).join('')}</ul>` : '', reflect: 'Come facevi a sapere che cosa esce con 50 o con 100, senza provarlo? Quali <b>due cose</b> ti basta sapere di una macchina per prevedere qualunque numero?', then: () => app.go(1) });
   },
   on: {
     async test(form){
-      const L = S.L, x = Number(form.x.value);
-      if (!Number.isInteger(x) || x < 0 || x > 10) return feedback('tilt', 'Attento', 'Puoi mettere dentro solo numeri interi da 0 a 10.');
-      if (L.tested.includes(x)) return feedback('info', 'Già provato', `Hai già provato ${x}: guarda nel registro.`);
-      const gen = S.gen, y = L.m.f(x);
-      S.busy = true;
+      const L = app.L, x = Number(form.x.value);
+      if (!Number.isInteger(x) || x < 0 || x > 10) return app.say('tilt', 'Attento', 'Puoi mettere dentro solo numeri interi da 0 a 10.');
+      if (L.tested.includes(x)) return app.say('info', 'Già provato', `Hai già provato ${x}: guarda nel registro.`);
+      const gen = app.gen, y = L.m.f(x);
+      app.busy = true;
       await machine.run(x, y);
-      if (gen !== S.gen) return;
-      S.busy = false;
+      if (gen !== app.gen) return;
+      app.busy = false;
       L.tokens--; L.tested.push(x);
       const p = { x, y, anim:'pop' };
       L.shown.push(p);
       reg.add({ x, y });
       plane.fit(L.shown.map(d => d.y)); plane.setDots(L.shown);
-      log(`Prova: entra ${x}, esce ${fmt(y)}`);
+      app.log(`Prova: entra ${x}, esce ${fmt(y)}`);
       if (!L.tokens){
         L.phase = 'wait'; el.tool.innerHTML = '';
-        feedback('info', 'Gettoni finiti', `Entra ${x}, esce <strong>${fmt(y)}</strong>. Hai finito i gettoni!`);
+        app.say('info', 'Gettoni finiti', `Entra ${x}, esce <strong>${fmt(y)}</strong>. Hai finito i gettoni!`);
         await wait(1100);
-        if (gen === S.gen) L1.startQuiz();
+        if (gen === app.gen) L1.startQuiz();
         return;
       }
       L1.render();
-      feedback('info', 'Osserva', `Entra ${x}, esce <strong>${fmt(y)}</strong>. Ti ${L.tokens === 1 ? 'resta 1 gettone' : `restano ${L.tokens} gettoni`}.`);
+      app.say('info', 'Osserva', `Entra ${x}, esce <strong>${fmt(y)}</strong>. Ti ${L.tokens === 1 ? 'resta 1 gettone' : `restano ${L.tokens} gettoni`}.`);
     },
     ready(){ L1.startQuiz(); },
     async answer(form){
-      const L = S.L, q = L.quiz[L.qi], v = readNum(form.y.value);
-      if (v === null) return feedback('tilt', 'Attento', 'Scrivi un numero.');
-      const gen = S.gen;
-      q.ans = v; S.busy = true;
+      const L = app.L, q = L.quiz[L.qi], v = readNum(form.y.value);
+      if (v === null) return app.say('tilt', 'Attento', 'Scrivi un numero.');
+      const gen = app.gen;
+      q.ans = v; app.busy = true;
       await machine.run(q.x, q.y, 800);
-      if (gen !== S.gen) return;
-      S.busy = false;
+      if (gen !== app.gen) return;
+      app.busy = false;
       const ok = same(v, q.y);
       reg.add({ x:q.x, y:q.y, cls: ok ? 'ok' : 'err', note: ok ? '✓' : `tu ${fmt(v)}` });
       if (q.x <= 10){ L.shown.push({ x:q.x, y:q.y, cls: ok ? 'ok' : 'err', anim:'pop' }); plane.fit(L.shown.map(d => d.y)); plane.setDots(L.shown); }
-      log(`Domanda: entra ${q.x}, hai detto ${fmt(v)}, esce ${fmt(q.y)} ${ok ? '✓' : '✕'}`);
+      app.log(`Domanda: entra ${q.x}, hai detto ${fmt(v)}, esce ${fmt(q.y)} ${ok ? '✓' : '✕'}`);
       L.qi++;
-      feedback(ok ? 'ok' : 'error', ok ? 'Giusto' : 'Non è così', `Entra ${q.x}: la macchina dà <strong>${fmt(q.y)}</strong>${ok ? '.' : `, non ${fmt(v)}.`}`);
+      app.say(ok ? 'ok' : 'error', ok ? 'Giusto' : 'Non è così', `Entra ${q.x}: la macchina dà <strong>${fmt(q.y)}</strong>${ok ? '.' : `, non ${fmt(v)}.`}`);
       if (L.qi < L.quiz.length) L1.render();
       else L1.finish();
     },
-    next(){ const L = S.L; if (L.won) L.round++; L1.load(); }
+    next(){ const L = app.L; if (L.won) L.round++; L1.load(); }
   }
 };
 
@@ -865,9 +714,9 @@ const L2 = {
     () => { const a = -rnd(1, 2); return lin(a, rnd(-10 * a, 20)); },
     () => lin(pick([0.5, 1.5]), rnd(0, 3))
   ],
-  enter(){ S.L.round = 0; S.L.history = []; L2.load(); },
+  enter(){ app.L.round = 0; app.L.history = []; L2.load(); },
   load(){
-    const L = S.L;
+    const L = app.L;
     Object.assign(L, { m:L2.ROUNDS[L.round](), tries:0, phase:'place' });
     machine.show(`Macchina ${L.round + 1} di 3`); reg.clear();
     plane.setDots([]); plane.fit(valuesOf(L.m));
@@ -875,13 +724,13 @@ const L2 = {
     L.ruler = [{ x:2, y:mid }, { x:8, y:mid }];
     plane.ruler.show(L.ruler); plane.ruler.lock(false);
     L2.render();
-    feedback('info', 'Osserva', L.round === 0
+    app.say('info', 'Osserva', L.round === 0
       ? 'Trascina i due pomelli bianchi, oppure tocca il grafico, per spostare il binario. Quando sei pronto, accendi la macchina.'
       : 'Nuova macchina, nuova regola. Dove metti il binario?');
   },
   render(){
-    const L = S.L;
-    el.tool.innerHTML = `<section class="tool"><h3>📜 La regola della macchina</h3><p class="rule">${ruleWords(L.m)}</p>${S.sym ? `<p class="math">${formula(L.m)}</p>` : ''}</section>
+    const L = app.L;
+    el.tool.innerHTML = `<section class="tool"><h3>📜 La regola della macchina</h3><p class="rule">${ruleWords(L.m)}</p>${app.sym ? `<p class="math">${formula(L.m)}</p>` : ''}</section>
       <section class="tool"><h3>🛤️ Il binario</h3><p class="sub">Sposta i due pomelli ●. Il binario è sempre dritto.</p>
         <button class="btn" type="button" data-act="fire" ${L.phase === 'place' ? '' : 'disabled'}>▶ Accendi la macchina</button>
         ${L.tries ? `<p class="sub">Tentativi: ${L.tries}</p>` : ''}</section>
@@ -889,10 +738,10 @@ const L2 = {
   },
   on: {
     async fire(){
-      const L = S.L, f = plane.ruler.f();
-      if (!f) return feedback('tilt', 'Binario in verticale', 'Così non va: per ogni numero che entra la macchina dà un solo numero, quindi il binario non può stare in piedi. Sposta un pomello.');
-      const gen = S.gen;
-      S.busy = true; L.phase = 'firing'; L.tries++;
+      const L = app.L, f = plane.ruler.f();
+      if (!f) return app.say('tilt', 'Binario in verticale', 'Così non va: per ogni numero che entra la macchina dà un solo numero, quindi il binario non può stare in piedi. Sposta un pomello.');
+      const gen = app.gen;
+      app.busy = true; L.phase = 'firing'; L.tries++;
       plane.ruler.lock(true); L2.render(); reg.clear();
       const dots = []; plane.setDots(dots);
       const balls = ballsOn(f, L.m);
@@ -901,25 +750,22 @@ const L2 = {
         reg.add({ x:b.x, y:b.y, cls: b.hit ? 'ok' : 'err' });
         plane.addDot({ x:b.x, y:b.y, cls:'ball ' + (b.hit ? 'caught' : 'miss'), anim:'drop' });
         await wait(190);
-        if (gen !== S.gen) return;
+        if (gen !== app.gen) return;
       }
-      S.busy = false;
+      app.busy = false;
       const caught = balls.filter(b => b.hit).length;
-      log(`Macchina ${L.round + 1}, tentativo ${L.tries}: ${caught} palline su 11`);
+      app.log(`Macchina ${L.round + 1}, tentativo ${L.tries}: ${caught} palline su 11`);
       if (caught < 11){
         L.phase = 'place'; plane.ruler.lock(false); L2.render();
-        return feedback('error', 'Palline perse', `Il binario ne ha prese ${caught} su 11. Le palline sono rimaste dove sono cadute: sposta il binario e riprova.`);
+        return app.say('error', 'Palline perse', `Il binario ne ha prese ${caught} su 11. Le palline sono rimaste dove sono cadute: sposta il binario e riprova.`);
       }
       L.phase = 'won'; L.history.push(L.m); L2.render();
-      if (L.round < 2) return feedback('win', 'Tutte prese!', `Undici palline su undici${L.tries > 1 ? '' : ', al primo colpo'}.`);
-      feedback('win', 'Tutte prese!', 'Tre binari perfetti.');
-      markDone(1);
-      showDialog('Tre binari perfetti!', 'Ogni pallina è caduta sul tuo binario.',
-        S.sym ? `<ul class="dlg-list">${L.history.map((m, i) => `<li>Macchina ${i + 1}: <span class="math">${formula(m)}</span></li>`).join('')}</ul>` : '',
-        'Quanti punti ti servivano <b>davvero</b> per mettere il binario? Quale punto si trova subito leggendo la regola, e come trovi il secondo?',
-        'Livello successivo →', () => startLevel(2));
+      if (L.round < 2) return app.say('win', 'Tutte prese!', `Undici palline su undici${L.tries > 1 ? '' : ', al primo colpo'}.`);
+      app.say('win', 'Tutte prese!', 'Tre binari perfetti.');
+      app.complete(1);
+      app.win({ title: 'Tre binari perfetti!', text: 'Ogni pallina è caduta sul tuo binario.', extra: app.sym ? `<ul class="dlg-list">${L.history.map((m, i) => `<li>Macchina ${i + 1}: <span class="math">${formula(m)}</span></li>`).join('')}</ul>` : '', reflect: 'Quanti punti ti servivano <b>davvero</b> per mettere il binario? Quale punto si trova subito leggendo la regola, e come trovi il secondo?', then: () => app.go(2) });
     },
-    next(){ S.L.round++; L2.load(); }
+    next(){ app.L.round++; L2.load(); }
   }
 };
 
@@ -938,12 +784,12 @@ const L3 = {
       () => lin(rnd(2, 5), 0)
     ]).slice(0, k).map(gen => gen());
     const nons = shuffle(Object.keys(NONLIN)).slice(0, 4 - k).map(non);
-    S.L.ms = shuffle([...lins, ...nons]).map((m, i) => ({ m, name:'ABCD'[i], known:[], tokens:4, solved:false, mode:null, sel:[], ruler:null, errors:0 }));
-    S.L.cur = 0;
+    app.L.ms = shuffle([...lins, ...nons]).map((m, i) => ({ m, name:'ABCD'[i], known:[], tokens:4, solved:false, mode:null, sel:[], ruler:null, errors:0 }));
+    app.L.cur = 0;
     L3.load();
-    feedback('info', 'Osserva', 'Scegli una macchina (A, B, C o D), fai qualche prova e poi decidi: è <b>dritta</b>, cioè i suoi punti stanno lungo un righello, oppure <b>storta</b>?');
+    app.say('info', 'Osserva', 'Scegli una macchina (A, B, C o D), fai qualche prova e poi decidi: è <b>dritta</b>, cioè i suoi punti stanno lungo un righello, oppure <b>storta</b>?');
   },
-  get M(){ return S.L.ms[S.L.cur]; },
+  get M(){ return app.L.ms[app.L.cur]; },
   load(){
     const M = L3.M;
     machine.show(`Macchina ${M.name}`);
@@ -966,14 +812,14 @@ const L3 = {
     plane.select(M.mode === 'curve' && !M.solved, d => L3.toggle(d.ref));
   },
   render(){
-    const L = S.L, M = L3.M;
+    const L = app.L, M = L3.M;
     const chips = L.ms.map((z, i) => `<button class="mchip${i === L.cur ? ' cur' : ''}${z.solved ? ' solved' : ''}" type="button" data-act="pick" data-i="${i}" aria-pressed="${i === L.cur}" aria-label="Macchina ${z.name}${z.solved ? ', risolta' : ''}">${z.name}${z.solved ? ' ✓' : ''}</button>`).join('');
     let body;
     if (M.solved){
       const straight = M.m.kind === 'lin';
       body = `<section class="tool solved-card"><h3>✓ Macchina ${M.name}: ${straight ? 'dritta' : 'storta'}</h3>
         <p class="sub">${straight ? 'Il righello ha retto la prova della macchina.' : 'Hai mostrato tre punti che non stanno sulla stessa retta.'}</p>
-        ${S.sym && straight ? `<p class="math">${formula(M.m)}</p>` : ''}</section>`;
+        ${app.sym && straight ? `<p class="math">${formula(M.m)}</p>` : ''}</section>`;
     } else {
       body = `<section class="tool"><h3>🪙 Prove sulla macchina ${M.name}</h3><div class="coins" aria-label="Gettoni rimasti: ${M.tokens}">${coins(M.tokens, 4)}</div>
         <form class="row" data-act="test"><label class="lbl" for="tx">Metti dentro</label><input class="num-input" id="tx" name="x" type="number" inputmode="numeric" min="0" max="10" placeholder="?" ${M.tokens ? '' : 'disabled'}><button class="btn grow" type="submit" ${M.tokens ? '' : 'disabled'}>Prova</button></form></section>
@@ -991,75 +837,72 @@ const L3 = {
     M.hint = null; L3.paint(); L3.render();
   },
   solve(){
-    const L = S.L, M = L3.M, straight = M.m.kind === 'lin';
+    const L = app.L, M = L3.M, straight = M.m.kind === 'lin';
     M.solved = true; M.mode = null; M.hint = null;
     L3.paint(); L3.render();
-    log(`Macchina ${M.name}: ${straight ? 'dritta' : 'storta'} ✓`);
+    app.log(`Macchina ${M.name}: ${straight ? 'dritta' : 'storta'} ✓`);
     const left = L.ms.filter(z => !z.solved).map(z => z.name);
-    feedback('ok', `Macchina ${M.name}: ${straight ? 'dritta' : 'storta'}`,
+    app.say('ok', `Macchina ${M.name}: ${straight ? 'dritta' : 'storta'}`,
       (straight ? 'Il punto scelto dalla macchina è caduto proprio sul tuo righello.' : 'Tre punti non allineati: nessun righello può passare da tutti e tre.') +
       (left.length ? ` Restano: ${left.join(', ')}.` : ''));
     if (left.length) return;
-    markDone(2);
+    app.complete(2);
     const errors = L.ms.reduce((s, z) => s + z.errors, 0);
-    setTimeout(() => showDialog('Tutte le macchine smascherate!', errors ? `Ce l’hai fatta, con ${plural(errors, 'verdetto respinto', 'verdetti respinti')} lungo la strada.` : 'Nessun verdetto respinto: complimenti!',
-      `<ul class="dlg-list">${L.ms.map(z => `<li>Macchina ${z.name}: <b>${z.m.kind === 'lin' ? 'dritta' : 'storta'}</b>${S.sym && z.m.kind === 'lin' ? ` · <span class="math">${formula(z.m)}</span>` : ''}</li>`).join('')}</ul>`,
-      'Riguarda i registri delle macchine dritte: quando il numero che entra aumenta di 1, che cosa succede sempre al numero che esce? E nelle macchine storte? Riusciresti a capirlo <b>senza</b> disegnare?',
-      'Livello successivo →', () => startLevel(3)), 500);
+    setTimeout(() => app.win({ title: 'Tutte le macchine smascherate!', text: errors ? `Ce l’hai fatta, con ${plural(errors, 'verdetto respinto', 'verdetti respinti')} lungo la strada.` : 'Nessun verdetto respinto: complimenti!', extra: `<ul class="dlg-list">${L.ms.map(z => `<li>Macchina ${z.name}: <b>${z.m.kind === 'lin' ? 'dritta' : 'storta'}</b>${app.sym && z.m.kind === 'lin' ? ` · <span class="math">${formula(z.m)}</span>` : ''}</li>`).join('')}</ul>`, reflect: 'Riguarda i registri delle macchine dritte: quando il numero che entra aumenta di 1, che cosa succede sempre al numero che esce? E nelle macchine storte? Riusciresti a capirlo <b>senza</b> disegnare?', then: () => app.go(3) }), 500);
   },
   on: {
     pick(b){
-      S.L.cur = +b.dataset.i; L3.load();
+      app.L.cur = +b.dataset.i; L3.load();
       const M = L3.M;
-      feedback('info', `Macchina ${M.name}`, M.solved ? 'Questa l’hai già risolta.' : M.known.length ? 'Riprendi da dove eri rimasto.' : 'Fai qualche prova, poi dai il tuo verdetto.');
+      app.say('info', `Macchina ${M.name}`, M.solved ? 'Questa l’hai già risolta.' : M.known.length ? 'Riprendi da dove eri rimasto.' : 'Fai qualche prova, poi dai il tuo verdetto.');
     },
     async test(form){
       const M = L3.M, x = Number(form.x.value);
       if (!M.tokens) return;
-      if (!Number.isInteger(x) || x < 0 || x > 10) return feedback('tilt', 'Attento', 'Puoi mettere dentro solo numeri interi da 0 a 10.');
-      if (M.known.some(p => p.x === x)) return feedback('info', 'Già provato', `Conosci già che cosa esce con ${x}.`);
-      const gen = S.gen, y = M.m.f(x);
-      S.busy = true;
+      if (!Number.isInteger(x) || x < 0 || x > 10) return app.say('tilt', 'Attento', 'Puoi mettere dentro solo numeri interi da 0 a 10.');
+      if (M.known.some(p => p.x === x)) return app.say('info', 'Già provato', `Conosci già che cosa esce con ${x}.`);
+      const gen = app.gen, y = M.m.f(x);
+      app.busy = true;
       await machine.run(x, y);
-      if (gen !== S.gen) return;
-      S.busy = false;
+      if (gen !== app.gen) return;
+      app.busy = false;
       M.tokens--;
       const p = { x, y }; M.known.push(p);
       reg.add({ x, y });
       L3.paint(p); L3.render();
-      log(`${M.name}: entra ${x}, esce ${fmt(y)}`);
-      feedback('info', 'Osserva', `Entra ${x}, esce <strong>${fmt(y)}</strong>.${M.tokens ? '' : ' Gettoni finiti per questa macchina: ora decidi.'}`);
+      app.log(`${M.name}: entra ${x}, esce ${fmt(y)}`);
+      app.say('info', 'Osserva', `Entra ${x}, esce <strong>${fmt(y)}</strong>.${M.tokens ? '' : ' Gettoni finiti per questa macchina: ora decidi.'}`);
     },
     mode(b){
       const M = L3.M;
       M.mode = b.dataset.mode; M.sel = []; M.hint = null;
       L3.paint(); L3.render();
-      if (M.mode === 'curve' && M.known.length < 3) feedback('tilt', 'Servono punti', 'Per dimostrare che è storta ti servono almeno 3 punti: fai qualche prova.');
-      else feedback('info', M.mode === 'line' ? 'Il righello' : 'La prova', M.mode === 'line' ? 'Trascina i pomelli: si agganciano ai punti che conosci.' : 'Tocca i punti sul grafico per sceglierli.');
+      if (M.mode === 'curve' && M.known.length < 3) app.say('tilt', 'Servono punti', 'Per dimostrare che è storta ti servono almeno 3 punti: fai qualche prova.');
+      else app.say('info', M.mode === 'line' ? 'Il righello' : 'La prova', M.mode === 'line' ? 'Trascina i pomelli: si agganciano ai punti che conosci.' : 'Tocca i punti sul grafico per sceglierli.');
     },
     async verify(){
       const M = L3.M, f = plane.ruler.f();
-      if (!f) return feedback('tilt', 'Righello in verticale', 'Un righello in verticale non descrive nessuna macchina: per ogni numero che entra ne esce uno solo.');
+      if (!f) return app.say('tilt', 'Righello in verticale', 'Un righello in verticale non descrive nessuna macchina: per ogni numero che entra ne esce uno solo.');
       const off = M.known.find(p => !same(f(p.x), p.y));
-      if (off) return feedback('tilt', 'Il righello non regge', `Il righello non passa per ${pt(off.x, off.y)}, un punto che conosci già.`);
+      if (off) return app.say('tilt', 'Il righello non regge', `Il righello non passa per ${pt(off.x, off.y)}, un punto che conosci già.`);
       const free = XS.filter(x => !M.known.some(p => p.x === x));
       if (!free.length) return L3.solve();
       // Il milieu è antagonista: sceglie il numero dove il tuo righello sbaglia di più.
       const dev = x => Math.abs(M.m.f(x) - f(x));
       const worst = Math.max(...free.map(dev));
-      const x = pick(free.filter(z => same(dev(z), worst))), y = M.m.f(x), gen = S.gen;
-      S.busy = true; plane.ruler.lock(true);
-      feedback('info', 'La macchina prova…', `La macchina sceglie un numero che non hai provato: <strong>${x}</strong>.`);
+      const x = pick(free.filter(z => same(dev(z), worst))), y = M.m.f(x), gen = app.gen;
+      app.busy = true; plane.ruler.lock(true);
+      app.say('info', 'La macchina prova…', `La macchina sceglie un numero che non hai provato: <strong>${x}</strong>.`);
       await machine.run(x, y, 900);
-      if (gen !== S.gen) return;
-      S.busy = false;
+      if (gen !== app.gen) return;
+      app.busy = false;
       const p = { x, y, probe:true }; M.known.push(p);
       reg.add({ x, y, cls:'probe' });
       if (same(f(x), y) && M.m.kind === 'lin') return L3.solve();
       M.errors++;
       L3.paint(p); L3.render();
-      log(`${M.name}: il righello non regge (entra ${x}, esce ${fmt(y)})`);
-      feedback('error', 'Fuori dal righello', `Entra ${x}, esce <strong>${fmt(y)}</strong>: il punto ${pt(x, y)} cade fuori dal tuo righello. Ora conosci un punto in più.`);
+      app.log(`${M.name}: il righello non regge (entra ${x}, esce ${fmt(y)})`);
+      app.say('error', 'Fuori dal righello', `Entra ${x}, esce <strong>${fmt(y)}</strong>: il punto ${pt(x, y)} cade fuori dal tuo righello. Ora conosci un punto in più.`);
     },
     prove(){
       const M = L3.M, [p, q, r] = M.sel;
@@ -1070,8 +913,8 @@ const L3 = {
       M.hint = { f: plane.lineThrough(ends[0], ends[2]), cls:'hint-line' };
       M.sel = [];
       L3.paint(); L3.render();
-      log(`${M.name}: prova respinta, i tre punti erano allineati`);
-      feedback('error', 'Nessuna prova', `${pt(p.x, p.y)}, ${pt(q.x, q.y)} e ${pt(r.x, r.y)} stanno sulla stessa retta: guarda la linea tratteggiata. Così non dimostri che è storta.`);
+      app.log(`${M.name}: prova respinta, i tre punti erano allineati`);
+      app.say('error', 'Nessuna prova', `${pt(p.x, p.y)}, ${pt(q.x, q.y)} e ${pt(r.x, r.y)} stanno sulla stessa retta: guarda la linea tratteggiata. Così non dimostri che è storta.`);
     }
   }
 };
@@ -1084,16 +927,16 @@ const L4 = {
   mission:'Si gioca in due. Uno vede la macchina segreta e scrive un messaggio; l’altro legge solo il messaggio e mette il binario. Se tutte le palline cadono sul binario, il round è vinto. Ma a ogni round il messaggio deve essere più corto!',
   ROUNDS: [ { budget:40, rep:'grafico' }, { budget:24, rep:'tabella' }, { budget:14, rep:'storia' }, { budget:8, rep:'grafico' } ],
   enter(){
-    Object.assign(S.L, { round:0, writer:0, names: store.get('fabbrica.names', ['', '']), gallery:[], phase:'names', msg:'' });
+    Object.assign(app.L, { round:0, writer:0, names: app.store.get('names', ['', '']), gallery:[], phase:'names', msg:'' });
     plane.setRange(0, 30);
     L4.stage(); L4.render();
-    feedback('info', 'Come si gioca', 'Scrivete i vostri nomi. A turno, uno scrive il messaggio e l’altro costruisce il binario. Il dispositivo passa di mano: non sbirciate!');
+    app.say('info', 'Come si gioca', 'Scrivete i vostri nomi. A turno, uno scrive il messaggio e l’altro costruisce il binario. Il dispositivo passa di mano: non sbirciate!');
   },
-  get A(){ return S.L.names[S.L.writer] || (S.L.writer ? 'B' : 'A'); },
-  get B(){ return S.L.names[1 - S.L.writer] || (S.L.writer ? 'A' : 'B'); },
-  get R(){ return L4.ROUNDS[S.L.round]; },
+  get A(){ return app.L.names[app.L.writer] || (app.L.writer ? 'B' : 'A'); },
+  get B(){ return app.L.names[1 - app.L.writer] || (app.L.writer ? 'A' : 'B'); },
+  get R(){ return L4.ROUNDS[app.L.round]; },
   newSecret(){
-    const L = S.L, rep = L4.R.rep;
+    const L = app.L, rep = L4.R.rep;
     let m;
     if (rep === 'tabella'){ const a = pick([1, 2]); m = lin(a, rnd(1, a === 1 ? 15 : 8)); m.xs = tableXs(m); }
     else if (rep === 'storia') m = storyMachine(2, 30);
@@ -1102,7 +945,7 @@ const L4 = {
     L.m = m;
   },
   stage(){
-    const L = S.L, m = L.m;
+    const L = app.L, m = L.m;
     const covered = L.phase === 'coverA' || L.phase === 'coverB';
     el.cover.hidden = !covered;
     if (L.phase === 'coverA') el.cover.innerHTML = `<div><div class="cover-ico">🙈</div><h2>Tocca a ${esc(L4.A)}</h2><p>${esc(L4.A)} vede la macchina segreta e scrive il messaggio.<br><b>${esc(L4.B)}, non guardare lo schermo!</b></p><button class="btn light" type="button" data-act="showA">Sono ${esc(L4.A)}: mostra la macchina</button></div>`;
@@ -1118,14 +961,14 @@ const L4 = {
     if (L.phase === 'firing' || L.phase === 'reveal'){ plane.ruler.show(L.ruler); plane.ruler.lock(true); plane.setLines([{ f:m.f, cls:'secret-line reveal' }]); }
   },
   gallery(){
-    const g = S.L.gallery;
+    const g = app.L.gallery;
     if (!g.length) return '';
     return `<details class="diario" open><summary>Messaggi <span class="count">${g.length}</span></summary><ol class="gallery">${g.map(z =>
       `<li class="${z.ok ? 'ok' : ''}"><span>${z.ok ? '✓' : '✕'}</span><span class="m">${esc(z.msg)}</span><span class="n">${z.len}/${z.budget}</span></li>`).join('')}</ol></details>`;
   },
-  rounds(){ return `<div class="rounds" aria-label="Round vinti: ${S.L.round} di 4">${L4.ROUNDS.map((_, i) => `<i class="${i < S.L.round ? 'on' : i === S.L.round ? 'cur' : ''}"></i>`).join('')}</div>`; },
+  rounds(){ return `<div class="rounds" aria-label="Round vinti: ${app.L.round} di 4">${L4.ROUNDS.map((_, i) => `<i class="${i < app.L.round ? 'on' : i === app.L.round ? 'cur' : ''}"></i>`).join('')}</div>`; },
   render(){
-    const L = S.L, R = L4.R;
+    const L = app.L, R = L4.R;
     const head = `<section class="tool"><h3>Round ${Math.min(L.round + 1, 4)} di 4</h3>${L4.rounds()}<p class="sub">Messaggio di al massimo <b>${R ? R.budget : '—'}</b> caratteri (anche gli spazi contano).</p></section>`;
     let body = '';
     if (L.phase === 'names'){
@@ -1152,63 +995,60 @@ const L4 = {
   },
   on: {
     start(form){
-      const L = S.L;
+      const L = app.L;
       L.names = [form.a.value.trim().slice(0, 14), form.b.value.trim().slice(0, 14)];
-      store.set('fabbrica.names', L.names);
+      app.store.set('names', L.names);
       L.phase = 'coverA'; L4.newSecret(); L4.stage(); L4.render();
-      feedback('info', 'Round 1', `Comincia ${esc(L4.A)} a scrivere.`);
-      log(`Giocano ${esc(L4.A)} e ${esc(L4.B)}`);
+      app.say('info', 'Round 1', `Comincia ${esc(L4.A)} a scrivere.`);
+      app.log(`Giocano ${esc(L4.A)} e ${esc(L4.B)}`);
     },
-    showA(){ S.L.phase = 'write'; L4.stage(); L4.render(); feedback('info', 'Scrivi il messaggio', `Che cosa deve sapere ${esc(L4.B)} per mettere il binario giusto?`); },
+    showA(){ app.L.phase = 'write'; L4.stage(); L4.render(); app.say('info', 'Scrivi il messaggio', `Che cosa deve sapere ${esc(L4.B)} per mettere il binario giusto?`); },
     count(t){ const n = [...t.value].length, c = $('#cnt'); c.textContent = `${n} / ${L4.R.budget}`; c.classList.toggle('full', n >= L4.R.budget); },
     send(form){
       const msg = form.msg.value.trim();
-      if (!msg) return feedback('tilt', 'Messaggio vuoto', 'Scrivi qualcosa!');
-      S.L.msg = msg.slice(0, L4.R.budget); S.L.phase = 'coverB';
+      if (!msg) return app.say('tilt', 'Messaggio vuoto', 'Scrivi qualcosa!');
+      app.L.msg = msg.slice(0, L4.R.budget); app.L.phase = 'coverB';
       L4.stage(); L4.render();
-      feedback('info', 'Messaggio inviato', `Ora tocca a ${esc(L4.B)}.`);
+      app.say('info', 'Messaggio inviato', `Ora tocca a ${esc(L4.B)}.`);
     },
-    showB(){ S.L.phase = 'build'; L4.stage(); L4.render(); feedback('info', 'Costruisci', `Leggi il messaggio di ${esc(L4.A)} e metti il binario.`); },
+    showB(){ app.L.phase = 'build'; L4.stage(); L4.render(); app.say('info', 'Costruisci', `Leggi il messaggio di ${esc(L4.A)} e metti il binario.`); },
     async check(){
-      const L = S.L, f = plane.ruler.f();
-      if (!f) return feedback('tilt', 'Binario in verticale', 'Il binario non può stare in piedi: sposta un pomello.');
-      const gen = S.gen;
-      S.busy = true; L.phase = 'firing'; L4.stage(); L4.render();
+      const L = app.L, f = plane.ruler.f();
+      if (!f) return app.say('tilt', 'Binario in verticale', 'Il binario non può stare in piedi: sposta un pomello.');
+      const gen = app.gen;
+      app.busy = true; L.phase = 'firing'; L4.stage(); L4.render();
       const balls = ballsOn(f, L.m);
       for (const b of balls){
         plane.addDot({ x:b.x, y:b.y, cls:'ball ' + (b.hit ? 'caught' : 'miss'), anim:'drop' });
         await wait(170);
-        if (gen !== S.gen) return;
+        if (gen !== app.gen) return;
       }
-      S.busy = false;
+      app.busy = false;
       L.caught = balls.filter(b => b.hit).length; L.ok = L.caught === 11;
       L.gallery.push({ msg:L.msg, len:[...L.msg].length, budget:L4.R.budget, ok:L.ok, m:L.m });
       L.phase = 'reveal'; L4.render();
-      log(`Round ${L.round + 1}: «${esc(L.msg)}» ${L.ok ? '✓' : '✕'}`);
-      feedback(L.ok ? 'win' : 'error', L.ok ? 'Messaggio riuscito!' : 'Palline perse', L.ok
+      app.log(`Round ${L.round + 1}: «${esc(L.msg)}» ${L.ok ? '✓' : '✕'}`);
+      app.say(L.ok ? 'win' : 'error', L.ok ? 'Messaggio riuscito!' : 'Palline perse', L.ok
         ? `Con ${[...L.msg].length} caratteri ${esc(L4.B)} ha messo il binario giusto.`
         : 'Confrontate il messaggio con la macchina segreta: che cosa mancava? Che cosa si capiva male?');
     },
     next(){
-      const L = S.L;
+      const L = app.L;
       if (L.ok) L.round++;
       if (L.round >= 4) return L4.complete();
       L.writer = 1 - L.writer; L.phase = 'coverA';
       L4.newSecret(); L4.stage(); L4.render();
-      feedback('info', `Round ${L.round + 1}`, `Ora scrive ${esc(L4.A)}, al massimo ${L4.R.budget} caratteri.`);
+      app.say('info', `Round ${L.round + 1}`, `Ora scrive ${esc(L4.A)}, al massimo ${L4.R.budget} caratteri.`);
     }
   },
   complete(){
-    const L = S.L;
-    markDone(3);
+    const L = app.L;
+    app.complete(3);
     L.phase = 'done'; el.tool.innerHTML = L4.gallery();
     const best = L.gallery.filter(z => z.ok).sort((a, b) => a.len - b.len).slice(0, 3);
     const last = L.gallery[L.gallery.length - 1].m;
-    feedback('win', 'Quattro round vinti!', 'Riguardate i vostri messaggi: quali informazioni non mancano mai?');
-    showDialog('Messaggi perfetti!', 'Avete costruito quattro binari leggendo solo i messaggi. I più corti che hanno funzionato:',
-      `<ul class="dlg-list">${best.map(z => `<li>«${esc(z.msg)}» <small>(${z.len} caratteri)</small></li>`).join('')}</ul>`,
-      `Nei messaggi più corti bastano <b>due numeri</b>: da dove parte la retta (che cosa esce quando entra 0) e di quanto sale o scende a ogni passo. In matematica si scrive così: <span class="math">y = a·x + b</span>, dove <b>b</b> è la partenza e <b>a</b> il passo. L’ultima macchina segreta era <span class="math">${formula(last)}</span>.`,
-      'Vai alla sfida →', () => startLevel(4));
+    app.say('win', 'Quattro round vinti!', 'Riguardate i vostri messaggi: quali informazioni non mancano mai?');
+    app.win({ title: 'Messaggi perfetti!', text: 'Avete costruito quattro binari leggendo solo i messaggi. I più corti che hanno funzionato:', extra: `<ul class="dlg-list">${best.map(z => `<li>«${esc(z.msg)}» <small>(${z.len} caratteri)</small></li>`).join('')}</ul>`, reflect: `Nei messaggi più corti bastano <b>due numeri</b>: da dove parte la retta (che cosa esce quando entra 0) e di quanto sale o scende a ogni passo. In matematica si scrive così: <span class="math">y = a·x + b</span>, dove <b>b</b> è la partenza e <b>a</b> il passo. L’ultima macchina segreta era <span class="math">${formula(last)}</span>.`, next: 'Vai alla sfida →', then: () => app.go(4) });
   }
 };
 
@@ -1216,7 +1056,7 @@ const L4 = {
    SFIDA — da una forma all'altra: grafico, tabella, storia, formula.
    ================================================================ */
 const L5 = {
-  nav:'⚡ Sfida', title:'Da una forma all’altra', noMachine:true,
+  nav:'⚡ Sfida', title:'Da una forma all’altra', noMachine:true, challenge:true,
   mission:'Ogni macchina si presenta in una forma diversa: grafico, tabella, storia o formula. Scrivi la formula oppure metti il binario. Cinque macchine giuste completano la fabbrica.',
   GOAL:5,
   TYPES: {
@@ -1225,13 +1065,13 @@ const L5 = {
     s2f:{ title:'📖 Dalla storia alla formula', hint:'Leggi la storia. Qual è la formula della macchina?' },
     f2g:{ title:'📐 Dalla formula al grafico', hint:'Conosci la formula: metti il binario e accendi la macchina.' }
   },
-  enter(){ Object.assign(S.L, { done:0, errors:0, last:null }); L5.load(); },
+  enter(){ Object.assign(app.L, { done:0, errors:0, last:null }); L5.load(); },
   gen(){
     const a = pick([1, 2, 3, 4, -1, -2, -3, 0.5, 2, 3]);
     return lin(a, a < 0 ? rnd(-10 * a, -10 * a + 10) : rnd(0, 10));
   },
   load(){
-    const L = S.L;
+    const L = app.L;
     let type;
     do type = pick(Object.keys(L5.TYPES)); while (type === L.last);
     Object.assign(L, { type, last:type, phase:'work', input:'' });
@@ -1244,10 +1084,10 @@ const L5 = {
     if (type === 's2f') showStory(storyHTML(m, 'La macchina'));
     if (type === 'f2g'){ const [lo, hi] = plane.range, mid = Math.round((lo + hi) / 2); L.ruler = [{ x:2, y:mid }, { x:8, y:mid }]; plane.ruler.show(L.ruler); plane.ruler.lock(false); }
     L5.render();
-    feedback('info', L5.TYPES[type].title.slice(3), L5.TYPES[type].hint);
+    app.say('info', L5.TYPES[type].title.slice(3), L5.TYPES[type].hint);
   },
   render(){
-    const L = S.L, T = L5.TYPES[L.type];
+    const L = app.L, T = L5.TYPES[L.type];
     const goal = `<section class="tool"><h3>🏭 Macchine giuste</h3><div class="goal" aria-label="${L.done} di ${L5.GOAL}">${'★'.repeat(L.done)}${'☆'.repeat(L5.GOAL - L.done)}</div></section>`;
     let body;
     if (L.phase === 'ok'){
@@ -1265,29 +1105,27 @@ const L5 = {
     focusFirst();
   },
   success(){
-    const L = S.L;
+    const L = app.L;
     L.done++; L.phase = 'ok';
-    log(`✓ ${formula(L.m)}`);
+    app.log(`✓ ${formula(L.m)}`);
     L5.render();
-    if (L.done < L5.GOAL) return feedback('win', 'Macchina giusta!', `Le due macchine danno sempre lo stesso numero. Ne mancano ${L5.GOAL - L.done}.`);
-    feedback('win', 'Fabbrica completata!', 'Cinque macchine giuste.');
-    markDone(4);
-    showDialog('La fabbrica è tua!', `Cinque macchine giuste${L.errors ? `, con ${plural(L.errors, 'tentativo', 'tentativi')} a vuoto` : ' senza errori'}.`,
-      `<div class="idcard"><span class="math">y = a·x + b</span><ul>
+    if (L.done < L5.GOAL) return app.say('win', 'Macchina giusta!', `Le due macchine danno sempre lo stesso numero. Ne mancano ${L5.GOAL - L.done}.`);
+    app.say('win', 'Fabbrica completata!', 'Cinque macchine giuste.');
+    app.complete(4);
+    app.win({ title: 'La fabbrica è tua!', text: `Cinque macchine giuste${L.errors ? `, con ${plural(L.errors, 'tentativo', 'tentativi')} a vuoto` : ' senza errori'}.`, extra: `<div class="idcard"><span class="math">y = a·x + b</span><ul>
         <li><b>b</b> è quello che esce quando entra 0: il punto dove la retta incontra l’asse verticale.</li>
         <li><b>a</b> dice di quanto cambia y quando x aumenta di 1: se è positivo la retta sale, se è negativo scende, se è 0 è orizzontale.</li>
         <li>Il grafico è una <b>retta</b>: per disegnarla bastano due punti.</li>
-        <li>La riconosci perché, a passi uguali di x, y cambia sempre della stessa quantità.</li></ul></div>`,
-      '', 'Altre cinque macchine →', () => startLevel(4));
+        <li>La riconosci perché, a passi uguali di x, y cambia sempre della stessa quantità.</li></ul></div>`, next: 'Altre cinque macchine →', then: () => app.go(4) });
   },
   on: {
     async build(form){
-      const L = S.L;
+      const L = app.L;
       L.input = form.f.value;
       let g;
-      try { g = parseFormula(L.input); } catch (err){ return feedback('tilt', 'Non riesco a leggerla', esc(err.message)); }
-      const gen = S.gen, tv = XS.map(L.m.f), uv = XS.map(x => g(x));
-      S.busy = true; L.phase = 'run'; L5.render();
+      try { g = parseFormula(L.input); } catch (err){ return app.say('tilt', 'Non riesco a leggerla', esc(err.message)); }
+      const gen = app.gen, tv = XS.map(L.m.f), uv = XS.map(x => g(x));
+      app.busy = true; L.phase = 'run'; L5.render();
       plane.fit([...tv, ...uv]);
       const base = L.type === 'g2f' ? integerPoints(L.m, 'secret-pt') : [];
       plane.setDots(base);
@@ -1298,144 +1136,40 @@ const L5 = {
         plane.addDot({ x, y:tv[x], cls:'tgt', r:9 });
         plane.addDot({ x, y:uv[x], cls:'mine' + (ok ? '' : ' bad'), r:6, anim:'pop' });
         await wait(110);
-        if (gen !== S.gen) return;
+        if (gen !== app.gen) return;
       }
-      S.busy = false;
+      app.busy = false;
       if (wrong === null) return L5.success();
       L.errors++; L.phase = 'work'; L5.render();
-      log(`✕ y = ${esc(L.input)}`);
-      feedback('error', 'Le macchine non coincidono', `Con x = ${wrong} la tua macchina dà <strong>${fmt(uv[wrong])}</strong>, quella vera <strong>${fmt(tv[wrong])}</strong>. I cerchi arancioni sono la macchina vera.`);
+      app.log(`✕ y = ${esc(L.input)}`);
+      app.say('error', 'Le macchine non coincidono', `Con x = ${wrong} la tua macchina dà <strong>${fmt(uv[wrong])}</strong>, quella vera <strong>${fmt(tv[wrong])}</strong>. I cerchi arancioni sono la macchina vera.`);
     },
     async fire(){
-      const L = S.L, f = plane.ruler.f();
-      if (!f) return feedback('tilt', 'Binario in verticale', 'Il binario non può stare in piedi: sposta un pomello.');
-      const gen = S.gen;
-      S.busy = true; L.phase = 'run'; plane.ruler.lock(true); L5.render();
+      const L = app.L, f = plane.ruler.f();
+      if (!f) return app.say('tilt', 'Binario in verticale', 'Il binario non può stare in piedi: sposta un pomello.');
+      const gen = app.gen;
+      app.busy = true; L.phase = 'run'; plane.ruler.lock(true); L5.render();
       plane.setDots([]);
       const balls = ballsOn(f, L.m);
       for (const b of balls){
         plane.addDot({ x:b.x, y:b.y, cls:'ball ' + (b.hit ? 'caught' : 'miss'), anim:'drop' });
         await wait(150);
-        if (gen !== S.gen) return;
+        if (gen !== app.gen) return;
       }
-      S.busy = false;
+      app.busy = false;
       const caught = balls.filter(b => b.hit).length;
       if (caught === 11) return L5.success();
       L.errors++; L.phase = 'work'; plane.ruler.lock(false); L5.render();
-      log(`✕ binario per ${formula(L.m)}: ${caught}/11`);
-      feedback('error', 'Palline perse', `Il binario ne ha prese ${caught} su 11. Sposta il binario e riprova.`);
+      app.log(`✕ binario per ${formula(L.m)}: ${caught}/11`);
+      app.say('error', 'Palline perse', `Il binario ne ha prese ${caught} su 11. Sposta il binario e riprova.`);
     },
     next(){ L5.load(); },
-    skip(){ S.L.errors++; log(`Saltata: ${formula(S.L.m)}`); L5.load(); }
+    skip(){ app.L.errors++; app.log(`Saltata: ${formula(app.L.m)}`); L5.load(); }
   }
 };
 
-const LEVELS = [L1, L2, L3, L4, L5];
-let cur = L1;
-
-/* ---------------- Livelli ---------------- */
-function renderLevels(){
-  const done = store.get('fabbrica.done', []);
-  el.levels.innerHTML = LEVELS.map((L, i) => {
-    const locked = i + 1 > S.unlocked;
-    return `<button class="lvl${i === S.idx ? ' active' : ''}" type="button" data-i="${i}" ${locked ? `disabled aria-label="${L.nav} (bloccato)"` : ''} ${i === S.idx ? 'aria-current="true"' : ''}>${locked ? '🔒 ' : ''}${L.nav}${done.includes(i) ? '<span class="done" aria-hidden="true">✓</span>' : ''}</button>`;
-  }).join('');
-}
-function markDone(i){
-  const done = store.get('fabbrica.done', []);
-  if (!done.includes(i)){ done.push(i); store.set('fabbrica.done', done); }
-  if (i + 2 > S.unlocked && i < 4){ S.unlocked = i + 2; if (!params.has('tutti')) store.set('fabbrica.unlocked', S.unlocked); }
-  renderLevels();
-}
-function startLevel(i){
-  if (i + 1 > S.unlocked) return;
-  if (el.dlg.open) el.dlg.close();
-  S.idx = i; S.gen++; S.busy = false; S.L = {};
-  cur = LEVELS[i];
-  el.cover.hidden = true; el.story.hidden = true;
-  el.bench.classList.toggle('no-machine', !!cur.noMachine);
-  el.mBadge.textContent = i === 4 ? 'Sfida' : `Livello ${i + 1}`;
-  el.mTitle.textContent = cur.title; el.mText.textContent = cur.mission;
-  clearLog(); reg.clear(); plane.clear();
-  applyNames(); renderLevels();
-  cur.enter();
-}
-function showDialog(title, text, extra, reflect, nextLabel, onNext){
-  el.winTitle.textContent = title;
-  el.winText.innerHTML = text;
-  el.winExtra.innerHTML = extra || '';
-  el.winReflect.innerHTML = reflect || '';
-  el.winReflect.hidden = !reflect;
-  el.dlgNext.textContent = nextLabel;
-  S.onNext = onNext;
-  el.dlg.showModal();
-  if (!reduceMotion) fx.confetti();
-}
-
-/* ---------------- Effetti ---------------- */
-const fx = (() => {
-  const c = $('#fx'), ctx = c.getContext('2d'); let parts = [], raf = 0, W = 0, H = 0;
-  function size(){ const d = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
-  function tick(){
-    ctx.clearRect(0, 0, W, H);
-    parts = parts.filter(p => p.life > 0);
-    for (const p of parts){
-      p.vy += .18; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = Math.min(1, p.life / 30); ctx.fillStyle = p.col;
-      ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
-    }
-    raf = parts.length ? requestAnimationFrame(tick) : 0;
-  }
-  function confetti(){
-    size();
-    const cols = ['#4338ca', '#6b3fd1', '#ffd166', '#f0a24a', '#2bb39f', '#e5675b'];
-    for (let i = 0; i < 140; i++) parts.push({ x: W / 2 + (Math.random() - .5) * W * .4, y: H * .35, vx: (Math.random() - .5) * 14, vy: -Math.random() * 12 - 4,
-      r: Math.random() * 6, vr: (Math.random() - .5) * .3, s: 7 + Math.random() * 7, life: 90 + Math.random() * 60, col: cols[i % cols.length] });
-    if (!raf) raf = requestAnimationFrame(tick);
-  }
-  addEventListener('resize', () => { if (raf) size(); });
-  return { confetti };
-})();
-
-/* ---------------- Collegamenti ---------------- */
-function dispatch(act, node){
-  if (S.busy) return;
-  cur.on[act]?.(node);
-}
-el.tool.addEventListener('click', e => {
-  const b = e.target.closest('[data-act]');
-  if (!b || b.disabled || b.tagName === 'FORM') return;
-  dispatch(b.dataset.act, b);
-});
-el.tool.addEventListener('submit', e => { e.preventDefault(); dispatch(e.target.dataset.act, e.target); });
-el.tool.addEventListener('input', e => { const t = e.target.closest('[data-input]'); if (t) cur.on[t.dataset.input]?.(t); });
-el.cover.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b) dispatch(b.dataset.act, b); });
-el.levels.addEventListener('click', e => { const b = e.target.closest('.lvl'); if (b && !b.disabled) startLevel(+b.dataset.i); });
-$('#btnReset').addEventListener('click', () => startLevel(S.idx));
-function setSym(on){
-  S.sym = on; el.sym.setAttribute('aria-checked', String(on)); store.set('fabbrica.sym', on);
-  applyNames();
-  if (S.idx < 3 && cur.render) cur.render();
-}
-el.sym.addEventListener('click', () => setSym(!S.sym));
-$('#dlgStay').addEventListener('click', () => el.dlg.close());
-el.dlgNext.addEventListener('click', () => { el.dlg.close(); S.onNext?.(); });
-document.addEventListener('pointerdown', e => {
-  const host = e.target.closest('.btn, .pill');
-  if (!host || host.disabled || reduceMotion) return;
-  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
-  const sp = document.createElement('span');
-  sp.className = 'rip';
-  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
-  host.appendChild(sp);
-  setTimeout(() => sp.remove(), 600);
-});
-
-if (params.has('debug')) window.__fabbrica = { S, plane, parseFormula, startLevel, get cur(){ return cur; } };
-
-el.sym.setAttribute('aria-checked', String(S.sym));
-startLevel(Math.min(S.unlocked - 1, Math.max(0, (Number(params.get('livello')) || 1) - 1)));
-})();
+app.debug({ plane, parseFormula });
+app.start([L1, L2, L3, L4, L5]);
 </script>
 </body>
 </html>

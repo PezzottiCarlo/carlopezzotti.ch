@@ -8,28 +8,12 @@
 <meta name="dd:tags" content="aritmetica, strategia, Brousseau">
 <meta name="dd:date" content="2026-10-20">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/_shared/dd.css">
+<link rel="stylesheet" href="/_lab/lab.css">
 <style>
 /* Colori dei due giocatori: tu = indaco, il Milieu = arancio (stessa scala "tilt" della Bilancia). */
-:root{ --me:var(--primary); --me-soft:var(--primary-soft); --mil:#c2560c; --mil-soft:var(--tilt-soft); --mil-line:var(--tilt-line); }
-
-.app{min-height:100vh;min-height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding:10px 16px 14px}
-.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
-@media (max-height:760px){.brand p{display:none}}
-.levels{display:flex;gap:6px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
-.lvl{font-weight:700;font-size:.88rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:7px 12px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s,transform .12s}
-.lvl:hover:not(:disabled){background:var(--primary-soft)}
-.lvl:active:not(:disabled){transform:scale(.96)}
-.lvl.active{background:var(--primary);color:#fff}
-.lvl:disabled{color:#6b7090;cursor:not-allowed;background:#f3f4f9}
-.lvl .done{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:.7rem}
-.lvl.active .done{background:rgba(255,255,255,.25);color:#fff}
-
-.layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(290px,25vw,370px);gap:14px}
-.stage-card{display:flex;flex-direction:column;gap:14px;padding:14px;min-height:0;overflow:auto}
-.mission{flex:none;display:flex;gap:12px;align-items:baseline}
-.mission h2{display:inline;margin:0 6px 0 0;font-size:1.05rem}
-.mission p{display:inline;margin:0;color:var(--muted);font-size:.92rem}
+:root{ --me:var(--primary); --me-soft:var(--primary-soft); --mil:#c2560c; --mil-soft:var(--tilt-soft); --mil-line:var(--tilt-line); --panel-w:clamp(290px,25vw,370px); }
+.topbar .brand{flex:0 1 auto}
+.stage-card{gap:14px;overflow:auto}
 .mission .btn{margin-left:auto;flex:none;align-self:center}
 .mission.proof .dd-badge{background:var(--win-soft);color:var(--win)}
 
@@ -89,17 +73,10 @@
 .endbar.lost{background:var(--mil-soft);color:var(--tilt)}
 
 /* ---------- Pannello ---------- */
-.panel{min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
-.feedback{min-height:92px}
-.tool{border:2px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
-.tool h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px}
-.tool .sub{margin:0;font-size:.84rem;color:var(--muted)}
-.seg{display:flex;gap:6px}
-.pill{flex:1;min-height:42px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:750;font-size:.88rem;color:var(--ink);cursor:pointer;transition:transform .12s,border-color .2s,background .2s;position:relative;overflow:hidden}
-.pill:hover:not(:disabled){border-color:var(--primary)}
-.pill:active:not(:disabled){transform:scale(.94)}
-.pill[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
-.pill:disabled{opacity:.5;cursor:not-allowed}
+.panel .feedback{min-height:92px}
+.lvl{font-size:.88rem;padding:7px 12px}
+.pill{min-height:42px;font-size:.88rem}
+.num-input{width:64px}
 .score{display:flex;gap:14px;font-size:.84rem;color:var(--muted);font-weight:650}
 .score b{color:var(--ink)}
 
@@ -124,25 +101,15 @@
 .claim.flash{animation:flash .9s ease}
 @keyframes flash{30%{background:var(--primary-soft)}}
 .claims-note{margin:0;font-size:.8rem;color:var(--muted)}
-
-details.diario{border:2px solid var(--line);border-radius:14px;padding:0 12px}
-details.diario summary{cursor:pointer;font-weight:750;font-size:.95rem;padding:10px 0;display:flex;align-items:center;gap:8px;list-style:none}
-details.diario summary::-webkit-details-marker{display:none}
-details.diario summary::before{content:"▸";transition:transform .2s;color:var(--primary)}
-details.diario[open] summary::before{transform:rotate(90deg)}
-details.diario .count{margin-left:auto;background:var(--primary-soft);color:var(--primary-dark);border-radius:999px;padding:1px 9px;font-size:.78rem}
-.log{list-style:none;margin:0 0 10px;padding:0;max-height:min(30vh,240px);overflow:auto;display:flex;flex-wrap:wrap;gap:6px}
-.log li{font-size:.82rem;font-weight:750;padding:4px 9px;border-radius:999px}
+.log{flex-direction:row;flex-wrap:wrap;gap:6px}
+.log li{font-size:.82rem;font-weight:750;padding:4px 9px;border-radius:999px;border:0}
 .log li.me{background:var(--me-soft);color:var(--primary-dark)}
 .log li.mil{background:var(--mil-soft);color:var(--tilt)}
 .log li small{font-weight:600;opacity:.75}
-.log-empty{color:var(--muted);font-size:.84rem;margin:0 0 10px}
 
-.dlg-body .reflect{background:#f7f8fd;border-radius:12px;padding:10px 12px;color:var(--ink);text-align:left;font-size:.92rem}
 .chain{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin:8px 0}
 .chain span{font-weight:850;background:var(--me);color:#fff;border-radius:8px;padding:2px 8px}
 .chain i{font-style:normal;color:var(--muted);align-self:center}
-#fx{position:fixed;inset:0;pointer-events:none;z-index:70;width:100vw;height:100vh}
 
 /* Desktop: tutto nello schermo, il pannello scorre. */
 @media (min-width:921px) and (min-height:600px){
@@ -150,22 +117,19 @@ details.diario .count{margin-left:auto;background:var(--primary-soft);color:var(
   .app{height:100vh;height:100dvh}
 }
 @media (max-width:920px){
-  .layout{grid-template-columns:1fr}
   .panel{display:grid;grid-template-columns:1fr 1fr;align-content:start}
   .panel .feedback,.panel .notebook,.panel details.diario{grid-column:1/-1}
-  .feedback{min-height:0}
+  .panel .feedback{min-height:0}
 }
 @media (max-width:620px){
-  .app{padding:8px 10px 12px}
   .panel{grid-template-columns:1fr}
-  .mission{flex-wrap:wrap}
   .duel{grid-template-columns:1fr 1fr;gap:8px}
   .said{grid-column:1/-1;grid-row:1}
   .player{padding:8px}
   .player .av{width:38px;height:38px}
   .move{min-width:0;flex:1}
-  .levels{width:100%}
-  .lvl{flex:1;justify-content:center;padding:7px 6px}
+  .levels{flex-wrap:wrap;overflow:visible}
+  .lvl{flex:1;justify-content:center;padding:7px 6px;white-space:normal}
 }
 </style>
 </head>
@@ -233,10 +197,7 @@ details.diario .count{margin-left:auto;background:var(--primary-soft);color:var(
     </section>
 
     <aside class="card panel" aria-label="Strumenti">
-      <div class="feedback info" id="feedback">
-        <span class="fb-ico" aria-hidden="true" id="fbIco">i</span>
-        <div><strong id="fbTitle">Osserva</strong><p id="fbText"></p></div>
-      </div>
+      <div class="feedback info" id="feedback"></div>
 
       <section class="tool" aria-labelledby="gameTitle" id="gameTool">
         <h3 id="gameTitle">🎲 Nuova partita</h3>
@@ -270,28 +231,8 @@ details.diario .count{margin-left:auto;background:var(--primary-soft);color:var(
   </main>
 </div>
 
-<dialog id="winDlg" aria-labelledby="winTitle" aria-describedby="winText">
-  <div class="dlg-body">
-    <div class="trophy" aria-hidden="true">
-      <svg width="42" height="42" viewBox="0 0 46 46"><path d="M23 4l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5L23 32.7l-11.3 5.9 2.2-12.5-9.1-8.9 12.6-1.8z" fill="#fff" stroke="#b9790c" stroke-width="2" stroke-linejoin="round"/></svg>
-    </div>
-    <h2 id="winTitle">Hai detto 20!</h2>
-    <p class="big" id="winText"></p>
-    <div id="winExtra"></div>
-    <p class="reflect" id="winReflect"></p>
-    <div class="dlg-actions">
-      <button class="btn ghost-btn" type="button" id="dlgStay">Resta qui</button>
-      <button class="btn" type="button" id="dlgNext">Livello successivo →</button>
-    </div>
-  </div>
-</dialog>
-
-<canvas id="fx" aria-hidden="true"></canvas>
-<div class="sr-only" aria-live="polite" id="sr"></div>
-
-<script>
-(() => {
-'use strict';
+<script type="module">
+import { lab, $, wait, reduceMotion } from '/_lab/lab.js';
 
 /* La corsa al 20 (G. Brousseau): da 0, a turno si aggiunge da 1 a K all'ultimo numero detto;
    chi dice T vince. Chi dice un numero n con (T - n) multiplo di K+1 può sempre vincere. */
@@ -303,35 +244,25 @@ const LEVELS = [
     mission:'Ora il Milieu non si lascia scappare nessuna occasione. Riesci a batterlo lo stesso?' },
   { title:'Il taccuino', skill:'expert', notebook:true,
     mission:'Scrivi nel taccuino le frasi «Chi dice … vince sempre» e dimostrale al Milieu. Il taccuino è completo quando ti dice come vincere già dalla prima mossa.' },
-  { title:'Sfida', skill:'expert', challenge:true, mission:'' }
-];
+  { title:'Sfida', nav:'⚡ Sfida', skill:'expert', challenge:true, mission:'' }
+].map(L => ({ ...L, enter: enterLevel }));
 const CHALLENGE = 3;
 
-const $ = s => document.querySelector(s);
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const wait = ms => new Promise(r => setTimeout(r, reduceMotion ? Math.min(ms, 150) : ms));
-
 const el = {
-  levels:$('#levels'), mission:$('#mission'), mBadge:$('#missionBadge'), mTitle:$('#missionTitle'), mText:$('#missionText'), btnAbort:$('#btnAbort'),
+  mission:$('#mission'), btnAbort:$('#btnAbort'),
   pMe:$('#pMe'), pMil:$('#pMil'), meState:$('#meState'), milState:$('#milState'), saidVal:$('#saidVal'), saidOf:$('#saidOf'),
   track:$('#track'), moves:$('#moves'), endbar:$('#endbar'), endText:$('#endText'), btnAgain:$('#btnAgain'),
-  fb:$('#feedback'), fbIco:$('#fbIco'), fbTitle:$('#fbTitle'), fbText:$('#fbText'),
   starts:[...document.querySelectorAll('[data-start]')], score:$('#score'), gameTool:$('#gameTool'),
   claimForm:$('#claimForm'), claimN:$('#claimN'), claims:$('#claims'), claimsNote:$('#claimsNote'), nbSub:$('#nbSub'),
-  log:$('#log'), logCount:$('#logCount'), logEmpty:$('#logEmpty'),
-  dlg:$('#winDlg'), winTitle:$('#winTitle'), winText:$('#winText'), winExtra:$('#winExtra'), winReflect:$('#winReflect'), dlgNext:$('#dlgNext'), sr:$('#sr')
+  log:$('#log'), logCount:$('#logCount'), logEmpty:$('#logEmpty')
 };
 
-const store = {
-  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
-  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
-};
+const app = lab({ id:'corsa20', reset:false });
 
 const S = {
-  idx:0, T:MAIN.T, K:MAIN.K, n:0, hist:[], turn:'me', starter:'me', over:false, busy:false, proof:null, token:0,
+  T:MAIN.T, K:MAIN.K, n:0, hist:[], turn:'me', starter:'me', over:false, busy:false, proof:null, token:0,
   score:{ me:0, mil:0 },
-  unlocked: Math.max(1, Math.min(CHALLENGE + 1, store.get('corsa20.unlocked', 1) | 0)),
-  claims: store.get('corsa20.claims', [])   // [{ n, status:'todo'|'proved'|'doubt', tries }]
+  claims: app.store.get('claims', [])   // [{ n, status:'todo'|'proved'|'doubt', tries }]
 };
 S.claims = Array.isArray(S.claims) ? S.claims.filter(c => c && c.n >= 1 && c.n < MAIN.T) : [];
 
@@ -346,7 +277,7 @@ const options = () => { const o = []; for (let s = 1; s <= S.K && S.n + s <= S.T
 function milieuStep(){
   const opts = options();
   const best = opts.find(s => winning(S.n + s));
-  const novice = LEVELS[S.idx].skill === 'novice' && !S.proof;
+  const novice = LEVELS[app.idx].skill === 'novice' && !S.proof;
   if (best && (!novice || S.n + best >= S.T - (S.K + 1))) return best;
   return opts[Math.floor(Math.random() * opts.length)];
 }
@@ -355,14 +286,6 @@ function milieuStep(){
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 const provedSet = () => new Set(S.claims.filter(c => c.status === 'proved').map(c => c.n));
 const saidBy = v => S.hist.find(h => h.v === v)?.who;
-
-function feedback(type, title, html){
-  el.fb.className = 'feedback ' + type;
-  el.fbIco.textContent = { info:'i', ok:'✓', tilt:'!', error:'✕', win:'★' }[type];
-  el.fbTitle.textContent = title;
-  el.fbText.innerHTML = html;
-  el.sr.textContent = title + '. ' + el.fbText.textContent;
-}
 
 function cols(){
   const w = el.track.parentElement.getBoundingClientRect().width || 800;
@@ -430,15 +353,6 @@ function renderScore(){
   el.starts.forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.start === S.starter)); b.disabled = !!S.proof; });
 }
 
-function renderLevels(){
-  const done = store.get('corsa20.done', []);
-  el.levels.innerHTML = LEVELS.map((L, i) => {
-    const locked = i + 1 > S.unlocked;
-    const name = i === CHALLENGE ? '⚡ Sfida' : `${i + 1}. ${L.title}`;
-    return `<button class="lvl${i === S.idx ? ' active' : ''}" type="button" data-i="${i}" ${locked ? 'disabled aria-label="' + name + ' (bloccato)"' : ''} ${i === S.idx ? 'aria-current="true"' : ''}>${locked ? '🔒 ' : ''}${name}${done.includes(i) ? '<span class="done" aria-hidden="true">✓</span>' : ''}</button>`;
-  }).join('');
-}
-
 function renderClaims(){
   const sorted = [...S.claims].sort((a, b) => b.n - a.n);
   const enabled = isMain();
@@ -463,25 +377,24 @@ function render(pop){ renderTrack(); renderMoves(); renderDuel(pop); renderLog()
 
 /* ---------------- Partita ---------------- */
 function setMission(){
-  const L = LEVELS[S.idx];
+  const L = LEVELS[app.idx];
   el.mission.classList.toggle('proof', !!S.proof);
   el.btnAbort.hidden = !S.proof;
-  if (S.proof){
-    el.mBadge.textContent = 'Dimostrazione';
-    el.mTitle.textContent = `Chi dice ${S.proof.n} vince sempre?`;
-    el.mText.textContent = `Hai appena detto ${S.proof.n}: ora tocca al Milieu, che proverà in ogni modo a dire ${S.T} prima di te. Vinci e la frase è dimostrata.`;
-    return;
-  }
-  el.mBadge.textContent = S.idx < CHALLENGE ? `Livello ${S.idx + 1}` : 'Sfida';
-  el.mTitle.textContent = S.idx === CHALLENGE ? `La corsa al ${S.T}` : L.title;
-  el.mText.textContent = S.idx === CHALLENGE
-    ? `Stesso gioco, nuove regole: si aggiunge da 1 a ${S.K} e vince chi dice ${S.T}. Le tue scoperte funzionano ancora?`
-    : L.mission;
+  if (S.proof) return app.mission({
+    badge: 'Dimostrazione',
+    title: `Chi dice ${S.proof.n} vince sempre?`,
+    text: `Hai appena detto ${S.proof.n}: ora tocca al Milieu, che proverà in ogni modo a dire ${S.T} prima di te. Vinci e la frase è dimostrata.`
+  });
+  app.mission({
+    badge: app.idx < CHALLENGE ? `Livello ${app.idx + 1}` : 'Sfida',
+    title: app.idx === CHALLENGE ? `La corsa al ${S.T}` : L.title,
+    text: app.idx === CHALLENGE ? `Stesso gioco, nuove regole: si aggiunge da 1 a ${S.K} e vince chi dice ${S.T}. Le tue scoperte funzionano ancora?` : L.mission
+  });
 }
 
 function newGame(opts = {}){
   S.token++;
-  if (el.dlg.open) el.dlg.close();
+  app.closeDialog();
   S.proof = opts.proof ?? null;
   S.over = false; S.busy = false;
   if (S.proof){ S.n = S.proof.n; S.hist = [{ v:S.proof.n, who:'me' }]; S.turn = 'mil'; }
@@ -490,11 +403,11 @@ function newGame(opts = {}){
   setMission();
   render();
   if (S.proof){
-    feedback('info', 'Dimostrazione', `Partiamo da <strong>${S.n}</strong>, detto da te. Il Milieu risponde: tu devi arrivare a ${S.T} qualunque cosa faccia.`);
+    app.say('info', 'Dimostrazione', `Partiamo da <strong>${S.n}</strong>, detto da te. Il Milieu risponde: tu devi arrivare a ${S.T} qualunque cosa faccia.`);
   } else if (S.turn === 'mil'){
-    feedback('info', 'Osserva', 'Comincia il Milieu.');
+    app.say('info', 'Osserva', 'Comincia il Milieu.');
   } else {
-    feedback('info', 'Osserva', S.idx === 0 && !S.score.me && !S.score.mil
+    app.say('info', 'Osserva', app.idx === 0 && !S.score.me && !S.score.mil
       ? `Tocca a te: di’ 1 o 2 (premi <strong>+1</strong> o <strong>+2</strong>, oppure tocca la casella). Poi il Milieu aggiungerà 1 o 2 al tuo numero, e così via fino a ${S.T}.`
       : `Tocca a te. Puoi dire ${options().map(s => S.n + s).join(' o ')}.`);
   }
@@ -523,7 +436,7 @@ async function milieuTurn(){
   if (S.n === S.T) return end('mil');
   S.turn = 'me';
   render(true);
-  feedback('info', 'Tocca a te', `Il Milieu ha aggiunto ${step} e ha detto <strong>${S.n}</strong>. Puoi dire ${options().map(s => S.n + s).join(' o ')}.`);
+  app.say('info', 'Tocca a te', `Il Milieu ha aggiunto ${step} e ha detto <strong>${S.n}</strong>. Puoi dire ${options().map(s => S.n + s).join(' o ')}.`);
 }
 
 function end(who){
@@ -539,13 +452,13 @@ function end(who){
   if (who === 'mil'){
     el.endText.textContent = `Il Milieu ha detto ${S.T}.`;
     const mine = S.hist.filter(h => h.who === 'me').map(h => h.v);
-    feedback('error', 'Ha vinto il Milieu', S.idx === 0
+    app.say('error', 'Ha vinto il Milieu', app.idx === 0
       ? 'Ripensa alla fine della partita: da quale numero in poi il Milieu era sicuro di vincere?'
       : `Hai detto ${mine.length ? mine.join(', ') : 'nessun numero'}. In quale momento la partita era già decisa?`);
     return;
   }
   el.endText.textContent = `Hai detto ${S.T}: hai vinto!`;
-  feedback('win', 'Hai vinto!', 'Saresti capace di rifarlo? Prova anche a far cominciare l’altro.');
+  app.say('win', 'Hai vinto!', 'Saresti capace di rifarlo? Prova anche a far cominciare l’altro.');
   win();
 }
 
@@ -554,7 +467,7 @@ function endProof(n, ok){
   el.endbar.hidden = false;
   if (ok){
     c.status = 'proved';
-    store.set('corsa20.claims', S.claims);
+    app.store.set('claims', S.claims);
     el.endbar.className = 'endbar won';
     el.endText.textContent = `Dimostrato: chi dice ${n} vince sempre.`;
     el.btnAgain.textContent = 'Torna a giocare';
@@ -565,16 +478,16 @@ function endProof(n, ok){
     const hint = proved.has(MAIN_CHAIN[0])
       ? 'Ripercorri la dimostrazione: quali altri numeri hai detto prima di arrivare al traguardo? Anche quelli meritano una riga nel taccuino.'
       : 'Dopo il Milieu, quale numero hai scelto ogni volta? C’è un altro numero, più piccolo, che ti porta qui in modo sicuro?';
-    feedback('ok', 'Frase dimostrata', `Hai vinto partendo da ${n}, nonostante il Milieu. ${hint}`);
+    app.say('ok', 'Frase dimostrata', `Hai vinto partendo da ${n}, nonostante il Milieu. ${hint}`);
     flashClaim(n);
   } else {
     c.status = 'doubt'; c.tries = (c.tries || 0) + 1;
-    store.set('corsa20.claims', S.claims);
+    app.store.set('claims', S.claims);
     el.endbar.className = 'endbar lost';
     el.endText.textContent = `Il Milieu ha detto ${S.T}: la frase su ${n} resta in dubbio.`;
     el.btnAgain.textContent = 'Torna a giocare';
     renderClaims();
-    feedback('tilt', 'Non dimostrata', `Il Milieu è riuscito a dire ${S.T}. La frase è falsa, oppure c’era una mossa migliore della tua? Puoi riprovare quando vuoi.`);
+    app.say('tilt', 'Non dimostrata', `Il Milieu è riuscito a dire ${S.T}. La frase è falsa, oppure c’era una mossa migliore della tua? Puoi riprovare quando vuoi.`);
   }
 }
 
@@ -583,41 +496,33 @@ function flashClaim(n){
   if (li && !reduceMotion){ li.classList.remove('flash'); void li.offsetWidth; li.classList.add('flash'); }
 }
 
-function markDone(i){
-  const done = store.get('corsa20.done', []);
-  if (!done.includes(i)){ done.push(i); store.set('corsa20.done', done); }
-  if (i + 2 > S.unlocked && i < CHALLENGE){ S.unlocked = i + 2; store.set('corsa20.unlocked', S.unlocked); }
-  renderLevels();
+// Dopo il dialogo: nella sfida una sfida nuova; dopo il taccuino o una dimostrazione il livello più alto; altrimenti il successivo.
+function afterDialog(){
+  if (app.idx === CHALLENGE) app.go(CHALLENGE);
+  else if (app.idx === 2 || S.proof) app.go(Math.min(app.unlocked - 1, CHALLENGE));
+  else app.go(Math.min(app.idx + 1, app.unlocked - 1));
 }
-
-function showDialog(title, text, extra, reflect, nextLabel){
-  el.winTitle.textContent = title;
-  el.winText.innerHTML = text;
-  el.winExtra.innerHTML = extra || '';
-  el.winReflect.innerHTML = reflect;
-  el.winReflect.hidden = !reflect;
-  el.dlgNext.textContent = nextLabel;
-  el.dlg.showModal();
-  if (!reduceMotion) fx.confetti();
+function showDialog(title, text, extra, reflect, next){
+  app.win({ title, text, extra, reflect, next, then: afterDialog });
 }
 
 function win(){
-  const i = S.idx;
+  const i = app.idx;
   const mine = S.hist.filter(h => h.who === 'me').map(h => h.v);
   if (i === 0){
-    markDone(0);
+    app.complete(0);
     showDialog('Hai detto 20!', 'Hai battuto il Milieu principiante.', '',
       'Ti sei accorto che, a un certo punto, la partita era già decisa? Da quale numero in poi eri sicuro di vincere? Se hai un’idea, scrivila nel <strong>taccuino</strong>.',
       'Livello successivo →');
   } else if (i === 1){
-    markDone(1);
+    app.complete(1);
     showDialog('Battuto il Milieu esperto!', `I numeri che hai detto: <strong>${mine.join(', ')}</strong>.`, '',
       'Il Milieu ora non perdona, eppure hai vinto. Sono numeri qualsiasi? Prova a scriverli nel taccuino e a <strong>dimostrarli</strong> uno per uno.',
       'Livello successivo →');
   } else if (i === 2){
-    feedback('win', 'Hai vinto!', 'Bella partita. Ora trasforma quello che sai in frasi del taccuino e dimostrale.');
+    app.say('win', 'Hai vinto!', 'Bella partita. Ora trasforma quello che sai in frasi del taccuino e dimostrale.');
   } else {
-    markDone(CHALLENGE);
+    app.complete(CHALLENGE);
     const chain = []; for (let v = S.T; v > 0; v -= S.K + 1) chain.unshift(v);
     const first = S.T % (S.K + 1);
     showDialog(`Hai vinto la corsa al ${S.T}!`, `Si aggiungeva da 1 a ${S.K}: le tue scoperte hanno funzionato anche qui.`,
@@ -629,9 +534,9 @@ function win(){
 }
 
 function completeNotebook(){
-  const already = store.get('corsa20.done', []).includes(2);
-  markDone(2);
-  feedback('win', 'Taccuino completo', 'Ogni numero sicuro, dal primo all’ultimo, è dimostrato.');
+  const already = app.isDone(2);
+  app.complete(2);
+  app.say('win', 'Taccuino completo', 'Ogni numero sicuro, dal primo all’ultimo, è dimostrato.');
   showDialog('Il taccuino è completo!', 'Hai dimostrato tutti i numeri che fanno vincere sempre:',
     `<div class="chain">${[...MAIN_CHAIN, MAIN.T].map(v => `<span>${v}</span>`).join('<i>→</i>')}</div>`,
     `Ogni numero sicuro si ottiene dal successivo togliendo <strong>3</strong>, perché 3 = 1 + 2: se l’avversario aggiunge 1 tu aggiungi 2, se aggiunge 2 tu aggiungi 1. ` +
@@ -644,30 +549,28 @@ el.claimForm.addEventListener('submit', e => {
   e.preventDefault();
   const n = Number(el.claimN.value);
   if (!Number.isInteger(n) || n < 1 || n >= MAIN.T){
-    feedback('tilt', 'Attento', `Scrivi un numero intero da 1 a ${MAIN.T - 1}.`);
+    app.say('tilt', 'Attento', `Scrivi un numero intero da 1 a ${MAIN.T - 1}.`);
     el.claimN.focus(); return;
   }
   el.claimN.value = '';
   if (S.claims.some(c => c.n === n)){
-    feedback('info', 'È già nel taccuino', `La frase su ${n} c’è già.`);
+    app.say('info', 'È già nel taccuino', `La frase su ${n} c’è già.`);
     renderClaims(); flashClaim(n); return;
   }
   S.claims.push({ n, status:'todo', tries:0 });
-  store.set('corsa20.claims', S.claims);
+  app.store.set('claims', S.claims);
   renderClaims(); flashClaim(n);
-  feedback('info', 'Scritta', S.proof || S.busy ? `Frase su ${n} aggiunta: dimostrala quando hai finito.` : `Ora premi <strong>Dimostra</strong>: partirai da ${n} e il Milieu proverà a batterti.`);
+  app.say('info', 'Scritta', S.proof || S.busy ? `Frase su ${n} aggiunta: dimostrala quando hai finito.` : `Ora premi <strong>Dimostra</strong>: partirai da ${n} e il Milieu proverà a batterti.`);
 });
 el.claims.addEventListener('click', e => {
   const p = e.target.closest('[data-prove]'), d = e.target.closest('[data-del]');
   if (p && !p.disabled){ const n = +p.dataset.prove; newGame({ proof:{ n } }); el.track.scrollIntoView({ block:'nearest', behavior: reduceMotion ? 'auto' : 'smooth' }); }
-  if (d && !d.disabled){ S.claims = S.claims.filter(c => c.n !== +d.dataset.del); store.set('corsa20.claims', S.claims); renderClaims(); renderTrack(); }
+  if (d && !d.disabled){ S.claims = S.claims.filter(c => c.n !== +d.dataset.del); app.store.set('claims', S.claims); renderClaims(); renderTrack(); }
 });
 
 /* ---------------- Livelli ---------------- */
-function startLevel(i){
-  if (i + 1 > S.unlocked) return;
-  S.idx = i;
-  if (i === CHALLENGE){
+function enterLevel(){
+  if (app.idx === CHALLENGE){
     for (;;){
       S.K = 2 + Math.floor(Math.random() * 3);              // da 1 a 2, 3 o 4
       S.T = 21 + Math.floor(Math.random() * 20);            // traguardo tra 21 e 40
@@ -676,68 +579,24 @@ function startLevel(i){
   } else { S.T = MAIN.T; S.K = MAIN.K; }
   S.score = { me:0, mil:0 };
   S.starter = 'me';
-  renderLevels();
   newGame();
 }
-
-/* ---------------- Effetti ---------------- */
-const fx = (() => {
-  const c = $('#fx'), ctx = c.getContext('2d'); let parts = [], raf = 0, W = 0, H = 0;
-  function size(){ const d = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
-  function tick(){
-    ctx.clearRect(0, 0, W, H);
-    parts = parts.filter(p => p.life > 0);
-    for (const p of parts){
-      p.vy += .18; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = Math.min(1, p.life / 30); ctx.fillStyle = p.col;
-      ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
-    }
-    raf = parts.length ? requestAnimationFrame(tick) : 0;
-  }
-  function confetti(){
-    size();
-    const cols = ['#4338ca', '#6b3fd1', '#ffd166', '#f0a24a', '#2bb39f', '#e5675b'];
-    for (let i = 0; i < 140; i++) parts.push({ x: W / 2 + (Math.random() - .5) * W * .4, y: H * .35, vx: (Math.random() - .5) * 14, vy: -Math.random() * 12 - 4,
-      r: Math.random() * 6, vr: (Math.random() - .5) * .3, s: 7 + Math.random() * 7, life: 90 + Math.random() * 60, col: cols[i % cols.length] });
-    if (!raf) raf = requestAnimationFrame(tick);
-  }
-  addEventListener('resize', () => { if (raf) size(); });
-  return { confetti };
-})();
 
 /* ---------------- Collegamenti ---------------- */
 el.moves.addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (b && !b.disabled) play(+b.dataset.step); });
 el.track.addEventListener('click', e => { const t = e.target.closest('.tile.next'); if (t) play(+t.dataset.v - S.n); });
-el.levels.addEventListener('click', e => { const b = e.target.closest('.lvl'); if (b && !b.disabled) startLevel(+b.dataset.i); });
 el.starts.forEach(b => b.addEventListener('click', () => { if (S.proof) return; S.starter = b.dataset.start; newGame(); }));
 el.btnAgain.addEventListener('click', () => newGame());
-el.btnAbort.addEventListener('click', () => { newGame(); feedback('info', 'Dimostrazione annullata', 'Puoi riprovarla dal taccuino quando vuoi.'); });
-$('#dlgStay').addEventListener('click', () => el.dlg.close());
-el.dlgNext.addEventListener('click', () => {
-  el.dlg.close();
-  if (S.idx === CHALLENGE) startLevel(CHALLENGE);
-  else if (S.idx === 2 || S.proof) startLevel(Math.min(S.unlocked - 1, CHALLENGE));
-  else startLevel(Math.min(S.idx + 1, S.unlocked - 1));
-});
+el.btnAbort.addEventListener('click', () => { newGame(); app.say('info', 'Dimostrazione annullata', 'Puoi riprovarla dal taccuino quando vuoi.'); });
 document.addEventListener('keydown', e => {
-  if (el.dlg.open || e.target.closest('input')) return;
+  if (app.dialog.open || e.target.closest('input')) return;
   const s = Number(e.key);
   if (Number.isInteger(s) && s >= 1 && s <= S.K) play(s);
 });
-document.addEventListener('pointerdown', e => {
-  const host = e.target.closest('.btn, .pill');
-  if (!host || host.disabled || reduceMotion) return;
-  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
-  const sp = document.createElement('span');
-  sp.className = 'rip';
-  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
-  host.appendChild(sp);
-  setTimeout(() => sp.remove(), 600);
-});
 let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(renderTrack, 120); });
 
-startLevel(0);
-})();
+app.debug({ S });
+app.start(LEVELS);
 </script>
 </body>
 </html>

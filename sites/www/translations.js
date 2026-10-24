@@ -21,7 +21,7 @@ const SITE = {
     linkedin: '',
     location: { city: 'Lugano', country: 'Svizzera', zip: 'CH-6900', lat: 46.0037, lon: 8.9511 },
     timeZone: 'Europe/Zurich',
-    // Temperatura reale a Lugano via open-meteo (nessuna chiave).
+    // Temperatura reale a Lugano: /api/weather sul nostro server (che la chiede a open-meteo).
     // Metti false per eliminare del tutto la chiamata di rete.
     showWeather: true
 };

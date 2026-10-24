@@ -1,0 +1,13 @@
+{
+  "name": "carlopezzotti.ch",
+  "private": true,
+  "description": "Il server e i siti di carlopezzotti.ch: www, so (Ceresio OS) e dd (gli esperimenti).",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node server/main.mjs",
+    "dev": "node --watch server/main.mjs --port 8091",
+    "new": "node scripts/new-experiment.mjs",
+    "tunnel": "node scripts/setup-tunnel.mjs"
+  }
+}

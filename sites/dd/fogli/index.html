@@ -8,36 +8,9 @@
 <meta name="dd:tags" content="prima media, frazioni, misura, Brousseau">
 <meta name="dd:date" content="2026-10-20">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/_shared/dd.css">
+<link rel="stylesheet" href="/_lab/lab.css">
 <style>
-.app{min-height:100vh;min-height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding:10px 16px 14px}
-.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
-.topbar .brand{flex:1 1 300px;min-width:0}
-@media (max-height:760px){.brand p{display:none}}
-.levels{display:flex;gap:6px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
-.lvl{font-weight:700;font-size:.86rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:7px 11px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s,transform .12s}
-.lvl:hover:not(:disabled){background:var(--primary-soft)}
-.lvl:active:not(:disabled){transform:scale(.96)}
-.lvl.active{background:var(--primary);color:#fff}
-.lvl:disabled{color:#6b7090;cursor:not-allowed;background:#f3f4f9}
-.lvl .done{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:.7rem}
-.lvl.active .done{background:rgba(255,255,255,.25);color:#fff}
-.top-tools{display:flex;align-items:center;gap:12px}
-.switch-row{display:flex;align-items:center;gap:8px;font-weight:650;font-size:.9rem}
-.icon-btn{width:42px;height:42px;padding:0;font-size:1.25rem}
-.switch{position:relative;width:54px;height:30px;border-radius:999px;border:2px solid #8a91b1;background:#e5e8f4;cursor:pointer;flex:none;transition:background .25s,border-color .25s;padding:0}
-.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .25s var(--wobble)}
-.switch[aria-checked="true"]{background:var(--primary);border-color:var(--primary)}
-.switch[aria-checked="true"]::after{transform:translateX(24px)}
-.switch .st{position:absolute;font:800 .58rem var(--font);top:50%;transform:translateY(-50%);color:#454b6b}
-.switch .st.on{left:6px;color:#fff;display:none}.switch .st.off{right:5px}
-.switch[aria-checked="true"] .st.on{display:block}.switch[aria-checked="true"] .st.off{display:none}
-
-.layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,26vw,380px);gap:14px}
-.stage-card{position:relative;display:flex;flex-direction:column;gap:12px;padding:14px;min-height:0;overflow:auto}
-.mission{flex:none;display:flex;gap:12px;align-items:baseline}
-.mission h2{display:inline;margin:0 6px 0 0;font-size:1.05rem}
-.mission p{display:inline;margin:0;color:var(--muted);font-size:.92rem}
+.stage-card{overflow:auto}
 
 /* ---------- Risme ---------- */
 .reams{flex:none;display:flex;flex-wrap:wrap;gap:10px}
@@ -94,31 +67,14 @@
 .bar{height:38px;border-radius:6px;width:0;transition:width .9s cubic-bezier(.3,.8,.3,1);background:repeating-linear-gradient(90deg,var(--c) 0 6px,var(--d) 6px 7px);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-weight:850;white-space:nowrap;min-width:max-content}
 .bars .cap{margin:0;color:var(--muted);font-size:.88rem;text-align:center}
 
+
 /* ---------- Pannello ---------- */
-.panel{min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
-.feedback{min-height:84px}
-.tools{display:flex;flex-direction:column;gap:12px}
-.tool{border:2px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
-.tool h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px}
-.tool .sub{margin:0;font-size:.84rem;color:var(--muted)}
-.tool p{margin:0}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .counter{display:flex;gap:6px;align-items:center}
 .counter .pill{flex:none;width:46px}
-.num-input{font:800 1.15rem var(--font);width:84px;height:44px;border:2px solid var(--line);border-radius:12px;text-align:center;color:var(--ink);background:#fff;-moz-appearance:textfield}
+.num-input{font-size:1.15rem;width:84px;height:44px}
 .num-input.sm{width:70px}
-.num-input::-webkit-inner-spin-button,.num-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
-.num-input:focus{outline:none;border-color:var(--primary)}
-.pill{min-height:44px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:800;font-size:.9rem;color:var(--ink);cursor:pointer;transition:transform .12s,border-color .2s,background .2s;position:relative;overflow:hidden}
-.pill:hover:not(:disabled){border-color:var(--primary)}
-.pill:active:not(:disabled){transform:scale(.95)}
-.pill:disabled{opacity:.5;cursor:not-allowed}
 .choices{display:flex;flex-direction:column;gap:8px}
 .choices .pill{width:100%;font-size:1rem}
-.coins{display:flex;gap:6px}
-.coin{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff7d6,#ffd166 60%,#f2a516);box-shadow:inset 0 -2px 0 rgba(0,0,0,.12)}
-.coin.used{background:#eceef7;box-shadow:inset 0 0 0 2px #d6dbee}
-.goal{font-size:1.4rem;letter-spacing:3px;color:#f2a516}
 .codes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .codes li{display:flex;gap:8px;align-items:flex-start;font-size:.88rem;padding:6px 9px;border-radius:10px;background:#f7f8fd;border:1px solid #e6e9f5}
 .codes .dot{flex:none;width:14px;height:14px;border-radius:4px;background:var(--c);margin-top:2px}
@@ -130,42 +86,12 @@
 body.sym-on .sym-only{display:inline!important}
 body.sym-on .pcard .sym-only{display:block!important}
 .answer-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-weight:700}
-
-details.diario{border:2px solid var(--line);border-radius:14px;padding:0 12px}
-details.diario summary{cursor:pointer;font-weight:750;font-size:.95rem;padding:10px 0;display:flex;align-items:center;gap:8px;list-style:none}
-details.diario summary::-webkit-details-marker{display:none}
-details.diario summary::before{content:"▸";transition:transform .2s;color:var(--primary)}
-details.diario[open] summary::before{transform:rotate(90deg)}
-details.diario .count{margin-left:auto;background:var(--primary-soft);color:var(--primary-dark);border-radius:999px;padding:1px 9px;font-size:.78rem}
-.log{list-style:none;margin:0 0 10px;padding:0;max-height:min(30vh,240px);overflow:auto;display:flex;flex-direction:column;gap:5px}
-.log li{font-size:.82rem;padding:5px 9px;border-radius:9px;background:#f7f8fd;border:1px solid #e6e9f5}
-.log-empty{color:var(--muted);font-size:.84rem;margin:0 0 10px}
-
-dialog{max-width:min(560px,94vw)}
-.dlg-body .reflect{background:#f7f8fd;border-radius:12px;padding:10px 12px;color:var(--ink);text-align:left;font-size:.92rem}
-.dlg-list{list-style:none;padding:0;margin:8px 0;display:flex;flex-direction:column;gap:6px;text-align:left}
-.dlg-list li{background:#f7f8fd;border-radius:10px;padding:7px 10px;font-weight:650}
-.idcard{text-align:left;border:2px solid var(--primary);border-radius:16px;padding:12px 14px;margin:10px 0;background:#fbfbff}
-.idcard ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:.92rem;color:var(--ink)}
 .idcard .frac{font-size:1.1rem}
-#fx{position:fixed;inset:0;pointer-events:none;z-index:70;width:100vw;height:100vh}
 
-@media (min-width:921px) and (min-height:700px){
-  body{height:100vh;height:100dvh;overflow:hidden}
-  .app{height:100vh;height:100dvh}
-}
 @media (max-width:920px){
-  .layout{grid-template-columns:1fr}
-  .panel{overflow:visible}
   .mlog{max-height:220px}
 }
 @media (max-width:620px){
-  .app{padding:8px 10px 12px}
-  .mission{flex-wrap:wrap}
-  .levels{width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
-  .levels::-webkit-scrollbar{display:none}
-  .lvl{flex:none;white-space:nowrap}
-  .top-tools{width:100%;justify-content:space-between}
   .ream{padding:6px 9px 6px 6px}
   .ream-ico{width:28px;height:24px}
   .pair{grid-template-columns:1fr}
@@ -174,7 +100,7 @@ dialog{max-width:min(560px,94vw)}
 }
 </style>
 </head>
-<body>
+<body class="fit">
 <div class="app">
   <header class="topbar">
     <div class="brand">
@@ -192,88 +118,41 @@ dialog{max-width:min(560px,94vw)}
     </div>
     <nav class="levels" id="levels" aria-label="Livelli"></nav>
     <div class="top-tools">
-      <div class="switch-row">
-        <span id="symLbl">Simboli</span>
-        <button class="switch" id="symToggle" type="button" role="switch" aria-checked="false" aria-labelledby="symLbl"><span class="st on" aria-hidden="true">SÌ</span><span class="st off" aria-hidden="true">NO</span></button>
-      </div>
-      <button class="btn ghost-btn icon-btn" type="button" id="btnReset" title="Ricomincia il livello" aria-label="Ricomincia il livello">↺</button>
+      <div id="sym"></div>
+      <button class="btn ghost-btn icon-btn" type="button" id="reset"></button>
     </div>
   </header>
 
   <main class="layout">
     <section class="card stage-card" aria-labelledby="missionTitle">
-      <div class="mission">
-        <span class="dd-badge" id="missionBadge">Livello 1</span>
-        <div><h2 id="missionTitle"></h2><p id="missionText"></p></div>
-      </div>
+      <div class="mission" id="mission"></div>
       <div id="stage" class="bench"></div>
     </section>
 
     <aside class="card panel" aria-label="Strumenti">
-      <div class="feedback info" id="feedback">
-        <span class="fb-ico" aria-hidden="true" id="fbIco">i</span>
-        <div><strong id="fbTitle">Osserva</strong><p id="fbText"></p></div>
-      </div>
+      <div class="feedback info" id="feedback"></div>
       <div class="tools" id="tool"></div>
       <section class="tool" id="notebook" aria-labelledby="nbTitle">
         <h3 id="nbTitle">📒 Quaderno dei codici</h3>
         <p class="sub">Qui finiscono le misure esatte che trovi.</p>
         <ul class="codes" id="codes"></ul>
       </section>
-      <details class="diario" id="diario">
-        <summary>Diario <span class="count" id="logCount">0</span></summary>
-        <p class="log-empty" id="logEmpty">Ancora niente.</p>
-        <ol class="log" id="log"></ol>
-      </details>
+      <details class="diario" id="diario"></details>
     </aside>
   </main>
 </div>
 
-<dialog id="winDlg" aria-labelledby="winTitle" aria-describedby="winText">
-  <div class="dlg-body">
-    <div class="trophy" aria-hidden="true">
-      <svg width="42" height="42" viewBox="0 0 46 46"><path d="M23 4l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5L23 32.7l-11.3 5.9 2.2-12.5-9.1-8.9 12.6-1.8z" fill="#fff" stroke="#b9790c" stroke-width="2" stroke-linejoin="round"/></svg>
-    </div>
-    <h2 id="winTitle"></h2>
-    <p class="big" id="winText"></p>
-    <div id="winExtra"></div>
-    <p class="reflect" id="winReflect"></p>
-    <div class="dlg-actions">
-      <button class="btn ghost-btn" type="button" id="dlgStay">Resta qui</button>
-      <button class="btn" type="button" id="dlgNext">Livello successivo →</button>
-    </div>
-  </div>
-</dialog>
-
-<canvas id="fx" aria-hidden="true"></canvas>
-<div class="sr-only" aria-live="polite" id="sr"></div>
-
-<script>
-(() => {
-'use strict';
+<script type="module">
+import { lab, $, plural, rnd, pick, shuffle, wait, reduceMotion } from '/_lab/lab.js';
 
 /* Lo spessore dei fogli (G. Brousseau).
    Ogni carta ha uno spessore razionale m/d mm. Il calibro legge solo millimetri interi:
    la misura è esatta solo quando n·m/d è intero. Da qui nascono i codici "n fogli = k mm",
    la loro equivalenza, il confronto e la somma: le frazioni come misura. */
 
-const $ = s => document.querySelector(s);
-const params = new URLSearchParams(location.search);
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const wait = ms => new Promise(r => setTimeout(r, reduceMotion ? Math.min(ms, 60) : ms));
-const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
-const pick = a => a[Math.floor(Math.random() * a.length)];
-const shuffle = arr => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
 const lcm = (a, b) => a / gcd(a, b) * b;
 const reduce = ({ m, d }) => { const g = gcd(m, d); return { m:m / g, d:d / g }; };
-const store = {
-  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
-  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
-};
-
 const MAX_MM = 30, MAX_N = 400;
 const PALETTE = [
   { key:'rossa',  col:'#e5675b', dark:'#a1190f' },
@@ -304,30 +183,9 @@ function readingText(T){
 }
 
 /* ---------------- Elementi ---------------- */
-const el = {
-  levels:$('#levels'), mBadge:$('#missionBadge'), mTitle:$('#missionTitle'), mText:$('#missionText'), stage:$('#stage'),
-  fb:$('#feedback'), fbIco:$('#fbIco'), fbTitle:$('#fbTitle'), fbText:$('#fbText'), tool:$('#tool'), codes:$('#codes'), notebook:$('#notebook'),
-  log:$('#log'), logCount:$('#logCount'), logEmpty:$('#logEmpty'), sym:$('#symToggle'), sr:$('#sr'),
-  dlg:$('#winDlg'), winTitle:$('#winTitle'), winText:$('#winText'), winExtra:$('#winExtra'), winReflect:$('#winReflect'), dlgNext:$('#dlgNext')
-};
-const S = {
-  idx:0, gen:0, busy:false, L:{}, onNext:null,
-  sym: store.get('fogli.sym', false),
-  unlocked: params.has('tutti') ? 4 : Math.max(1, Math.min(4, store.get('fogli.unlocked', 1) | 0))
-};
+const el = { stage:$('#stage'), tool:$('#tool'), codes:$('#codes'), notebook:$('#notebook') };
+const app = lab({ id:'fogli', sym:true, onLevel(){ el.notebook.hidden = false; } });
 
-function feedback(type, title, html){
-  el.fb.className = 'feedback ' + type;
-  el.fbIco.textContent = { info:'i', ok:'✓', tilt:'!', error:'✕', win:'★' }[type];
-  el.fbTitle.textContent = title;
-  el.fbText.innerHTML = html;
-  el.sr.textContent = title + '. ' + el.fbText.textContent;
-}
-function log(text){
-  const li = document.createElement('li'); li.innerHTML = text; el.log.appendChild(li);
-  el.logCount.textContent = el.log.children.length; el.logEmpty.hidden = true; el.log.scrollTop = el.log.scrollHeight;
-}
-function clearLog(){ el.log.innerHTML = ''; el.logCount.textContent = '0'; el.logEmpty.hidden = false; }
 const coins = (n, max) => '<i class="coin"></i>'.repeat(n) + '<i class="coin used"></i>'.repeat(Math.max(0, max - n));
 function focusFirst(){ if (matchMedia('(pointer: fine)').matches) el.tool.querySelector('input:not([disabled])')?.focus({ preventScroll:true }); }
 
@@ -425,25 +283,25 @@ function counterHTML(n, disabled){
     <button class="pill" type="button" data-act="step" data-d="1" ${disabled ? 'disabled' : ''}>+1</button><button class="pill" type="button" data-act="step" data-d="10" ${disabled ? 'disabled' : ''}>+10</button></div>`;
 }
 const counterActs = {
-  step(b){ S.L.n = Math.max(1, Math.min(MAX_N, (S.L.n || 1) + Number(b.dataset.d))); const i = $('#nIn'); if (i) i.value = S.L.n; },
-  setN(i){ const v = Math.round(Number(i.value)); if (Number.isFinite(v) && v >= 1) S.L.n = Math.min(MAX_N, v); }
+  step(b){ app.L.n = Math.max(1, Math.min(MAX_N, (app.L.n || 1) + Number(b.dataset.d))); const i = $('#nIn'); if (i) i.value = app.L.n; },
+  setN(i){ const v = Math.round(Number(i.value)); if (Number.isFinite(v) && v >= 1) app.L.n = Math.min(MAX_N, v); }
 };
 function readN(){
   const v = Number($('#nIn')?.value);
-  if (!Number.isInteger(v) || v < 1 || v > MAX_N){ feedback('tilt', 'Attento', `Scegli un numero intero di fogli da 1 a ${MAX_N}.`); return null; }
-  S.L.n = v; return v;
+  if (!Number.isInteger(v) || v < 1 || v > MAX_N){ app.say('tilt', 'Attento', `Scegli un numero intero di fogli da 1 a ${MAX_N}.`); return null; }
+  app.L.n = v; return v;
 }
 async function doMeasure(p, t, n, tag){
-  const gen = S.gen;
-  S.busy = true;
+  const gen = app.gen;
+  app.busy = true;
   const T = await measure(p, n, t);
-  if (gen !== S.gen) return null;
-  S.busy = false;
+  if (gen !== app.gen) return null;
+  app.busy = false;
   const exact = Number.isInteger(T) && T <= MAX_MM;
   p.notes.forEach(z => z.fresh = false);
   p.notes.push({ n, T, exact, fresh:true });
   setReading(T, n);
-  log(`${tag || 'Carta ' + p.key}: ${n} fogli → ${readingText(T)}`);
+  app.log(`${tag || 'Carta ' + p.key}: ${n} fogli → ${readingText(T)}`);
   return T;
 }
 
@@ -453,16 +311,16 @@ async function doMeasure(p, t, n, tag){
 const L1 = {
   nav:'1. Il calibro', title:'Il calibro',
   mission:'Ecco tre risme di carta. Un solo foglio è troppo sottile per il calibro, che legge solo i millimetri interi. Per ogni carta trova una pila che il calibro misuri esattamente.',
-  enter(){ Object.assign(S.L, { papers:box.slice(0, 3), sel:0, n:10 }); L1.paint(); feedback('info', 'Osserva', 'Scegli una carta, decidi quanti fogli mettere nella pila e premi <strong>Misura</strong>. Il calibro ti dirà se la misura è esatta.'); },
+  enter(){ Object.assign(app.L, { papers:box.slice(0, 3), sel:0, n:10 }); L1.paint(); app.say('info', 'Osserva', 'Scegli una carta, decidi quanti fogli mettere nella pila e premi <strong>Misura</strong>. Il calibro ti dirà se la misura è esatta.'); },
   paint(){
-    const L = S.L, p = L.papers[L.sel];
+    const L = app.L, p = L.papers[L.sel];
     el.stage.innerHTML = reamsHTML(L.papers, L.sel) + `<div class="cal-wrap">${calibroHTML()}</div><div class="reading" id="reading" aria-live="polite"></div>` + mlogHTML(p);
     const last = p.notes[p.notes.length - 1];
     if (last){ cal.set(Math.min(last.T, MAX_MM), { col:p.col, dark:p.dark, sheetPx:(X(Math.min(last.T, MAX_MM)) - X(0)) / last.n }); setReading(last.T, last.n); } else { cal.open(); setReading(null); }
     L1.render(); renderNotebook(L.papers);
   },
   render(){
-    const L = S.L, found = L.papers.filter(p => exactCodes(p).length).length;
+    const L = app.L, found = L.papers.filter(p => exactCodes(p).length).length;
     el.tool.innerHTML = `<section class="tool"><h3>📏 La pila</h3><p class="sub">Quanti fogli di carta <b>${L.papers[L.sel].key}</b>?</p>${counterHTML(L.n)}
       <button class="btn" type="button" data-act="measure">Misura la pila</button></section>
       <section class="tool"><h3>🎯 Misure esatte trovate</h3><p class="goal" aria-label="${found} di 3">${'★'.repeat(found)}${'☆'.repeat(3 - found)}</p></section>`;
@@ -470,26 +328,23 @@ const L1 = {
   },
   on: {
     ...counterActs,
-    sel(b){ S.L.sel = +b.dataset.i; L1.paint(); },
+    sel(b){ app.L.sel = +b.dataset.i; L1.paint(); },
     async measure(){
-      const L = S.L, p = L.papers[L.sel], n = readN();
+      const L = app.L, p = L.papers[L.sel], n = readN();
       if (!n) return;
-      if (mmOf(n, p) > MAX_MM) return feedback('tilt', 'Pila troppo alta', `Il calibro arriva solo fino a ${MAX_MM} mm: prova con meno fogli.`);
+      if (mmOf(n, p) > MAX_MM) return app.say('tilt', 'Pila troppo alta', `Il calibro arriva solo fino a ${MAX_MM} mm: prova con meno fogli.`);
       const before = exactCodes(p).length, again = exactCodes(p).some(c => c.n === n);
       const T = await doMeasure(p, p, n);
       if (T === null) return;
       swap('reamsBox', reamsHTML(L.papers, L.sel)); swap('mlogBox', mlogHTML(p)); renderNotebook(L.papers); L1.render();
-      if (!Number.isInteger(T)) return feedback('info', 'Non esatta', `${n} fogli di carta ${p.key}: il calibro si ferma <strong>${readingText(T)}</strong>. Prova con un altro numero di fogli.`);
-      if (again) return feedback('info', 'La sapevi già', `${codeText(n, T)}: è già nel quaderno. Prova con un altro numero di fogli.`);
-      if (before) return feedback('ok', 'Un’altra misura esatta', `Anche ${codeText(n, T)}! Che legame c’è con l’altra misura esatta della carta ${p.key}?`);
+      if (!Number.isInteger(T)) return app.say('info', 'Non esatta', `${n} fogli di carta ${p.key}: il calibro si ferma <strong>${readingText(T)}</strong>. Prova con un altro numero di fogli.`);
+      if (again) return app.say('info', 'La sapevi già', `${codeText(n, T)}: è già nel quaderno. Prova con un altro numero di fogli.`);
+      if (before) return app.say('ok', 'Un’altra misura esatta', `Anche ${codeText(n, T)}! Che legame c’è con l’altra misura esatta della carta ${p.key}?`);
       const found = L.papers.filter(q => exactCodes(q).length).length;
-      feedback('ok', 'Misura esatta!', `${n} fogli di carta ${p.key} misurano esattamente <strong>${T} mm</strong>. È scritto nel quaderno.${found < 3 ? ' Passa a un’altra carta.' : ''}`);
+      app.say('ok', 'Misura esatta!', `${n} fogli di carta ${p.key} misurano esattamente <strong>${T} mm</strong>. È scritto nel quaderno.${found < 3 ? ' Passa a un’altra carta.' : ''}`);
       if (found === 3){
-        markDone(0);
-        showDialog('Tre misure esatte!', 'Hai trovato una pila misurabile per ogni carta.',
-          `<ul class="dlg-list">${L.papers.map(q => { const c = exactCodes(q)[0]; return `<li style="color:${q.dark}">Carta ${q.key}: ${codeText(c.n, c.k)}</li>`; }).join('')}</ul>`,
-          'Con questi codici puoi descrivere ogni carta senza mostrarla. Ma attenzione: una carta può avere <b>più</b> codici. Se 40 fogli misurano 3 mm, quanto misurano 80 fogli? E 120? Sono codici diversi della stessa carta?',
-          'Livello successivo →', () => startLevel(1));
+        app.complete(0);
+        app.win({ title: 'Tre misure esatte!', text: 'Hai trovato una pila misurabile per ogni carta.', extra: `<ul class="dlg-list">${L.papers.map(q => { const c = exactCodes(q)[0]; return `<li style="color:${q.dark}">Carta ${q.key}: ${codeText(c.n, c.k)}</li>`; }).join('')}</ul>`, reflect: 'Con questi codici puoi descrivere ogni carta senza mostrarla. Ma attenzione: una carta può avere <b>più</b> codici. Se 40 fogli misurano 3 mm, quanto misurano 80 fogli? E 120? Sono codici diversi della stessa carta?', then: () => app.go(1) });
       }
     }
   }
@@ -502,26 +357,26 @@ const L2 = {
   nav:'2. Che carta è?', title:'Che carta è?',
   mission:'Un’altra classe ha misurato le stesse carte e ti manda dei bigliettini. Scopri di quale carta parlano. Puoi fare solo 2 misure per bigliettino, ma il quaderno ti può aiutare.',
   GOAL:5, BUDGET:2,
-  enter(){ Object.assign(S.L, { papers:box, sel:0, n:10, ok:0, last:null }); L2.newNote(); },
+  enter(){ Object.assign(app.L, { papers:box, sel:0, n:10, ok:0, last:null }); L2.newNote(); },
   newNote(){
-    const L = S.L;
+    const L = app.L;
     let pi;
     do pi = rnd(0, 4); while (pi === L.last);
     const p = box[pi], ks = [2, 3, 4, 5, 6, 8].filter(k => k * p.d <= MAX_N && k * p.m <= MAX_MM);
     const k = pick(ks.length ? ks : [1]);
     Object.assign(L, { target:pi, last:pi, msg:{ n:k * p.d, k:k * p.m }, budget:L2.BUDGET, phase:'ask', answer:null });
     L2.paint();
-    feedback('info', 'Nuovo bigliettino', `«${codeText(L.msg.n, L.msg.k)}». Quale carta della scatola è? Guarda il quaderno, fai al massimo 2 misure e poi rispondi.`);
+    app.say('info', 'Nuovo bigliettino', `«${codeText(L.msg.n, L.msg.k)}». Quale carta della scatola è? Guarda il quaderno, fai al massimo 2 misure e poi rispondi.`);
   },
   paint(){
-    const L = S.L, p = box[L.sel];
+    const L = app.L, p = box[L.sel];
     el.stage.innerHTML = `<div class="note-card"><h3>✉️ Bigliettino dall’altra classe</h3><p>Abbiamo misurato una delle vostre carte: <span class="code">${codeText(L.msg.n, L.msg.k)}</span><span class="sym-only"> → ${fracHTML(L.msg.k, L.msg.n)}</span></p></div>`
       + reamsHTML(box, L.sel) + `<div class="cal-wrap">${calibroHTML()}</div><div class="reading" id="reading" aria-live="polite"></div>` + mlogHTML(p);
     cal.open(); setReading(null);
     L2.render(); renderNotebook(box);
   },
   render(){
-    const L = S.L, done = L.phase !== 'ask';
+    const L = app.L, done = L.phase !== 'ask';
     el.tool.innerHTML = `<section class="tool"><h3>🏁 Bigliettini risolti</h3><p class="goal" aria-label="${L.ok} di ${L2.GOAL}">${'★'.repeat(L.ok)}${'☆'.repeat(L2.GOAL - L.ok)}</p></section>
       <section class="tool"><h3>📏 Misure per questo bigliettino</h3><div class="coins" aria-label="Misure rimaste: ${L.budget}">${coins(L.budget, L2.BUDGET)}</div>
       ${counterHTML(L.n, done || !L.budget)}<button class="btn" type="button" data-act="measure" ${done || !L.budget ? 'disabled' : ''}>Misura la carta ${box[L.sel].key}</button></section>
@@ -530,38 +385,36 @@ const L2 = {
   },
   on: {
     ...counterActs,
-    sel(b){ if (S.L.phase === 'ask'){ S.L.sel = +b.dataset.i; L2.paint(); } },
+    sel(b){ if (app.L.phase === 'ask'){ app.L.sel = +b.dataset.i; L2.paint(); } },
     async measure(){
-      const L = S.L, p = box[L.sel], n = readN();
+      const L = app.L, p = box[L.sel], n = readN();
       if (!n || !L.budget) return;
-      if (mmOf(n, p) > MAX_MM) return feedback('tilt', 'Pila troppo alta', `Il calibro arriva solo fino a ${MAX_MM} mm. La misura non è stata contata.`);
+      if (mmOf(n, p) > MAX_MM) return app.say('tilt', 'Pila troppo alta', `Il calibro arriva solo fino a ${MAX_MM} mm. La misura non è stata contata.`);
       L.budget--;
       const T = await doMeasure(p, p, n);
       if (T === null) return;
       swap('reamsBox', reamsHTML(box, L.sel)); swap('mlogBox', mlogHTML(p)); renderNotebook(box); L2.render();
-      feedback('info', 'Misura fatta', `${n} fogli di carta ${p.key} → <strong>${readingText(T)}</strong>. ${L.budget ? 'Ti resta 1 misura.' : 'Misure finite: ora decidi.'}`);
+      app.say('info', 'Misura fatta', `${n} fogli di carta ${p.key} → <strong>${readingText(T)}</strong>. ${L.budget ? 'Ti resta 1 misura.' : 'Misure finite: ora decidi.'}`);
     },
     async answer(){
-      const L = S.L, p = box[L.sel], { n, k } = L.msg, gen = S.gen;
+      const L = app.L, p = box[L.sel], { n, k } = L.msg, gen = app.gen;
       L.phase = 'check'; L2.render();
-      feedback('info', 'Verifica…', `Mettiamo ${n} fogli di carta ${p.key} nel calibro.`);
-      S.busy = true;
+      app.say('info', 'Verifica…', `Mettiamo ${n} fogli di carta ${p.key} nel calibro.`);
+      app.busy = true;
       const T = await measure(p, n, p);
-      if (gen !== S.gen) return;
-      S.busy = false;
+      if (gen !== app.gen) return;
+      app.busy = false;
       const ok = Number.isInteger(T) && T === k;
       setReading(T, n, ok ? '' : ` <small>(il bigliettino diceva ${k} mm)</small>`);
       L.phase = 'done';
       if (ok) L.ok++;
-      log(`Bigliettino «${codeText(n, k)}»: carta ${p.key} ${ok ? '✓' : '✕'}`);
+      app.log(`Bigliettino «${codeText(n, k)}»: carta ${p.key} ${ok ? '✓' : '✕'}`);
       L2.render();
-      if (!ok) return feedback('error', 'Non è questa', `${n} fogli di carta ${p.key} misurano <strong>${readingText(T)}</strong>, non ${k} mm. Il prossimo bigliettino parla di un’altra carta.`);
-      if (L.ok < L2.GOAL) return feedback('win', 'Esatto!', `È proprio la carta ${p.key}.${exactCodes(p).length ? ` Nel quaderno avevi ${exactCodes(p).map(c => codeText(c.n, c.k)).join(', ')}: che legame c’è con il bigliettino?` : ''}`);
-      feedback('win', 'Tutti i bigliettini risolti!', 'Cinque carte riconosciute.');
-      markDone(1);
-      showDialog('Cinque bigliettini risolti!', 'Hai riconosciuto le carte anche quando il codice era diverso dal tuo.',
-        '', 'Se 40 fogli misurano 3 mm, allora 80 fogli misurano 6 mm e 120 fogli 9 mm: sono <b>codici equivalenti</b> della stessa carta. Come fai a capire se due codici parlano della stessa carta, senza misurare?',
-        'Livello successivo →', () => startLevel(2));
+      if (!ok) return app.say('error', 'Non è questa', `${n} fogli di carta ${p.key} misurano <strong>${readingText(T)}</strong>, non ${k} mm. Il prossimo bigliettino parla di un’altra carta.`);
+      if (L.ok < L2.GOAL) return app.say('win', 'Esatto!', `È proprio la carta ${p.key}.${exactCodes(p).length ? ` Nel quaderno avevi ${exactCodes(p).map(c => codeText(c.n, c.k)).join(', ')}: che legame c’è con il bigliettino?` : ''}`);
+      app.say('win', 'Tutti i bigliettini risolti!', 'Cinque carte riconosciute.');
+      app.complete(1);
+      app.win({ title: 'Cinque bigliettini risolti!', text: 'Hai riconosciuto le carte anche quando il codice era diverso dal tuo.', reflect: 'Se 40 fogli misurano 3 mm, allora 80 fogli misurano 6 mm e 120 fogli 9 mm: sono <b>codici equivalenti</b> della stessa carta. Come fai a capire se due codici parlano della stessa carta, senza misurare?', then: () => app.go(2) });
     },
     next(){ L2.newNote(); }
   }
@@ -575,7 +428,7 @@ const L3 = {
   mission:'Due carte misteriose, conosciute solo dal loro codice. Quale ha i fogli più spessi? La macchina impila lo stesso numero di fogli delle due carte e mostra chi aveva ragione.',
   GOAL:5,
   COLS:[{ col:'#4f7cf0', dark:'#2747a8' }, { col:'#e5675b', dark:'#a1190f' }],
-  enter(){ Object.assign(S.L, { ok:0, errors:0 }); L3.newPair(); },
+  enter(){ Object.assign(app.L, { ok:0, errors:0 }); L3.newPair(); },
   gen(){
     for (let guard = 0; ; guard++){
       const f1 = pick(POOL), type = pick(['eq', 'close', 'close', 'trap']);
@@ -590,13 +443,13 @@ const L3 = {
     }
   },
   newPair(){
-    const L = S.L;
+    const L = app.L;
     Object.assign(L, L3.gen(), { phase:'ask' });
     L3.paint();
-    feedback('info', 'Due carte misteriose', 'Quale carta ha i fogli più spessi? Rispondi senza misurare: hai solo i codici.');
+    app.say('info', 'Due carte misteriose', 'Quale carta ha i fogli più spessi? Rispondi senza misurare: hai solo i codici.');
   },
   paint(){
-    const L = S.L, c = L3.COLS;
+    const L = app.L, c = L3.COLS;
     const card = (name, z, i) => `<div class="pcard" style="border-color:${c[i].col}"><h3>Carta ${name}</h3><span class="code" style="color:${c[i].dark}">${codeText(z.n, z.k)}</span><span class="frac sym-only">${z.k}/${z.n} mm</span></div>`;
     let bars = '';
     if (L.phase === 'done'){
@@ -611,7 +464,7 @@ const L3 = {
     L3.render();
   },
   render(){
-    const L = S.L, ask = L.phase === 'ask';
+    const L = app.L, ask = L.phase === 'ask';
     el.tool.innerHTML = `<section class="tool"><h3>🏁 Confronti giusti</h3><p class="goal" aria-label="${L.ok} di ${L3.GOAL}">${'★'.repeat(L.ok)}${'☆'.repeat(L3.GOAL - L.ok)}</p></section>
       <section class="tool"><h3>⚖️ Quale foglio è più spesso?</h3>
       ${ask ? `<div class="choices"><button class="pill" type="button" data-act="pick" data-v="x" style="border-color:${L3.COLS[0].col}">Carta X</button><button class="pill" type="button" data-act="pick" data-v="eq">Sono uguali</button><button class="pill" type="button" data-act="pick" data-v="y" style="border-color:${L3.COLS[1].col}">Carta Y</button></div>`
@@ -619,20 +472,18 @@ const L3 = {
   },
   on: {
     pick(b){
-      const L = S.L, hx = L.N * L.x.k / L.x.n, hy = L.N * L.y.k / L.y.n;
+      const L = app.L, hx = L.N * L.x.k / L.x.n, hy = L.N * L.y.k / L.y.n;
       const truth = hx === hy ? 'eq' : hx > hy ? 'x' : 'y', ok = b.dataset.v === truth;
       L.phase = 'done';
       if (ok) L.ok++; else L.errors++;
-      log(`X ${codeText(L.x.n, L.x.k)} · Y ${codeText(L.y.n, L.y.k)}: ${ok ? '✓' : '✕'}`);
+      app.log(`X ${codeText(L.x.n, L.x.k)} · Y ${codeText(L.y.n, L.y.k)}: ${ok ? '✓' : '✕'}`);
       L3.paint();
       const says = truth === 'eq' ? 'le due pile sono alte uguali: è la stessa carta!' : `la pila della carta ${truth.toUpperCase()} è più alta.`;
-      if (!ok) return feedback('error', 'Non è così', `Con ${L.N} fogli ciascuna, ${says}`);
-      if (L.ok < L3.GOAL) return feedback('ok', 'Giusto!', `Con ${L.N} fogli ciascuna, ${says}`);
-      feedback('win', 'Cinque confronti giusti!', `Con ${L.N} fogli ciascuna, ${says}`);
-      markDone(2);
-      showDialog('Occhio da esperto!', `Cinque confronti giusti${L.errors ? ` (e ${plural(L.errors, 'sbaglio', 'sbagli')} lungo la strada)` : ''}.`,
-        '', 'Un codice con numeri più grandi non vuol dire fogli più spessi! Per confrontare due carte conviene immaginare pile con lo <b>stesso numero di fogli</b>: allora vince la pila più alta. Oppure pile della stessa altezza: allora è più spessa la carta che ha bisogno di meno fogli.',
-        'Livello successivo →', () => startLevel(3));
+      if (!ok) return app.say('error', 'Non è così', `Con ${L.N} fogli ciascuna, ${says}`);
+      if (L.ok < L3.GOAL) return app.say('ok', 'Giusto!', `Con ${L.N} fogli ciascuna, ${says}`);
+      app.say('win', 'Cinque confronti giusti!', `Con ${L.N} fogli ciascuna, ${says}`);
+      app.complete(2);
+      app.win({ title: 'Occhio da esperto!', text: `Cinque confronti giusti${L.errors ? ` (e ${plural(L.errors, 'sbaglio', 'sbagli')} lungo la strada)` : ''}.`, reflect: 'Un codice con numeri più grandi non vuol dire fogli più spessi! Per confrontare due carte conviene immaginare pile con lo <b>stesso numero di fogli</b>: allora vince la pila più alta. Oppure pile della stessa altezza: allora è più spessa la carta che ha bisogno di meno fogli.', then: () => app.go(3) });
     },
     next(){ L3.newPair(); }
   }
@@ -645,7 +496,7 @@ const L4 = {
   nav:'4. Il foglio doppio', title:'Il foglio doppio',
   mission:'La fabbrica incolla un foglio di una carta e uno di un’altra: nasce una carta doppia. Trova il codice della carta doppia e mettilo alla prova con il calibro.',
   GOAL:3,
-  enter(){ Object.assign(S.L, { done:0, used:[] }); L4.newPair(); },
+  enter(){ Object.assign(app.L, { done:0, used:[] }); L4.newPair(); },
   sumOf: (a, b) => reduce({ m:a.m * b.d + b.m * a.d, d:a.d * b.d }),
   pairs(){
     const out = [];
@@ -656,7 +507,7 @@ const L4 = {
     return out;
   },
   newPair(){
-    const L = S.L, id = ([a, b]) => a.key + '-' + b.key;
+    const L = app.L, id = ([a, b]) => a.key + '-' + b.key;
     let list = L4.pairs().filter(z => !L.used.includes(id(z)));
     if (!list.length) list = L4.pairs();
     if (!list.length){ // scatola sfortunata: due carte di riserva, la scatola resta com'è
@@ -668,10 +519,10 @@ const L4 = {
     Object.assign(L, { a, b, sum:s, n:10, phase:'work',
       dbl:{ key:`${a.key}-${b.key}`, col:a.col, dark:a.dark, fill:`url(#dbl)`, notes:[] } });
     L4.paint();
-    feedback('info', 'Una carta nuova', `Un foglio di carta ${a.key} incollato a un foglio di carta ${b.key}. Quanto è spesso il foglio doppio? Misura pile di fogli doppi e trova un codice esatto.`);
+    app.say('info', 'Una carta nuova', `Un foglio di carta ${a.key} incollato a un foglio di carta ${b.key}. Quanto è spesso il foglio doppio? Misura pile di fogli doppi e trova un codice esatto.`);
   },
   paint(){
-    const L = S.L, a = L.a, b = L.b;
+    const L = app.L, a = L.a, b = L.b;
     el.stage.innerHTML = `<div class="note-card"><h3>🧪 La ricetta della carta doppia</h3><p>1 foglio di <b style="color:${a.dark}">carta ${a.key}</b> <small>(${codeText(a.d, a.m)})</small> + 1 foglio di <b style="color:${b.dark}">carta ${b.key}</b> <small>(${codeText(b.d, b.m)})</small></p></div>
       <div class="reams"><div class="ream" style="--c:${a.col};--d:${a.dark};--c2:${b.col};cursor:default"><span class="ream-ico double" aria-hidden="true"></span><span><b>Carta doppia</b><small>${plural(L.dbl.notes.length, 'misura', 'misure')}</small></span></div></div>
       <div class="cal-wrap">${calibroHTML()}</div><div class="reading" id="reading" aria-live="polite"></div>` + mlogHTML(L.dbl, 'Misure della carta doppia');
@@ -684,7 +535,7 @@ const L4 = {
     L4.render();
   },
   render(){
-    const L = S.L, work = L.phase === 'work';
+    const L = app.L, work = L.phase === 'work';
     el.tool.innerHTML = `<section class="tool"><h3>🏁 Carte doppie risolte</h3><p class="goal" aria-label="${L.done} di ${L4.GOAL}">${'★'.repeat(L.done)}${'☆'.repeat(L4.GOAL - L.done)}</p></section>
       <section class="tool"><h3>📏 Pila di fogli doppi</h3>${counterHTML(L.n, !work)}<button class="btn" type="button" data-act="measure" ${work ? '' : 'disabled'}>Misura la pila</button></section>
       <section class="tool"><h3>🏷️ Il codice della carta doppia</h3>
@@ -694,133 +545,50 @@ const L4 = {
   on: {
     ...counterActs,
     async measure(){
-      const L = S.L, n = readN();
+      const L = app.L, n = readN();
       if (!n) return;
-      if (mmOf(n, L.sum) > MAX_MM) return feedback('tilt', 'Pila troppo alta', `Il calibro arriva solo fino a ${MAX_MM} mm: prova con meno fogli.`);
+      if (mmOf(n, L.sum) > MAX_MM) return app.say('tilt', 'Pila troppo alta', `Il calibro arriva solo fino a ${MAX_MM} mm: prova con meno fogli.`);
       const T = await doMeasure(L.dbl, L.sum, n, 'Carta doppia');
       if (T === null) return;
       swap('mlogBox', mlogHTML(L.dbl, 'Misure della carta doppia')); L4.render();
-      feedback(Number.isInteger(T) ? 'ok' : 'info', Number.isInteger(T) ? 'Misura esatta!' : 'Non esatta', `${n} fogli doppi → <strong>${readingText(T)}</strong>.`);
+      app.say(Number.isInteger(T) ? 'ok' : 'info', Number.isInteger(T) ? 'Misura esatta!' : 'Non esatta', `${n} fogli doppi → <strong>${readingText(T)}</strong>.`);
     },
     async answer(form){
-      const L = S.L, n = Number(form.n.value), k = Number(form.k.value);
-      if (!Number.isInteger(n) || n < 1 || !Number.isInteger(k) || k < 1) return feedback('tilt', 'Attento', 'Scrivi due numeri interi: quanti fogli doppi e quanti millimetri.');
+      const L = app.L, n = Number(form.n.value), k = Number(form.k.value);
+      if (!Number.isInteger(n) || n < 1 || !Number.isInteger(k) || k < 1) return app.say('tilt', 'Attento', 'Scrivi due numeri interi: quanti fogli doppi e quanti millimetri.');
       const ok = n * L.sum.m === k * L.sum.d;
-      log(`Codice proposto: ${n} fogli doppi = ${k} mm ${ok ? '✓' : '✕'}`);
+      app.log(`Codice proposto: ${n} fogli doppi = ${k} mm ${ok ? '✓' : '✕'}`);
       if (n * L.sum.m / L.sum.d <= MAX_MM){
         const T = await doMeasure(L.dbl, L.sum, n, 'Verifica');
         if (T === null) return;
         swap('mlogBox', mlogHTML(L.dbl, 'Misure della carta doppia'));
         setReading(T, n, ok ? '' : ` <small>(tu avevi scritto ${k} mm)</small>`);
       }
-      if (!ok) return feedback('error', 'Il calibro non è d’accordo', n * L.sum.m / L.sum.d <= MAX_MM
+      if (!ok) return app.say('error', 'Il calibro non è d’accordo', n * L.sum.m / L.sum.d <= MAX_MM
         ? `${n} fogli doppi misurano <strong>${readingText(mmOf(n, L.sum))}</strong>, non ${k} mm.`
         : `${n} fogli doppi sono troppi per il calibro, ma di sicuro non misurano ${k} mm. Prova a ragionare con pile più piccole.`);
       L.done++; L.phase = 'done'; L4.render();
       const a = L.a, b = L.b;
-      if (L.done < L4.GOAL) return feedback('win', 'Codice giusto!', `La carta doppia: ${codeText(n, k)}.${S.sym ? ` In simboli: ${a.m}/${a.d} + ${b.m}/${b.d} = ${L.sum.m}/${L.sum.d} mm.` : ''}`);
-      feedback('win', 'Tre carte doppie!', 'Hai trovato il codice di tre carte doppie.');
-      markDone(3);
-      showDialog('Sei un esperto di carta!', 'Hai misurato, riconosciuto, confrontato e incollato carte.',
-        `<div class="idcard"><ul>
+      if (L.done < L4.GOAL) return app.say('win', 'Codice giusto!', `La carta doppia: ${codeText(n, k)}.${app.sym ? ` In simboli: ${a.m}/${a.d} + ${b.m}/${b.d} = ${L.sum.m}/${L.sum.d} mm.` : ''}`);
+      app.say('win', 'Tre carte doppie!', 'Hai trovato il codice di tre carte doppie.');
+      app.complete(3);
+      app.win({ title: 'Sei un esperto di carta!', text: 'Hai misurato, riconosciuto, confrontato e incollato carte.', extra: `<div class="idcard"><ul>
           <li>Se <b>40 fogli = 3 mm</b>, un foglio è spesso <span class="frac">3/40 mm</span>: tre millimetri divisi in quaranta parti. È una <b>frazione</b>.</li>
           <li>Codici diversi possono descrivere la stessa carta: <span class="frac">3/40 = 6/80 = 9/120</span>. Sono <b>frazioni equivalenti</b>.</li>
           <li>Per <b>confrontare</b> due carte si usano pile con lo stesso numero di fogli: è come dare alle frazioni lo stesso denominatore.</li>
-          <li>Per <b>sommare</b> gli spessori (il foglio doppio) si fa lo stesso: pile con lo stesso numero di fogli, poi si sommano i millimetri.</li></ul></div>`,
-        '', 'Ricomincia dal livello 1 →', () => startLevel(0));
+          <li>Per <b>sommare</b> gli spessori (il foglio doppio) si fa lo stesso: pile con lo stesso numero di fogli, poi si sommano i millimetri.</li></ul></div>`, next: 'Ricomincia dal livello 1 →', then: () => app.go(0) });
     },
     next(){ L4.newPair(); }
   }
 };
 
-const LEVELS = [L1, L2, L3, L4];
-let cur = L1;
-
-function renderLevels(){
-  const done = store.get('fogli.done', []);
-  el.levels.innerHTML = LEVELS.map((L, i) => {
-    const locked = i + 1 > S.unlocked;
-    return `<button class="lvl${i === S.idx ? ' active' : ''}" type="button" data-i="${i}" ${locked ? `disabled aria-label="${L.nav} (bloccato)"` : ''} ${i === S.idx ? 'aria-current="true"' : ''}>${locked ? '🔒 ' : ''}${L.nav}${done.includes(i) ? '<span class="done" aria-hidden="true">✓</span>' : ''}</button>`;
-  }).join('');
-}
-function markDone(i){
-  const done = store.get('fogli.done', []);
-  if (!done.includes(i)){ done.push(i); store.set('fogli.done', done); }
-  if (i + 2 > S.unlocked && i < 3){ S.unlocked = i + 2; if (!params.has('tutti')) store.set('fogli.unlocked', S.unlocked); }
-  renderLevels();
-}
-function startLevel(i){
-  if (i + 1 > S.unlocked) return;
-  if (el.dlg.open) el.dlg.close();
-  S.idx = i; S.gen++; S.busy = false; S.L = {};
-  cur = LEVELS[i];
-  el.mBadge.textContent = `Livello ${i + 1}`;
-  el.mTitle.textContent = cur.title; el.mText.textContent = cur.mission;
-  el.notebook.hidden = false;
-  clearLog(); renderLevels();
-  cur.enter();
-}
-function showDialog(title, text, extra, reflect, nextLabel, onNext){
-  el.winTitle.textContent = title; el.winText.innerHTML = text;
-  el.winExtra.innerHTML = extra || ''; el.winReflect.innerHTML = reflect || ''; el.winReflect.hidden = !reflect;
-  el.dlgNext.textContent = nextLabel; S.onNext = onNext;
-  el.dlg.showModal();
-  if (!reduceMotion) fx.confetti();
-}
-
-const fx = (() => {
-  const c = $('#fx'), ctx = c.getContext('2d'); let parts = [], raf = 0, W = 0, H = 0;
-  function size(){ const d = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
-  function tick(){
-    ctx.clearRect(0, 0, W, H);
-    parts = parts.filter(p => p.life > 0);
-    for (const p of parts){
-      p.vy += .18; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = Math.min(1, p.life / 30); ctx.fillStyle = p.col;
-      ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
-    }
-    raf = parts.length ? requestAnimationFrame(tick) : 0;
-  }
-  function confetti(){
-    size();
-    const cols = ['#4338ca', '#6b3fd1', '#ffd166', '#f0a24a', '#2bb39f', '#e5675b'];
-    for (let i = 0; i < 140; i++) parts.push({ x: W / 2 + (Math.random() - .5) * W * .4, y: H * .35, vx: (Math.random() - .5) * 14, vy: -Math.random() * 12 - 4,
-      r: Math.random() * 6, vr: (Math.random() - .5) * .3, s: 7 + Math.random() * 7, life: 90 + Math.random() * 60, col: cols[i % cols.length] });
-    if (!raf) raf = requestAnimationFrame(tick);
-  }
-  addEventListener('resize', () => { if (raf) size(); });
-  return { confetti };
-})();
-
 /* ---------------- Collegamenti ---------------- */
-function dispatch(act, node){ if (!S.busy) cur.on[act]?.(node); }
-for (const root of [el.tool, el.stage]){
-  root.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && !b.disabled && b.tagName !== 'FORM') dispatch(b.dataset.act, b); });
-  root.addEventListener('submit', e => { e.preventDefault(); dispatch(e.target.dataset.act, e.target); });
-  root.addEventListener('input', e => { const t = e.target.closest('[data-input]'); if (t) cur.on[t.dataset.input]?.(t); });
-}
-el.tool.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'nIn'){ e.preventDefault(); dispatch('measure'); } });
-el.levels.addEventListener('click', e => { const b = e.target.closest('.lvl'); if (b && !b.disabled) startLevel(+b.dataset.i); });
-$('#btnReset').addEventListener('click', () => startLevel(S.idx));
-function setSym(on){ S.sym = on; document.body.classList.toggle('sym-on', on); el.sym.setAttribute('aria-checked', String(on)); store.set('fogli.sym', on); }
-el.sym.addEventListener('click', () => setSym(!S.sym));
-$('#dlgStay').addEventListener('click', () => el.dlg.close());
-el.dlgNext.addEventListener('click', () => { el.dlg.close(); S.onNext?.(); });
-document.addEventListener('pointerdown', e => {
-  const host = e.target.closest('.btn, .pill');
-  if (!host || host.disabled || reduceMotion) return;
-  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
-  const sp = document.createElement('span');
-  sp.className = 'rip';
-  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
-  host.appendChild(sp);
-  setTimeout(() => sp.remove(), 600);
+el.tool.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'nIn'){ e.preventDefault(); if (!app.busy) app.level.on.measure(); }
 });
 
-if (params.has('debug')) window.__fogli = { S, box, startLevel, get cur(){ return cur; } };
-setSym(S.sym);
-startLevel(Math.min(S.unlocked - 1, Math.max(0, (Number(params.get('livello')) || 1) - 1)));
-})();
+app.debug({ box });
+app.start([L1, L2, L3, L4]);
 </script>
 </body>
 </html>

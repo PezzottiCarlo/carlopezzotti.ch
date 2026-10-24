@@ -8,37 +8,11 @@
 <meta name="dd:tags" content="prima media, area, perimetro, geometria">
 <meta name="dd:date" content="2026-10-20">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/_shared/dd.css">
+<link rel="stylesheet" href="/_lab/lab.css">
 <style>
 :root{ --grass:#8fd18b; --grass-d:#4f9e4a; --earth:#f6f2e6; --earth-l:#e6dfc8; --wood:#8a5a2b; --wood-d:#5c3a1a; }
-.app{min-height:100vh;min-height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding:10px 16px 14px}
-.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
-.topbar .brand{flex:1 1 300px;min-width:0}
-@media (max-height:760px){.brand p{display:none}}
-.levels{display:flex;gap:6px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
-.lvl{font-weight:700;font-size:.86rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:7px 11px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s,transform .12s}
-.lvl:hover:not(:disabled){background:var(--primary-soft)}
-.lvl:active:not(:disabled){transform:scale(.96)}
-.lvl.active{background:var(--primary);color:#fff}
-.lvl:disabled{color:#6b7090;cursor:not-allowed;background:#f3f4f9}
-.lvl .done{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:.7rem}
-.lvl.active .done{background:rgba(255,255,255,.25);color:#fff}
-.top-tools{display:flex;align-items:center;gap:12px}
-.switch-row{display:flex;align-items:center;gap:8px;font-weight:650;font-size:.9rem}
-.icon-btn{width:42px;height:42px;padding:0;font-size:1.25rem}
-.switch{position:relative;width:54px;height:30px;border-radius:999px;border:2px solid #8a91b1;background:#e5e8f4;cursor:pointer;flex:none;transition:background .25s,border-color .25s;padding:0}
-.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .25s var(--wobble)}
-.switch[aria-checked="true"]{background:var(--primary);border-color:var(--primary)}
-.switch[aria-checked="true"]::after{transform:translateX(24px)}
-.switch .st{position:absolute;font:800 .58rem var(--font);top:50%;transform:translateY(-50%);color:#454b6b}
-.switch .st.on{left:6px;color:#fff;display:none}.switch .st.off{right:5px}
-.switch[aria-checked="true"] .st.on{display:block}.switch[aria-checked="true"] .st.off{display:none}
+.stage-card{overflow:auto}
 
-.layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,26vw,380px);gap:14px}
-.stage-card{display:flex;flex-direction:column;gap:12px;padding:14px;min-height:0;overflow:auto}
-.mission{flex:none;display:flex;gap:12px;align-items:baseline}
-.mission h2{display:inline;margin:0 6px 0 0;font-size:1.05rem}
-.mission p{display:inline;margin:0;color:var(--muted);font-size:.92rem}
 .task{flex:none;border-radius:16px;padding:12px 16px;background:#f2fbf1;border:2px solid #b9e3b5;font-size:1.08rem;font-weight:650;line-height:1.4}
 .task b{color:var(--grass-d)}
 
@@ -68,16 +42,8 @@
 .outside{font-size:1.3rem;letter-spacing:2px}
 
 /* ---------- Pannello ---------- */
-.panel{min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
-.feedback{min-height:84px}
-.tools{display:flex;flex-direction:column;gap:12px}
-.tool{border:2px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
-.tool h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px}
-.tool .sub{margin:0;font-size:.84rem;color:var(--muted)}
-.tool p{margin:0}
-.row{display:flex;gap:8px;flex-wrap:wrap}
+.row{align-items:stretch}
 .row .btn{flex:1}
-.goal{font-size:1.4rem;letter-spacing:3px;color:#f2a516}
 .hist{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.9rem}
 .hist th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:4px 6px}
 .hist td{padding:5px 6px;border-top:1px solid #eef0f8;font-weight:700}
@@ -90,46 +56,16 @@
 .claims li.cur{border-color:var(--primary)}
 .claims .st{flex:none;font-weight:800}
 
-details.diario{border:2px solid var(--line);border-radius:14px;padding:0 12px}
-details.diario summary{cursor:pointer;font-weight:750;font-size:.95rem;padding:10px 0;display:flex;align-items:center;gap:8px;list-style:none}
-details.diario summary::-webkit-details-marker{display:none}
-details.diario summary::before{content:"▸";transition:transform .2s;color:var(--primary)}
-details.diario[open] summary::before{transform:rotate(90deg)}
-details.diario .count{margin-left:auto;background:var(--primary-soft);color:var(--primary-dark);border-radius:999px;padding:1px 9px;font-size:.78rem}
-.log{list-style:none;margin:0 0 10px;padding:0;max-height:min(30vh,240px);overflow:auto;display:flex;flex-direction:column;gap:5px}
-.log li{font-size:.82rem;padding:5px 9px;border-radius:9px;background:#f7f8fd;border:1px solid #e6e9f5}
-.log-empty{color:var(--muted);font-size:.84rem;margin:0 0 10px}
-
-dialog{max-width:min(560px,94vw)}
-.dlg-body .reflect{background:#f7f8fd;border-radius:12px;padding:10px 12px;color:var(--ink);text-align:left;font-size:.92rem}
-.dlg-list{list-style:none;padding:0;margin:8px 0;display:flex;flex-direction:column;gap:6px;text-align:left}
-.dlg-list li{background:#f7f8fd;border-radius:10px;padding:7px 10px;font-weight:650}
-.idcard{text-align:left;border:2px solid var(--primary);border-radius:16px;padding:12px 14px;margin:10px 0;background:#fbfbff}
-.idcard ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:.92rem;color:var(--ink)}
-#fx{position:fixed;inset:0;pointer-events:none;z-index:70;width:100vw;height:100vh}
-
-@media (min-width:921px) and (min-height:700px){
-  body{height:100vh;height:100dvh;overflow:hidden}
-  .app{height:100vh;height:100dvh}
+@media (min-width:921px) and (min-height:680px){
   .fields.one{justify-items:center}
   .fields.one .field{width:100%;max-width:calc((100dvh - 350px) * 1.31)}
 }
-@media (max-width:920px){
-  .layout{grid-template-columns:1fr}
-  .panel{overflow:visible}
-}
 @media (max-width:620px){
-  .app{padding:8px 10px 12px}
-  .mission{flex-wrap:wrap}
-  .levels{width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
-  .levels::-webkit-scrollbar{display:none}
-  .lvl{flex:none;white-space:nowrap}
-  .top-tools{width:100%;justify-content:space-between}
   .fields{grid-template-columns:1fr}
 }
 </style>
 </head>
-<body>
+<body class="fit">
 <div class="app">
   <header class="topbar">
     <div class="brand">
@@ -147,104 +83,40 @@ dialog{max-width:min(560px,94vw)}
     </div>
     <nav class="levels" id="levels" aria-label="Livelli"></nav>
     <div class="top-tools">
-      <div class="switch-row">
-        <span id="symLbl">Simboli</span>
-        <button class="switch" id="symToggle" type="button" role="switch" aria-checked="false" aria-labelledby="symLbl"><span class="st on" aria-hidden="true">SÌ</span><span class="st off" aria-hidden="true">NO</span></button>
-      </div>
-      <button class="btn ghost-btn icon-btn" type="button" id="btnReset" title="Ricomincia il livello" aria-label="Ricomincia il livello">↺</button>
+      <div id="sym"></div>
+      <button class="btn ghost-btn icon-btn" type="button" id="reset"></button>
     </div>
   </header>
 
   <main class="layout">
     <section class="card stage-card" aria-labelledby="missionTitle">
-      <div class="mission">
-        <span class="dd-badge" id="missionBadge">Livello 1</span>
-        <div><h2 id="missionTitle"></h2><p id="missionText"></p></div>
-      </div>
+      <div class="mission" id="mission"></div>
       <div class="task" id="task" aria-live="polite"></div>
       <div class="fields" id="fields"></div>
     </section>
 
     <aside class="card panel" aria-label="Strumenti">
-      <div class="feedback info" id="feedback">
-        <span class="fb-ico" aria-hidden="true" id="fbIco">i</span>
-        <div><strong id="fbTitle">Osserva</strong><p id="fbText"></p></div>
-      </div>
+      <div class="feedback info" id="feedback"></div>
       <div class="tools" id="tool"></div>
-      <details class="diario" id="diario">
-        <summary>Diario <span class="count" id="logCount">0</span></summary>
-        <p class="log-empty" id="logEmpty">Ancora niente.</p>
-        <ol class="log" id="log"></ol>
-      </details>
+      <details class="diario" id="diario"></details>
     </aside>
   </main>
 </div>
 
-<dialog id="winDlg" aria-labelledby="winTitle" aria-describedby="winText">
-  <div class="dlg-body">
-    <div class="trophy" aria-hidden="true">
-      <svg width="42" height="42" viewBox="0 0 46 46"><path d="M23 4l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5L23 32.7l-11.3 5.9 2.2-12.5-9.1-8.9 12.6-1.8z" fill="#fff" stroke="#b9790c" stroke-width="2" stroke-linejoin="round"/></svg>
-    </div>
-    <h2 id="winTitle"></h2>
-    <p class="big" id="winText"></p>
-    <div id="winExtra"></div>
-    <p class="reflect" id="winReflect"></p>
-    <div class="dlg-actions">
-      <button class="btn ghost-btn" type="button" id="dlgStay">Resta qui</button>
-      <button class="btn" type="button" id="dlgNext">Livello successivo →</button>
-    </div>
-  </div>
-</dialog>
-
-<canvas id="fx" aria-hidden="true"></canvas>
-<div class="sr-only" aria-live="polite" id="sr"></div>
-
-<script>
-(() => {
-'use strict';
+<script type="module">
+import { lab, $, esc, plural, rnd, pick, reduceMotion } from '/_lab/lab.js';
 
 /* Il recinto delle pecore: area e perimetro su una quadrettatura.
    Un quadretto di prato = 1 pecora; un lato di quadretto = 1 m di recinto.
    Il milieu mette alla prova la concezione "stesso recinto, stesso prato". */
 
-const $ = s => document.querySelector(s);
-const params = new URLSearchParams(location.search);
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
-const pick = a => a[Math.floor(Math.random() * a.length)];
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-const store = {
-  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
-  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
-};
-
-const el = {
-  levels:$('#levels'), mBadge:$('#missionBadge'), mTitle:$('#missionTitle'), mText:$('#missionText'), task:$('#task'), fields:$('#fields'),
-  fb:$('#feedback'), fbIco:$('#fbIco'), fbTitle:$('#fbTitle'), fbText:$('#fbText'), tool:$('#tool'),
-  log:$('#log'), logCount:$('#logCount'), logEmpty:$('#logEmpty'), sym:$('#symToggle'), sr:$('#sr'),
-  dlg:$('#winDlg'), winTitle:$('#winTitle'), winText:$('#winText'), winExtra:$('#winExtra'), winReflect:$('#winReflect'), dlgNext:$('#dlgNext')
-};
-const S = {
-  idx:0, gen:0, L:{}, onNext:null,
-  sym: store.get('recinto.sym', false),
-  unlocked: params.has('tutti') ? 4 : Math.max(1, Math.min(4, store.get('recinto.unlocked', 1) | 0))
-};
-const W_AREA = () => S.sym ? 'Area' : 'Prato';
-const W_PER = () => S.sym ? 'Perimetro' : 'Recinto';
-
-function feedback(type, title, html){
-  el.fb.className = 'feedback ' + type;
-  el.fbIco.textContent = { info:'i', ok:'✓', tilt:'!', error:'✕', win:'★' }[type];
-  el.fbTitle.textContent = title;
-  el.fbText.innerHTML = html;
-  el.sr.textContent = title + '. ' + el.fbText.textContent;
-}
-function log(text){
-  const li = document.createElement('li'); li.innerHTML = text; el.log.appendChild(li);
-  el.logCount.textContent = el.log.children.length; el.logEmpty.hidden = true; el.log.scrollTop = el.log.scrollHeight;
-}
-function clearLog(){ el.log.innerHTML = ''; el.logCount.textContent = '0'; el.logEmpty.hidden = false; }
+const el = { task:$('#task'), fields:$('#fields'), tool:$('#tool') };
+const app = lab({
+  id:'recinto',
+  sym:{ onChange(){ for (const k of ['f', 'A', 'B']) app.L[k]?.repaint(); app.level.render?.(); } }
+});
+const W_AREA = () => app.sym ? 'Area' : 'Prato';
+const W_PER = () => app.sym ? 'Perimetro' : 'Recinto';
 
 /* ---------------- Geometria dei prati ---------------- */
 const key = (c, r) => c + ',' + r;
@@ -400,20 +272,20 @@ function missionLevel(cfg){
   return {
     nav:cfg.nav, title:cfg.title, mission:cfg.mission,
     enter(){
-      Object.assign(S.L, { round:0, hist:[] });
+      Object.assign(app.L, { round:0, hist:[] });
       const [host] = fieldsLayout(1);
-      S.L.f = makeField(host, { cols:12, rows:9, onChange: () => this.live() });
+      app.L.f = makeField(host, { cols:12, rows:9, onChange: () => this.live() });
       this.load();
     },
     load(){
-      const L = S.L, R = cfg.rounds[L.round];
+      const L = app.L, R = cfg.rounds[L.round];
       L.phase = 'build';
       el.task.innerHTML = `<b>Missione ${L.round + 1} di ${cfg.rounds.length}.</b> ${R.text}`;
       L.f.lock(false); this.live(); this.render();
-      feedback('info', 'Osserva', L.round === 0 ? 'Tocca i quadretti per farli diventare prato (o trascina il dito). Tocca un quadretto verde per toglierlo. Il recinto si costruisce da solo intorno al prato.' : 'Nuova missione: puoi modificare il prato che hai già.');
+      app.say('info', 'Osserva', L.round === 0 ? 'Tocca i quadretti per farli diventare prato (o trascina il dito). Tocca un quadretto verde per toglierlo. Il recinto si costruisce da solo intorno al prato.' : 'Nuova missione: puoi modificare il prato che hai già.');
     },
     live(){
-      const L = S.L;
+      const L = app.L;
       if (!L.f) return;
       if (cfg.roll){
         const p = L.f.m.per, over = p > cfg.roll;
@@ -421,30 +293,30 @@ function missionLevel(cfg){
       }
     },
     render(){
-      const L = S.L, build = L.phase === 'build';
+      const L = app.L, build = L.phase === 'build';
       el.tool.innerHTML = goal(L.round + (L.phase === 'won' ? 1 : 0), cfg.rounds.length)
         + `<section class="tool"><h3>🐑 Il pastore controlla</h3><div class="row">${build ? '<button class="btn" type="button" data-act="check">Fai entrare le pecore</button><button class="btn ghost-btn" type="button" data-act="clear">Svuota</button>' : (L.round < cfg.rounds.length - 1 ? '<button class="btn" type="button" data-act="next">Prossima missione →</button>' : '')}</div></section>`
         + histHTML(L.hist);
     },
     on: {
-      clear(){ S.L.f.clear(); },
+      clear(){ app.L.f.clear(); },
       check(){
-        const L = S.L, f = L.f, R = cfg.rounds[L.round], issue = shapeIssue(f);
-        if (issue) return feedback('tilt', 'Attento', issue);
+        const L = app.L, f = L.f, R = cfg.rounds[L.round], issue = shapeIssue(f);
+        if (issue) return app.say('tilt', 'Attento', issue);
         const { area, per } = f.m;
         const out = R.sheep ? f.sheep(R.sheep) : (f.sheep(area), 0);
         const msg = R.check(area, per);
-        log(`Missione ${L.round + 1}: recinto ${per} m, prato ${area} ${msg ? '✗' : '✓'}`);
-        if (msg) return feedback('error', 'Non ancora', msg + (out ? ` <span class="outside">${'🐑'.repeat(Math.min(out, 12))}</span> ${plural(out, 'pecora resta', 'pecore restano')} fuori.` : ''));
+        app.log(`Missione ${L.round + 1}: recinto ${per} m, prato ${area} ${msg ? '✗' : '✓'}`);
+        if (msg) return app.say('error', 'Non ancora', msg + (out ? ` <span class="outside">${'🐑'.repeat(Math.min(out, 12))}</span> ${plural(out, 'pecora resta', 'pecore restano')} fuori.` : ''));
         L.hist.push({ area, per });
         L.phase = 'won'; f.lock(true);
-        if (L.round < cfg.rounds.length - 1){ this.render(); return feedback('ok', 'Missione compiuta!', R.ok(area, per)); }
+        if (L.round < cfg.rounds.length - 1){ this.render(); return app.say('ok', 'Missione compiuta!', R.ok(area, per)); }
         this.render();
-        feedback('win', 'Tutte le missioni compiute!', R.ok(area, per));
-        markDone(S.idx);
-        showDialog(cfg.done.title, cfg.done.text, histHTML(L.hist).replace('<section class="tool">', '<div>').replace('</section>', '</div>'), cfg.done.reflect, 'Livello successivo →', () => startLevel(S.idx + 1));
+        app.say('win', 'Tutte le missioni compiute!', R.ok(area, per));
+        app.complete(app.idx);
+        app.win({ title: cfg.done.title, text: cfg.done.text, extra: histHTML(L.hist).replace('<section class="tool">', '<div>').replace('</section>', '</div>'), reflect: cfg.done.reflect, then: () => app.go(app.idx + 1) });
       },
-      next(){ S.L.round++; this.load(); }
+      next(){ app.L.round++; this.load(); }
     }
   };
 }
@@ -519,21 +391,21 @@ const L3 = {
   nav:'3. Vero o falso?', title:'Vero o falso?',
   mission:'Il signor Bastian Contrario dice tante cose sui prati. Alcune sono vere, altre no. Se una frase è falsa, dimostralo con un controesempio: costruisci i prati A e B che la smentiscono.',
   enter(){
-    Object.assign(S.L, { i:0, res:[] });
+    Object.assign(app.L, { i:0, res:[] });
     const [ha, hb] = fieldsLayout(2);
-    S.L.A = makeField(ha, { cols:8, rows:6, label:'Prato A' });
-    S.L.B = makeField(hb, { cols:8, rows:6, label:'Prato B' });
+    app.L.A = makeField(ha, { cols:8, rows:6, label:'Prato A' });
+    app.L.B = makeField(hb, { cols:8, rows:6, label:'Prato B' });
     L3.load();
   },
   load(){
-    const L = S.L, C = CLAIMS[L.i];
+    const L = app.L, C = CLAIMS[L.i];
     L.phase = 'think'; L.A.lock(false); L.B.lock(false);
     el.task.innerHTML = `<b>Frase ${L.i + 1} di ${CLAIMS.length}.</b> Bastian Contrario dice: «${C.text}»`;
     L3.render();
-    feedback('info', 'Vera o falsa?', 'Se pensi che sia falsa, costruisci un controesempio nei prati A e B. Se pensi che sia vera, dillo: Bastian proverà a smentirti.');
+    app.say('info', 'Vera o falsa?', 'Se pensi che sia falsa, costruisci un controesempio nei prati A e B. Se pensi che sia vera, dillo: Bastian proverà a smentirti.');
   },
   render(){
-    const L = S.L, C = CLAIMS[L.i], think = L.phase === 'think';
+    const L = app.L, C = CLAIMS[L.i], think = L.phase === 'think';
     el.tool.innerHTML = `<section class="tool"><h3>🗣️ La frase</h3><p class="claim"><small>Bastian Contrario dice</small>«${C.text}»</p>
       ${think ? `<div class="row"><button class="btn" type="button" data-act="falsa">È falsa: ecco il controesempio</button><button class="btn ghost-btn" type="button" data-act="vera">È vera</button></div>
       <button class="btn ghost-btn" type="button" data-act="clear">Svuota i prati</button>`
@@ -544,38 +416,35 @@ const L3 = {
       }).join('')}</ul></section>`;
   },
   settle(ok, title, html){
-    const L = S.L;
+    const L = app.L;
     L.res[L.i] = { ok };
     L.phase = 'done'; L.A.lock(true); L.B.lock(true);
-    log(`Frase ${L.i + 1}: ${ok ? '✓' : '✕'}`);
+    app.log(`Frase ${L.i + 1}: ${ok ? '✓' : '✕'}`);
     L3.render();
-    feedback(ok ? 'ok' : 'error', title, html);
+    app.say(ok ? 'ok' : 'error', title, html);
     if (L.i === CLAIMS.length - 1){
-      markDone(2);
+      app.complete(2);
       const right = L.res.filter(r => r.ok).length;
-      setTimeout(() => showDialog('Bastian è stato smascherato!', `Hai giudicato bene ${right} frasi su ${CLAIMS.length}.`,
-        `<ul class="dlg-list">${CLAIMS.map(z => `<li>${z.truth ? '✓ Vera' : '✕ Falsa'}: «${esc(z.text)}»</li>`).join('')}</ul>`,
-        'Per smentire una frase basta <b>un solo</b> controesempio. Per essere sicuri che una frase è vera, invece, non basta provarla qualche volta: bisogna capire <b>perché</b> funziona sempre. Sai spiegare perché il recinto è sempre pari?',
-        'Livello successivo →', () => startLevel(3)), 600);
+      setTimeout(() => app.win({ title: 'Bastian è stato smascherato!', text: `Hai giudicato bene ${right} frasi su ${CLAIMS.length}.`, extra: `<ul class="dlg-list">${CLAIMS.map(z => `<li>${z.truth ? '✓ Vera' : '✕ Falsa'}: «${esc(z.text)}»</li>`).join('')}</ul>`, reflect: 'Per smentire una frase basta <b>un solo</b> controesempio. Per essere sicuri che una frase è vera, invece, non basta provarla qualche volta: bisogna capire <b>perché</b> funziona sempre. Sai spiegare perché il recinto è sempre pari?', then: () => app.go(3) }), 600);
     }
   },
   on: {
-    clear(){ S.L.A.clear(); S.L.B.clear(); },
+    clear(){ app.L.A.clear(); app.L.B.clear(); },
     falsa(){
-      const L = S.L, C = CLAIMS[L.i];
-      for (const [f, n] of [[L.A, 'A'], [L.B, 'B']]){ const issue = shapeIssue(f); if (issue) return feedback('tilt', `Prato ${n}`, issue); }
+      const L = app.L, C = CLAIMS[L.i];
+      for (const [f, n] of [[L.A, 'A'], [L.B, 'B']]){ const issue = shapeIssue(f); if (issue) return app.say('tilt', `Prato ${n}`, issue); }
       const msg = C.check(L.A.m, L.B.m, L.A.cells, L.B.cells);
-      if (msg) return feedback('tilt', 'Non è un controesempio', `${msg} ${C.need}`);
+      if (msg) return app.say('tilt', 'Non è un controesempio', `${msg} ${C.need}`);
       L3.settle(true, 'Frase smentita!', `Il tuo controesempio funziona: prato A ${L.A.m.per} m e ${plural(L.A.m.area, 'quadretto', 'quadretti')}, prato B ${L.B.m.per} m e ${plural(L.B.m.area, 'quadretto', 'quadretti')}.`);
     },
     vera(){
-      const L = S.L, C = CLAIMS[L.i];
+      const L = app.L, C = CLAIMS[L.i];
       if (C.truth) return L3.settle(true, 'Bastian non trova controesempi', 'Ci ha provato in tutti i modi, ma la frase regge: è vera.');
       const [a, b] = C.cex();
       L.A.set(a); L.B.set(b);
       L3.settle(false, 'Bastian ti smentisce!', `Guarda i suoi prati: A ha ${L.A.m.per} m di recinto e ${plural(L.A.m.area, 'quadretto', 'quadretti')}, B ha ${L.B.m.per} m e ${plural(L.B.m.area, 'quadretto', 'quadretti')}. La frase era falsa.`);
     },
-    next(){ S.L.i++; S.L.A.clear(); S.L.B.clear(); L3.load(); }
+    next(){ app.L.i++; app.L.A.clear(); app.L.B.clear(); L3.load(); }
   }
 };
 
@@ -583,12 +452,12 @@ const L3 = {
    SFIDA — si può fare o no?
    ================================================================ */
 const L4 = {
-  nav:'⚡ Sfida', title:'Si può fare?', GOAL:5,
+  nav:'⚡ Sfida', title:'Si può fare?', GOAL:5, challenge:true,
   mission:'Il pastore chiede prati con un certo numero di quadretti e un certo recinto. A volte si può, a volte no. Costruiscilo, oppure dichiara che è impossibile: il milieu controllerà.',
   enter(){
-    Object.assign(S.L, { done:0, errors:0 });
+    Object.assign(app.L, { done:0, errors:0 });
     const [host] = fieldsLayout(1);
-    S.L.f = makeField(host, { cols:12, rows:9 });
+    app.L.f = makeField(host, { cols:12, rows:9 });
     L4.newTask();
   },
   gen(){
@@ -607,15 +476,15 @@ const L4 = {
     }
   },
   newTask(){
-    const L = S.L;
+    const L = app.L;
     Object.assign(L, L4.gen(), { phase:'build' });
     L.f.clear(); L.f.lock(false);
     el.task.innerHTML = `Il pastore vuole un prato di <b>${plural(L.a, 'quadretto', 'quadretti')}</b> con <b>${L.p} m</b> di recinto.`;
     L4.render();
-    feedback('info', 'Si può fare?', 'Costruisci il prato e controllalo, oppure dichiara che è impossibile.');
+    app.say('info', 'Si può fare?', 'Costruisci il prato e controllalo, oppure dichiara che è impossibile.');
   },
   render(){
-    const L = S.L, build = L.phase === 'build';
+    const L = app.L, build = L.phase === 'build';
     el.tool.innerHTML = goal(L.done, L4.GOAL) + `<section class="tool"><h3>🧐 Il tuo verdetto</h3>
       ${build ? '<div class="row"><button class="btn" type="button" data-act="check">Ecco il prato</button><button class="btn ghost-btn" type="button" data-act="impossible">È impossibile!</button></div><button class="btn ghost-btn" type="button" data-act="clear">Svuota</button>'
         : (L.done < L4.GOAL ? '<button class="btn" type="button" data-act="next">Prossima richiesta →</button>' : '')}</section>`;
@@ -626,129 +495,45 @@ const L4 = {
     return `Con ${a} quadretti il recinto più lungo possibile è di ${maxPer(a)} m.`;
   },
   win(title, html){
-    const L = S.L;
+    const L = app.L;
     L.done++; L.phase = 'done'; L.f.lock(true);
     L4.render();
-    if (L.done < L4.GOAL) return feedback('win', title, html);
-    feedback('win', title, html);
-    markDone(3);
-    showDialog('Pastore esperto!', `Cinque richieste risolte${L.errors ? `, con ${plural(L.errors, 'errore', 'errori')}` : ' senza errori'}.`,
-      `<div class="idcard"><ul>
+    if (L.done < L4.GOAL) return app.say('win', title, html);
+    app.say('win', title, html);
+    app.complete(3);
+    app.win({ title: 'Pastore esperto!', text: `Cinque richieste risolte${L.errors ? `, con ${plural(L.errors, 'errore', 'errori')}` : ' senza errori'}.`, extra: `<div class="idcard"><ul>
         <li>L’<b>area</b> dice quanto prato c’è (quanti quadretti); il <b>perimetro</b> dice quanto è lungo il recinto (quanti lati di quadretto). Sono due misure <b>diverse</b>.</li>
         <li>Lo stesso perimetro può chiudere aree diverse, e la stessa area può avere perimetri diversi.</li>
         <li>Con lo stesso recinto, il prato più grande ha una forma raccolta, vicina al <b>quadrato</b>; i prati lunghi e stretti sono i più piccoli.</li>
-        <li>Su una quadrettatura il perimetro è sempre un numero <b>pari</b>.</li></ul></div>`,
-      '', 'Altre cinque richieste →', () => startLevel(3));
+        <li>Su una quadrettatura il perimetro è sempre un numero <b>pari</b>.</li></ul></div>`, next: 'Altre cinque richieste →', then: () => app.go(3) });
   },
   on: {
-    clear(){ S.L.f.clear(); },
+    clear(){ app.L.f.clear(); },
     check(){
-      const L = S.L, issue = shapeIssue(L.f);
-      if (issue) return feedback('tilt', 'Attento', issue);
+      const L = app.L, issue = shapeIssue(L.f);
+      if (issue) return app.say('tilt', 'Attento', issue);
       const { area, per } = L.f.m;
-      log(`${L.a} quadretti / ${L.p} m: costruito ${area} / ${per} m`);
+      app.log(`${L.a} quadretti / ${L.p} m: costruito ${area} / ${per} m`);
       if (area === L.a && per === L.p){ L.f.sheep(area); return L4.win('Si poteva fare!', `${plural(area, 'quadretto', 'quadretti')} e ${per} m di recinto: proprio quello che voleva il pastore.`); }
       L.errors++;
-      feedback('error', 'Non è quello richiesto', `Il tuo prato ha ${plural(area, 'quadretto', 'quadretti')} e ${per} m di recinto; il pastore voleva ${L.a} quadretti e ${L.p} m.`);
+      app.say('error', 'Non è quello richiesto', `Il tuo prato ha ${plural(area, 'quadretto', 'quadretti')} e ${per} m di recinto; il pastore voleva ${L.a} quadretti e ${L.p} m.`);
     },
     impossible(){
-      const L = S.L;
-      log(`${L.a} quadretti / ${L.p} m: dichiarato impossibile`);
+      const L = app.L;
+      app.log(`${L.a} quadretti / ${L.p} m: dichiarato impossibile`);
       if (!L.sol) return L4.win('Davvero impossibile!', `Nemmeno il milieu ci riesce. ${L4.why(L.a, L.p)}`);
       L.errors++;
       L.f.set(L.sol); L.f.lock(true); L.phase = 'shown';
       L.f.sheep(L.a);
       L4.render();
-      feedback('error', 'Invece si può!', `Il milieu ha costruito un prato di ${plural(L.a, 'quadretto', 'quadretti')} con ${L.p} m di recinto. Guardalo bene.`);
+      app.say('error', 'Invece si può!', `Il milieu ha costruito un prato di ${plural(L.a, 'quadretto', 'quadretti')} con ${L.p} m di recinto. Guardalo bene.`);
     },
     next(){ L4.newTask(); }
   }
 };
 
-const LEVELS = [L1, L2, L3, L4];
-let cur = L1;
-
-function renderLevels(){
-  const done = store.get('recinto.done', []);
-  el.levels.innerHTML = LEVELS.map((L, i) => {
-    const locked = i + 1 > S.unlocked;
-    return `<button class="lvl${i === S.idx ? ' active' : ''}" type="button" data-i="${i}" ${locked ? `disabled aria-label="${L.nav} (bloccato)"` : ''} ${i === S.idx ? 'aria-current="true"' : ''}>${locked ? '🔒 ' : ''}${L.nav}${done.includes(i) ? '<span class="done" aria-hidden="true">✓</span>' : ''}</button>`;
-  }).join('');
-}
-function markDone(i){
-  const done = store.get('recinto.done', []);
-  if (!done.includes(i)){ done.push(i); store.set('recinto.done', done); }
-  if (i + 2 > S.unlocked && i < 3){ S.unlocked = i + 2; if (!params.has('tutti')) store.set('recinto.unlocked', S.unlocked); }
-  renderLevels();
-}
-function startLevel(i){
-  if (i + 1 > S.unlocked) return;
-  if (el.dlg.open) el.dlg.close();
-  S.idx = i; S.gen++; S.L = {};
-  cur = LEVELS[i];
-  el.mBadge.textContent = i === 3 ? 'Sfida' : `Livello ${i + 1}`;
-  el.mTitle.textContent = cur.title; el.mText.textContent = cur.mission;
-  clearLog(); renderLevels();
-  cur.enter();
-}
-function showDialog(title, text, extra, reflect, nextLabel, onNext){
-  el.winTitle.textContent = title; el.winText.innerHTML = text;
-  el.winExtra.innerHTML = extra || ''; el.winReflect.innerHTML = reflect || ''; el.winReflect.hidden = !reflect;
-  el.dlgNext.textContent = nextLabel; S.onNext = onNext;
-  el.dlg.showModal();
-  if (!reduceMotion) fx.confetti();
-}
-
-const fx = (() => {
-  const c = $('#fx'), ctx = c.getContext('2d'); let parts = [], raf = 0, W = 0, H = 0;
-  function size(){ const d = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
-  function tick(){
-    ctx.clearRect(0, 0, W, H);
-    parts = parts.filter(p => p.life > 0);
-    for (const p of parts){
-      p.vy += .18; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = Math.min(1, p.life / 30); ctx.fillStyle = p.col;
-      ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
-    }
-    raf = parts.length ? requestAnimationFrame(tick) : 0;
-  }
-  function confetti(){
-    size();
-    const cols = ['#4338ca', '#6b3fd1', '#ffd166', '#f0a24a', '#2bb39f', '#e5675b'];
-    for (let i = 0; i < 140; i++) parts.push({ x: W / 2 + (Math.random() - .5) * W * .4, y: H * .35, vx: (Math.random() - .5) * 14, vy: -Math.random() * 12 - 4,
-      r: Math.random() * 6, vr: (Math.random() - .5) * .3, s: 7 + Math.random() * 7, life: 90 + Math.random() * 60, col: cols[i % cols.length] });
-    if (!raf) raf = requestAnimationFrame(tick);
-  }
-  addEventListener('resize', () => { if (raf) size(); });
-  return { confetti };
-})();
-
-el.tool.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && !b.disabled) cur.on[b.dataset.act]?.call(cur, b); });
-el.levels.addEventListener('click', e => { const b = e.target.closest('.lvl'); if (b && !b.disabled) startLevel(+b.dataset.i); });
-$('#btnReset').addEventListener('click', () => startLevel(S.idx));
-function setSym(on){
-  S.sym = on; el.sym.setAttribute('aria-checked', String(on)); store.set('recinto.sym', on);
-  for (const k of ['f', 'A', 'B']) S.L[k]?.repaint();
-  cur.render?.();
-}
-el.sym.addEventListener('click', () => setSym(!S.sym));
-$('#dlgStay').addEventListener('click', () => el.dlg.close());
-el.dlgNext.addEventListener('click', () => { el.dlg.close(); S.onNext?.(); });
-document.addEventListener('pointerdown', e => {
-  const host = e.target.closest('.btn');
-  if (!host || host.disabled || reduceMotion) return;
-  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
-  const sp = document.createElement('span');
-  sp.className = 'rip';
-  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
-  host.appendChild(sp);
-  setTimeout(() => sp.remove(), 600);
-});
-
-if (params.has('debug')) window.__recinto = { S, startLevel, buildShape, measureShape, rect, key, possible, minPer, maxPer, get cur(){ return cur; } };
-el.sym.setAttribute('aria-checked', String(S.sym));
-startLevel(Math.min(S.unlocked - 1, Math.max(0, (Number(params.get('livello')) || 1) - 1)));
-})();
+app.debug({ buildShape, measureShape, rect, key, possible, minPer, maxPer });
+app.start([L1, L2, L3, L4]);
 </script>
 </body>
 </html>

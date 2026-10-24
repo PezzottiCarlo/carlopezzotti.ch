@@ -8,38 +8,27 @@
 <meta name="dd:tags" content="funzioni, musica, grafici, Brousseau">
 <meta name="dd:date" content="2026-10-24">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/_shared/dd.css">
+<link rel="stylesheet" href="/_lab/lab.css">
 <style>
 :root{ --c:var(--primary); --ghost:#1b1f3b; }
 
-.app{min-height:100vh;min-height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding:10px 16px 14px}
-.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
-.topbar .brand{flex:1 1 300px;min-width:0}
-.levels{display:flex;gap:4px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
-.lvl{font-weight:700;font-size:.84rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:6px 10px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:background .2s,transform .12s}
-.lvl:hover:not(:disabled){background:var(--primary-soft)}
-.lvl:active:not(:disabled){transform:scale(.96)}
-.lvl.active{background:var(--primary);color:#fff}
-.lvl:disabled{color:#6b7090;cursor:not-allowed;background:#f3f4f9}
-.lvl .done{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:.68rem}
-.lvl.active .done{background:rgba(255,255,255,.25);color:#fff}
-.icon-btn{width:42px;height:42px;padding:0;font-size:1.25rem}
+:root{ --panel-w:clamp(300px,27vw,390px); }
+.levels{gap:4px}
+.lvl{font-size:.84rem;padding:6px 10px;gap:5px}
+.lvl .done{width:17px;height:17px;font-size:.68rem}
 
-.layout{flex:1;display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,27vw,390px);gap:14px;align-items:start}
+.layout{align-items:start}
 .stage{display:flex;flex-direction:column;gap:12px;padding:14px;min-width:0}
-.mission{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.mission{align-items:flex-start;flex-wrap:wrap}
 .mission > div{flex:1;min-width:200px}
-.mission h2{margin:0;font-size:1.15rem}
-.mission p{margin:2px 0 0;color:var(--muted);font-size:.92rem}
+.mission h2{display:block;margin:0;font-size:1.15rem}
+.mission p{display:block;margin:2px 0 0}
 .pips{display:flex;gap:6px;align-items:center}
 .pip{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:#fff}
 .pip.now{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
 .pip.ok{background:var(--ok-line);border-color:var(--ok-line)}
-.panel{padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
-.tools{display:flex;flex-direction:column;gap:12px}
-.tool{border:2px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
-.tool h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px}
-.tool .sub{margin:0;font-size:.84rem;color:var(--muted)}
+.panel{min-width:0;overflow:visible}
+.panel .feedback{min-height:0}
 .tool.solved{border-color:var(--ok-line);background:var(--ok-soft)}
 
 /* Ascolto */
@@ -100,7 +89,7 @@
 .chip:hover:not(:disabled){border-color:var(--primary)}
 .chip:disabled{cursor:not-allowed;opacity:.5}
 .chip.asked{background:var(--primary-soft);border-color:var(--primary);opacity:1}
-.coins{font-size:1.2rem;letter-spacing:2px}
+.coins{display:block;font-size:1.2rem;letter-spacing:2px}
 .qbig{font-family:var(--math);font-size:1.25rem;font-weight:700}
 .results{display:flex;gap:6px;flex-wrap:wrap}
 .res{font-weight:800;font-size:.8rem;border-radius:8px;padding:2px 8px}
@@ -142,12 +131,11 @@ canvas.lane{display:block;width:100%;height:84px;border-radius:10px;background:#
 .final-link{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 14px;border-radius:14px;background:var(--win-soft);border-left:6px solid var(--win-line)}
 .final-link p{margin:0;font-weight:700}
 
-@media (max-width:920px){
-  .layout{grid-template-columns:minmax(0,1fr)}
-}
 @media (max-width:620px){
   .app{padding:8px 10px 14px}
-  .brand p{display:none}
+  .topbar .brand p{display:none}
+  .levels{flex-wrap:wrap;overflow:visible}
+  .lvl{white-space:normal}
   .seq,.lane-wrap{grid-template-columns:64px minmax(0,1fr)}
   .seq .nm small{display:none}
   .cell{height:30px;border-radius:5px;border-width:1.5px}
@@ -176,158 +164,46 @@ canvas.lane{display:block;width:100%;height:84px;border-radius:10px;background:#
       </div>
     </div>
     <nav class="levels" id="levels" aria-label="Livelli"></nav>
-    <button class="btn ghost-btn icon-btn" type="button" id="btnReset" title="Ricomincia il livello" aria-label="Ricomincia il livello">↺</button>
+    <button class="btn ghost-btn icon-btn" type="button" id="reset"></button>
   </header>
 
   <main class="layout">
     <section class="card stage" aria-labelledby="mTitle">
-      <div class="mission">
-        <span class="dd-badge" id="mBadge"></span>
+      <div class="mission" id="mission">
+        <span class="dd-badge"></span>
         <div><h2 id="mTitle"></h2><p id="mText"></p></div>
         <div class="pips" id="pips" aria-label="Round"></div>
       </div>
       <div class="stage-body" id="stage"></div>
     </section>
     <aside class="card panel" aria-label="Strumenti">
-      <div class="feedback info" id="fb">
-        <span class="fb-ico" aria-hidden="true" id="fbIco">i</span>
-        <div><strong id="fbTitle"></strong><p id="fbText"></p></div>
-      </div>
+      <div class="feedback info" id="feedback"></div>
       <div class="tools" id="tools"></div>
     </aside>
   </main>
 </div>
 
-<dialog id="winDlg" aria-labelledby="winTitle" aria-describedby="winText">
-  <div class="dlg-body">
-    <div class="trophy" aria-hidden="true">
-      <svg width="42" height="42" viewBox="0 0 46 46"><path d="M23 4l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5L23 32.7l-11.3 5.9 2.2-12.5-9.1-8.9 12.6-1.8z" fill="#fff" stroke="#b9790c" stroke-width="2" stroke-linejoin="round"/></svg>
-    </div>
-    <h2 id="winTitle"></h2>
-    <p id="winStars" class="stars"></p>
-    <p class="big" id="winText"></p>
-    <div id="winExtra"></div>
-    <div class="dlg-actions">
-      <button class="btn ghost-btn" type="button" id="dlgStay">Resta qui</button>
-      <button class="btn" type="button" id="dlgNext">Livello successivo →</button>
-    </div>
-  </div>
-</dialog>
-
-<script>
-(() => {
-'use strict';
-const $ = s => document.querySelector(s);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const params = new URLSearchParams(location.search);
-
+<script type="module">
+import { lab, $, esc, fmt, store } from '/_lab/lab.js';
+import { SR, TWO_PI, noise, render, createAudio, fitCanvas as fit, smoothEnv, dpr } from '/_lab/audio.js';
 // Il suono è calcolato un campione alla volta dalle stesse funzioni dei grafici: 44100 valori al secondo.
-const SR = 44100;
-const TWO_PI = 2 * Math.PI;
-const fmt = (x, d = 2) => {
-  const r = Math.round(x * 10 ** d) / 10 ** d;
-  return String(r).replace('.', ',').replace('-', '−');
-};
-const noise = j => { const x = Math.sin(j * 12.9898 + 78.233) * 43758.5453; return (x - Math.floor(x)) * 2 - 1; };
-const dpr = () => Math.min(2, window.devicePixelRatio || 1);
 const I = s => `<i>${s}</i>`;
 const ex = s => `e<sup>${s}</sup>`;
 
-const store = {
-  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
-  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
-};
-const SAVE_KEY = 'dd-suona-v1';
-const SAVE = Object.assign({ done:[], stars:{}, learned:{} }, store.get(SAVE_KEY, {}));
-const save = () => store.set(SAVE_KEY, SAVE);
+const app = lab({ id:'suona', act(name, node){ CTRL[LV().type].click(node); } });
+
+// Prima del laboratorio i progressi stavano tutti in «dd-suona-v1», con i livelli per nome.
+// Si spostano una volta sola: livelli fatti e stelle passano al laboratorio, i valori imparati restano qui.
+const OLD = store().get('dd-suona-v1', null);
+const learned = app.store.get('learned', OLD?.learned ?? {});
+const saveLearned = () => app.store.set('learned', learned);
 
 /* ------------------------------------------------------------------ audio */
-let ctx = null, master = null, sources = [];
-function ensureCtx(){
-  if (ctx) return ctx;
-  const AC = window.AudioContext || window.webkitAudioContext;
-  ctx = new AC();
-  master = ctx.createGain();
-  master.gain.value = .55;
-  // Niente compressore: il volume A deve sentirsi davvero. Solo un limitatore morbido sopra 0,7.
-  const shaper = ctx.createWaveShaper(), curve = new Float32Array(2049);
-  for (let q = 0; q < curve.length; q++) {
-    const x = q / (curve.length - 1) * 2 - 1, a = Math.abs(x);
-    curve[q] = Math.sign(x) * (a < .7 ? a : .7 + .3 * Math.tanh((a - .7) / .3));
-  }
-  shaper.curve = curve;
-  master.connect(shaper); shaper.connect(ctx.destination);
-  return ctx;
-}
-function stopAll(){
-  sources.forEach(s => { try { s.stop(); } catch(e){} });
-  sources = [];
-  S.play = null;
-}
-// Suona un campionamento; con loop, ripete fino a stop o per «times» volte
-function playBuf(buf, { delay = 0, loop = false, times = 1, gain = 1, node = null } = {}){
-  const c = ensureCtx();
-  c.resume();
-  const ab = c.createBuffer(1, buf.length, SR);
-  ab.copyToChannel(buf, 0);
-  const src = c.createBufferSource();
-  src.buffer = ab;
-  const g = node || c.createGain();
-  if (!node) { g.gain.value = gain; g.connect(master); }
-  src.connect(g);
-  const t0 = c.currentTime + .04 + delay;
-  src.loop = loop;
-  src.start(t0);
-  if (loop && times !== Infinity) src.stop(t0 + times * buf.length / SR);
-  sources.push(src);
-  src.onended = () => { sources = sources.filter(x => x !== src); };
-  return { src, t0, g, dur:buf.length / SR * (loop ? times : 1) };
-}
-function render(fn, dur, fadeIn = 0){
-  const N = Math.round(dur * SR), out = new Float32Array(N), fo = Math.round(.02 * SR), fi = Math.round(fadeIn * SR);
-  for (let j = 0; j < N; j++) {
-    let y = fn(j / SR, j);
-    if (j >= N - fo) y *= (N - j) / fo;
-    if (fi && j < fi) y *= j / fi;
-    out[j] = y;
-  }
-  return out;
-}
-// Anche il «bravo» è una funzione: tre note che si spengono
-function chime(){
-  const notes = [523.25, 659.25, 783.99];
-  playBuf(render((t) => notes.reduce((s, f, i) => {
-    const u = t - i * .09;
-    return u < 0 ? s : s + .22 * Math.exp(-7 * u) * Math.sin(TWO_PI * f * u);
-  }, 0), 1));
-}
+const audio = createAudio({ gain:.55 });
+function stopAll(){ audio.stopAll(); S.play = null; }
+const playBuf = (buf, opts) => audio.play(buf, opts);
 
 /* ------------------------------------------------------------------ disegno */
-function fit(cv){
-  const r = dpr(), w = Math.max(1, Math.round(cv.clientWidth * r)), h = Math.max(1, Math.round(cv.clientHeight * r));
-  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
-  return [w, h, r];
-}
-// Il volume (inviluppo): per ogni pixel il valore più grande di |y| lì intorno, poi ammorbidito
-function smoothEnv(get, N, W, radiusSec){
-  const col = new Float32Array(W), out = new Float32Array(W);
-  for (let x = 0; x < W; x++) {
-    const a = Math.floor(x * N / W), b = Math.max(a + 1, Math.floor((x + 1) * N / W));
-    let m = 0;
-    for (let j = a; j < b && j < N; j++) { const v = Math.abs(get(j)); if (v > m) m = v; }
-    col[x] = m;
-  }
-  const rad = Math.max(0, Math.ceil(radiusSec * SR / (N / W)));
-  for (let x = 0; x < W; x++) {
-    let m = 0;
-    for (let q = Math.max(0, x - rad); q <= Math.min(W - 1, x + rad); q++) if (col[q] > m) m = col[q];
-    out[x] = m;
-  }
-  for (let x = 1; x < W - 1; x++) col[x] = (out[x - 1] + 2 * out[x] + out[x + 1]) / 4;
-  col[0] = out[0]; col[W - 1] = out[W - 1];
-  return col;
-}
 function shapePath(g, env, x0, w, mid, k){
   const W = env.length, X = x => x0 + x / (W - 1) * w;
   g.beginPath();
@@ -367,7 +243,7 @@ const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).
 /* ------------------------------------------------------------------ gli strumenti costruiti nei livelli */
 // I valori «imparati» vengono dai livelli vinti: la cassa del finale è quella che hai accordato tu.
 function instruments(){
-  const L = SAVE.learned;
+  const L = learned;
   return {
     cassa:{ name:'Cassa', fn:'cassa', color:'#e5484d', mix:.9, len:.5,
       p:{ f1:L.kick?.f1 ?? 50, d:L.kick?.d ?? 150 },
@@ -501,48 +377,30 @@ const LEVELS = [
       { opts:[0, .5, 1], start:{ cassa:1, basso:1, hat:1, clap:1 }, target:{ cassa:1, basso:.5, hat:1, clap:.5 }, mode:'both' }],
     win:{ text:'Quello che senti è la <b>somma</b> delle funzioni. Il numero davanti a ognuna è il suo volume nel mix.' } },
 
-  { id:'beat', nav:'Il tuo beat', type:'free', title:'Il tuo beat',
+  { id:'beat', nav:'Il tuo beat', type:'free', title:'Il tuo beat', badge:'Finale',
     text:'Tutto quello che hai costruito, insieme. Accendi i passi e suona.' },
 ];
+LEVELS.forEach((L, i) => { L.nav = `${i + 1} ${L.nav}`; L.mission = L.text; L.enter = enterLevel; });
 const ROW_IDS = ['cassa', 'clap', 'hat', 'open', 'basso'];
 
 /* ------------------------------------------------------------------ stato */
-const S = { idx:0, r:0, st:null, play:null, conf:0, wonRounds:[] };
-const el = { levels:$('#levels'), badge:$('#mBadge'), title:$('#mTitle'), text:$('#mText'), pips:$('#pips'),
-  stage:$('#stage'), tools:$('#tools'), fb:$('#fb'), fbIco:$('#fbIco'), fbTitle:$('#fbTitle'), fbText:$('#fbText'),
-  dlg:$('#winDlg') };
-const LV = () => LEVELS[S.idx];
+const S = { r:0, st:null, play:null, conf:0, wonRounds:[] };
+const el = { pips:$('#pips'), stage:$('#stage'), tools:$('#tools') };
+const LV = () => app.level;
 const R = () => LV().rounds?.[S.r];
-const unlocked = i => params.get('livelli') === 'tutti' || i === 0 || SAVE.done.includes(LEVELS[i - 1].id) || SAVE.done.includes(LEVELS[i].id);
 
-function setFb(kind, title, text){
-  el.fb.className = 'feedback ' + kind;
-  el.fbIco.textContent = { info:'i', ok:'✓', tilt:'!', error:'✕', win:'★' }[kind];
-  el.fbTitle.textContent = title;
-  el.fbText.innerHTML = text;
-}
-function buildNav(){
-  el.levels.innerHTML = LEVELS.map((L, i) => {
-    const locked = !unlocked(i), done = SAVE.done.includes(L.id);
-    return `<button class="lvl${i === S.idx ? ' active' : ''}" type="button" data-lv="${i}" ${locked ? `disabled aria-label="${L.nav} (bloccato)"` : ''} ${i === S.idx ? 'aria-current="true"' : ''}>${locked ? '🔒' : i + 1} ${L.nav}${done ? '<span class="done" aria-hidden="true">✓</span>' : ''}</button>`;
-  }).join('');
-}
+const setFb = (kind, title, text) => app.say(kind, title, text);
 function buildMission(){
   const L = LV();
-  el.badge.textContent = L.type === 'free' ? 'Finale' : `Livello ${S.idx + 1}`;
-  el.title.textContent = L.title;
-  el.text.textContent = L.text;
   document.documentElement.style.setProperty('--c', L.color || css('--primary'));
   el.pips.innerHTML = (L.rounds || []).map((_, i) => `<span class="pip ${S.wonRounds[i] ? 'ok' : i === S.r ? 'now' : ''}" title="Round ${i + 1}"></span>`).join('');
 }
 const CTRL = {};
-function enterLevel(i){
+function enterLevel(){
   stopAll();
   if (CTRL.free.live) CTRL.free.stop();
-  S.idx = i; S.r = 0; S.conf = 0; S.wonRounds = [];
-  buildNav();
+  S.r = 0; S.conf = 0; S.wonRounds = [];
   enterRound();
-  const u = new URL(location.href); u.searchParams.set('livello', LV().id); history.replaceState(null, '', u);
 }
 function enterRound(){
   stopAll();
@@ -557,11 +415,11 @@ function nextRound(){
 function roundWon(){
   const L = LV();
   S.wonRounds[S.r] = true;
-  const learned = L.learn?.(S.r, S.st.p);
-  if (learned) Object.assign(SAVE.learned, learned);
+  const got = L.learn?.(S.r, S.st.p);
+  if (got) { Object.assign(learned, got); saveLearned(); }
   buildMission();
   if (S.r + 1 < L.rounds.length) {
-    chime();
+    audio.chime();
     return false;
   }
   levelWon();
@@ -570,21 +428,16 @@ function roundWon(){
 function levelWon(){
   const L = LV(), n = L.rounds.length;
   const stars = S.conf <= n + 1 ? 3 : S.conf <= 2 * n + 2 ? 2 : 1;
-  if (!SAVE.done.includes(L.id)) SAVE.done.push(L.id);
-  SAVE.stars[L.id] = Math.max(SAVE.stars[L.id] || 0, stars);
-  save();
-  buildNav();
-  chime();
-  $('#winTitle').textContent = `${L.title}: superato!`;
-  $('#winStars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-  $('#winText').innerHTML = L.win.text;
-  $('#winExtra').innerHTML = L.win.extra ? L.win.extra() : '';
-  $('#dlgNext').textContent = S.idx + 2 === LEVELS.length ? 'Al finale: il tuo beat →' : 'Livello successivo →';
-  setTimeout(() => el.dlg.showModal(), 650);
+  app.complete(app.idx, { stars });
+  audio.chime();
+  const dialog = {
+    title: `${L.title}: superato!`, stars, text: L.win.text, extra: L.win.extra ? L.win.extra() : '',
+    next: app.idx + 2 === LEVELS.length ? 'Al finale: il tuo beat →' : 'Livello successivo →',
+    then: () => app.next(), confetti: false
+  };
+  setTimeout(() => app.win(dialog), 650);
 }
-$('#dlgStay').addEventListener('click', () => el.dlg.close());
-$('#dlgNext').addEventListener('click', () => { el.dlg.close(); if (S.idx + 1 < LEVELS.length) enterLevel(S.idx + 1); });
-el.dlg.addEventListener('click', e => {
+app.dialog.addEventListener('click', e => {
   const b = e.target.closest('[data-act="speed"]');
   if (b) { stopAll(); const f = +b.dataset.f; playBuf(render(t => .8 * Math.sin(TWO_PI * f * t), 1.4, .01)); }
 });
@@ -735,7 +588,7 @@ CTRL.predict = {
     if (st.phase === 'done') {
       S.wonRounds[S.r] = true;
       buildMission();
-      if (S.r + 1 < LV().rounds.length) chime(); else levelWon();
+      if (S.r + 1 < LV().rounds.length) audio.chime(); else levelWon();
     }
   },
   pointer(e){
@@ -1216,19 +1069,18 @@ CTRL.free = {
       <section class="tool"><h3>🎚️ Partenze</h3><div class="row-tools">${Object.entries(PRESETS).map(([k, P]) => `<button class="btn ghost-btn small-btn" type="button" data-act="preset" data-p="${k}">${P.name}</button>`).join('')}</div></section>`;
   },
   start(){
-    const c = ensureCtx(); c.resume();
+    const c = audio.ensure(); c.resume();
     this.t0 = c.currentTime + .06;
     this.nodes = ROW_IDS.map(id => {
-      const g = c.createGain(); g.gain.value = this.on[id] ? this.inst[id].mix : 0; g.connect(master);
-      const ab = c.createBuffer(1, this.buf[id].length, SR); ab.copyToChannel(this.buf[id], 0);
-      const src = c.createBufferSource(); src.buffer = ab; src.loop = true; src.connect(g); src.start(this.t0);
+      const g = c.createGain(); g.gain.value = this.on[id] ? this.inst[id].mix : 0; g.connect(audio.master);
+      const src = c.createBufferSource(); src.buffer = audio.buffer(this.buf[id]); src.loop = true; src.connect(g); src.start(this.t0);
       return { g, src };
     });
     this.live = true;
   },
   stop(){
     if (!this.live) return;
-    const t = ctx.currentTime;
+    const t = audio.ctx.currentTime;
     this.nodes.forEach(({ g, src }) => { g.gain.setTargetAtTime(0, t, .012); src.stop(t + .08); });
     this.nodes = []; this.live = false;
     el.stage.querySelectorAll('.cell.now').forEach(c => c.classList.remove('now'));
@@ -1238,9 +1090,8 @@ CTRL.free = {
   // cambia il suono di una riga senza perdere il tempo
   swap(k){
     if (!this.live) return;
-    const id = ROW_IDS[k], when = ctx.currentTime + .03, loop = this.buf[id].length / SR, off = (((when - this.t0) % loop) + loop) % loop;
-    const ab = ctx.createBuffer(1, this.buf[id].length, SR); ab.copyToChannel(this.buf[id], 0);
-    const src = ctx.createBufferSource(); src.buffer = ab; src.loop = true; src.connect(this.nodes[k].g); src.start(when, off);
+    const ctx = audio.ctx, id = ROW_IDS[k], when = ctx.currentTime + .03, loop = this.buf[id].length / SR, off = (((when - this.t0) % loop) + loop) % loop;
+    const src = ctx.createBufferSource(); src.buffer = audio.buffer(this.buf[id]); src.loop = true; src.connect(this.nodes[k].g); src.start(when, off);
     this.nodes[k].src.stop(when); this.nodes[k].src = src;
   },
   draw(frac = null){
@@ -1257,7 +1108,7 @@ CTRL.free = {
     if (frac !== null) { g.fillStyle = '#fff'; g.fillRect(frac * W - r, 0, 2 * r, H); }
   },
   frame(){
-    const loop = STEPS * this.sd(), t = ctx.currentTime - this.t0 - (ctx.outputLatency || 0);
+    const ctx = audio.ctx, loop = STEPS * this.sd(), t = ctx.currentTime - this.t0 - (ctx.outputLatency || 0);
     if (t < 0) return;
     const x = (t % loop) / loop, n = Math.floor(x * STEPS);
     this.draw(x);
@@ -1273,7 +1124,7 @@ CTRL.free = {
     if (act === 'preset') this.load(a.dataset.p);
     if (act === 'fon') {
       const id = a.dataset.id; this.on[id] = !this.on[id]; this.env = null;
-      if (this.live) this.nodes[ROW_IDS.indexOf(id)].g.gain.setTargetAtTime(this.on[id] ? this.inst[id].mix : 0, ctx.currentTime, .015);
+      if (this.live) this.nodes[ROW_IDS.indexOf(id)].g.gain.setTargetAtTime(this.on[id] ? this.inst[id].mix : 0, audio.ctx.currentTime, .015);
       this.tools(); this.draw();
     }
     if (act === 'fcell') {
@@ -1299,16 +1150,6 @@ el.tools.addEventListener('input', e => {
 });
 
 /* ------------------------------------------------------------------ eventi */
-el.levels.addEventListener('click', e => {
-  const b = e.target.closest('[data-lv]');
-  if (b && !b.disabled && +b.dataset.lv !== S.idx) enterLevel(+b.dataset.lv);
-});
-$('#btnReset').addEventListener('click', () => enterLevel(S.idx));
-document.addEventListener('click', e => {
-  const a = e.target.closest('[data-act]');
-  if (!a || a.disabled || el.dlg.contains(a)) return;
-  CTRL[LV().type].click(a);
-});
 el.tools.addEventListener('input', e => {
   const t = e.target;
   if (LV().type === 'match' && t.dataset.k) CTRL.match.input(t);
@@ -1317,16 +1158,6 @@ el.tools.addEventListener('input', e => {
     el.tools.querySelector('.qbig').textContent = `t = ${fmt(S.st.qs[S.st.qi], 3)} → y = ${fmt(S.st.guess)}`;
     CTRL.predict.draw();
   }
-});
-document.addEventListener('pointerdown', e => {
-  const host = e.target.closest('.btn');
-  if (!host || host.disabled || reduceMotion) return;
-  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
-  const sp = document.createElement('span');
-  sp.className = 'rip';
-  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
-  host.appendChild(sp);
-  setTimeout(() => sp.remove(), 600);
 });
 let resizeTimer = 0, lastW = 0;
 new ResizeObserver(() => {
@@ -1347,6 +1178,7 @@ function frame(){
   requestAnimationFrame(frame);
   if (LV().type === 'free') { if (CTRL.free.live) CTRL.free.frame(); return; }
   const p = S.play;
+  const ctx = audio.ctx;
   if (!p || !ctx) { if (wasPlaying) { wasPlaying = false; markPlaying(); CTRL[LV().type].draw?.(); } return; }
   const t = ctx.currentTime - p.t0;
   if (t > p.dur) { S.play = null; return; }
@@ -1358,11 +1190,16 @@ function frame(){
 }
 requestAnimationFrame(frame);
 
-if (params.has('debug')) window.__suona = { S, SAVE, LEVELS, CTRL };
-
-const start = LEVELS.findIndex(L => L.id === params.get('livello'));
-enterLevel(start >= 0 && unlocked(start) ? start : 0);
-})();
+// Progressi del vecchio formato (livelli per nome) → laboratorio (livelli per numero), una volta sola.
+if (OLD && app.store.get('done') === undefined){
+  const done = LEVELS.map((L, i) => OLD.done?.includes(L.id) ? i : -1).filter(i => i >= 0);
+  app.store.set('done', done);
+  app.store.set('stars', Object.fromEntries(LEVELS.map((L, i) => [i, OLD.stars?.[L.id]]).filter(([, n]) => n)));
+  if (done.length) app.store.set('unlocked', Math.min(LEVELS.length, Math.max(...done) + 2));
+  saveLearned();
+}
+app.debug({ S, LEVELS, CTRL });
+app.start(LEVELS);
 </script>
 </body>
 </html>

@@ -117,13 +117,14 @@ OS.loadRepos = async () => {
     const c = JSON.parse(sessionStorage.getItem('ceresio.repos') || 'null');
     if (c && Date.now() - c.t < 15 * 60e3) { OS.repos = c.list; return c.list.length + ' repo'; }
   } catch { /* nessuna cache */ }
-  const r = await withTimeout('https://api.github.com/users/' + OS.CV.github + '/repos?per_page=100&sort=updated');
+  // Il nostro server chiede i repository a GitHub e li tiene in cache per tutti.
+  const r = await withTimeout('/api/github/repos');
   if (!r.ok) throw new Error('GitHub ' + r.status);
   // Il font conosce solo latino e pochi simboli: via emoji e caratteri esotici.
   const clean = (s) => (s || '').replace(/[^ -ɏ€★♥♪…’‘“”–—]/gu, '').replace(/\s+/g, ' ').trim();
   const list = (await r.json()).map((x) => ({
-    name: x.name, desc: clean(x.description), lang: x.language || '', stars: x.stargazers_count,
-    forks: x.forks_count, url: x.html_url, updated: x.pushed_at || x.updated_at, fork: x.fork, home: x.homepage || ''
+    name: x.name, desc: clean(x.desc), lang: x.lang, stars: x.stars,
+    forks: x.forks, url: x.url, updated: x.pushed || x.updated, fork: x.fork, home: x.home
   })).sort((a, b) => (a.fork - b.fork) || (b.updated > a.updated ? 1 : -1));
   OS.repos = list;
   try { sessionStorage.setItem('ceresio.repos', JSON.stringify({ t: Date.now(), list })); } catch { /* ignorato */ }
@@ -132,11 +133,11 @@ OS.loadRepos = async () => {
 
 OS.weather = null;
 OS.loadWeather = async () => {
-  const u = `https://api.open-meteo.com/v1/forecast?latitude=${OS.CV.lat}&longitude=${OS.CV.lon}&current=temperature_2m,weather_code,is_day&timezone=Europe%2FZurich`;
-  const r = await withTimeout(u, 4000);
+  // Lugano, dal nostro server (che chiede a open-meteo e tiene la risposta 10 minuti).
+  const r = await withTimeout('/api/weather', 4000);
   if (!r.ok) throw new Error('meteo ' + r.status);
-  const c = (await r.json()).current;
-  OS.weather = { temp: Math.round(c.temperature_2m), code: c.weather_code };
+  const c = await r.json();
+  OS.weather = { temp: Math.round(c.temp), code: c.code };
   return OS.weather.temp + '°C';
 };
 // Codici WMO -> tipo di cielo usato dallo sfondo.

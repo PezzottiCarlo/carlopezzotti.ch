@@ -2,18 +2,27 @@
   "domain": "carlopezzotti.ch",
   "server": { "port": 8090, "bind": "127.0.0.1" },
   "tunnel": "carlo.pezzotti",
+  "deploy": { "branch": "main" },
+  "github": "PezzottiCarlo",
+  "weather": { "place": "Lugano", "lat": 46.0037, "lon": 8.9511, "tz": "Europe/Zurich" },
   "sites": [
     {
+      "name": "www",
       "folder": "sites/www",
-      "hosts": ["carlopezzotti.ch", "www.carlopezzotti.ch", "web.carlopezzotti.ch"]
+      "hosts": ["carlopezzotti.ch", "www.carlopezzotti.ch", "web.carlopezzotti.ch"],
+      "fallback": "index"
     },
     {
+      "name": "so",
       "folder": "sites/so",
-      "hosts": ["so.carlopezzotti.ch"]
+      "hosts": ["so.carlopezzotti.ch"],
+      "fallback": "index"
     },
     {
+      "name": "dd",
       "folder": "sites/dd",
-      "hosts": ["dd.carlopezzotti.ch"]
+      "hosts": ["dd.carlopezzotti.ch"],
+      "app": "server/sites/dd.mjs"
     }
   ]
 }

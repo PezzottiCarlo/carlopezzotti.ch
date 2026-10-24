@@ -8,13 +8,12 @@
 <meta name="dd:tags" content="funzioni, musica, grafici, esponenziale">
 <meta name="dd:date" content="2026-10-23">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/_shared/dd.css">
+<link rel="stylesheet" href="/_lab/lab.css">
 <style>
 :root{ --lw:180px; --console:#151831; --console-2:#1e2245; }
 
-.app{min-height:100vh;min-height:100dvh;max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:12px;padding:10px 16px 16px}
-.topbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
-.topbar .brand{flex:1 1 320px;min-width:0}
+.app{gap:12px;padding-bottom:16px}
+.topbar .brand{flex:1 1 320px}
 .beats{display:flex;gap:6px;flex-wrap:wrap;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--shadow)}
 .beat-tab{border:0;background:transparent;color:var(--ink);border-radius:10px;padding:6px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;font-weight:800;font-size:.95rem;transition:background .2s,transform .12s}
 .beat-tab small{font-weight:650;font-size:.72rem;color:var(--muted)}
@@ -22,8 +21,8 @@
 .beat-tab:active{transform:scale(.96)}
 .beat-tab.active{background:var(--primary);color:#fff}
 .beat-tab.active small{color:#d9d8ff}
-.top-tools{display:flex;align-items:center;gap:10px}
-.icon-btn{width:46px;height:46px;padding:0;font-size:1.25rem}
+.top-tools{gap:10px}
+.icon-btn{width:46px;height:46px}
 .play{height:46px;padding:0 20px 0 16px;font-size:1rem;border-radius:14px}
 .play .pi{width:0;height:0;border-style:solid;border-width:8px 0 8px 13px;border-color:transparent transparent transparent currentColor}
 .play.on{background:#b42318;border-color:#b42318}
@@ -85,7 +84,7 @@
 .dhead p{margin:1px 0 0;font-size:.86rem;color:var(--muted)}
 .dhead .grow{flex:1;min-width:0}
 .dbtns{display:flex;gap:6px}
-.pill{position:relative;overflow:hidden;border:2px solid var(--line);background:#fff;color:var(--ink);font-weight:800;font-size:.82rem;border-radius:10px;padding:6px 10px;cursor:pointer;transition:background .2s,border-color .2s}
+.pill{min-height:0;position:relative;overflow:hidden;border:2px solid var(--line);background:#fff;color:var(--ink);font-weight:800;font-size:.82rem;border-radius:10px;padding:6px 10px;cursor:pointer;transition:background .2s,border-color .2s}
 .pill:hover{border-color:var(--c)}
 .pill.tgl[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
 .pill.sol[aria-pressed="true"]{background:#ffd166;border-color:#e0a800;color:#3d2a00}
@@ -143,7 +142,8 @@
 @media (max-width:640px){
   :root{--lw:118px}
   .app{padding:8px 10px 14px}
-  .brand p{display:none}
+  .topbar .brand p{display:none}
+  .top-tools{width:auto;justify-content:flex-start}
   .lab{flex-wrap:wrap;align-content:center;gap:3px 4px}
   .nm{flex-basis:calc(100% - 18px);padding:2px}
   .nm small{display:none}
@@ -200,23 +200,13 @@
   </main>
 </div>
 
-<script>
-(() => {
-'use strict';
-const $ = s => document.querySelector(s);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const params = new URLSearchParams(location.search);
+<script type="module">
+import { $, esc, params, fmt as fmtN } from '/_lab/lab.js';
+import { SR, TWO_PI, noise, createAudio, fitCanvas, smoothEnv, dpr } from '/_lab/audio.js';
 
 // Tutto il suono viene calcolato qui, un campione alla volta, dalle stesse
 // funzioni che la pagina mostra: 44100 valori di y per ogni secondo.
-const SR = 44100;
-const TWO_PI = 2 * Math.PI;
-
-const fmt = (x, d = 3) => {
-  const r = Math.round(x * 10 ** d) / 10 ** d;
-  return String(r).replace('.', ',').replace('-', '−');
-};
+const fmt = (x, d = 3) => fmtN(x, d);
 const fmtStep = n => {
   const w = Math.floor(n + 1e-6), f = n - w;
   if (f < .01) return String(w);
@@ -226,8 +216,6 @@ const fmtStep = n => {
   return fmt(n, 2);
 };
 
-// Rumore: un numero "a caso" tra −1 e 1 per ogni campione j, sempre lo stesso per lo stesso j.
-const noise = j => { const x = Math.sin(j * 12.9898 + 78.233) * 43758.5453; return (x - Math.floor(x)) * 2 - 1; };
 const noteF = (inst, s) => inst.base * 2 ** (s / 12);
 const NAMES = ['Do', 'Do♯', 'Re', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
 const noteName = (inst, s) => NAMES[((Math.round(69 + 12 * Math.log2(inst.base / 440)) + s) % 12 + 12) % 12];
@@ -608,7 +596,7 @@ const prepare = b => { b.on = b.inst.map(() => true); b.solo = null; b.sel = 0; 
 BEATS.forEach(prepare);
 
 /* ------------------------------------------------------------------ stato */
-const S = { bi:0, playing:false, ctx:null, master:null, t0:0, nodes:[], buf:[], N:0, sorted:[], hover:null,
+const S = { bi:0, playing:false, t0:0, nodes:[], buf:[], N:0, sorted:[], hover:null,
   lensT:0, lensMul:1, ov:null, ovG:null, live:false };
 const el = { beats:$('#beats'), play:$('#play'), playTxt:$('#playTxt'), reset:$('#reset'), all:$('#all'), desc:$('#beatDesc'),
   sumf:$('#sumf'), console:$('#console'), rows:$('#rows'), axis:$('#axis'), tips:$('#tips'), detail:$('#detail') };
@@ -617,7 +605,6 @@ let lanes = [], leds = [], labs = [], sumLane = null, envs = [];
 const beat = () => BEATS[S.bi];
 const stepDur = () => 60 / beat().bpm / 4;
 const audible = i => beat().solo !== null ? beat().solo === i : beat().on[i];
-const dpr = () => Math.min(2, window.devicePixelRatio || 1);
 const sortHits = inst => [...inst.hits].sort((a, b) => a.n - b.n || (a.s ?? 0) - (b.s ?? 0));
 
 // Per le note che scivolano con «carry», τ di volume e filtro continua dalla nota prima
@@ -674,41 +661,18 @@ function renderAll(){
 }
 
 /* ------------------------------------------------------------------ audio */
-function ensureCtx(){
-  if (S.ctx) return S.ctx;
-  const AC = window.AudioContext || window.webkitAudioContext;
-  const ctx = new AC();
-  const comp = ctx.createDynamicsCompressor();
-  comp.threshold.value = -12; comp.knee.value = 8; comp.ratio.value = 5; comp.attack.value = .003; comp.release.value = .15;
-  const master = ctx.createGain();
-  master.gain.value = .75;
-  // Limitatore morbido in uscita: lineare fino a 0,7, poi curva verso 1 con una tanh.
-  // Il WaveShaper legge l'ingresso tra −1 e 1, quindi prima si dimezza (u = x/2).
-  const half = ctx.createGain(), shaper = ctx.createWaveShaper(), curve = new Float32Array(2049);
-  half.gain.value = .5;
-  for (let q = 0; q < curve.length; q++) {
-    const x = (q / (curve.length - 1) * 2 - 1) * 2, a = Math.abs(x);
-    curve[q] = Math.sign(x) * (a < .7 ? a : .7 + .3 * Math.tanh((a - .7) / .3));
-  }
-  shaper.curve = curve; shaper.oversample = '2x';
-  master.connect(comp); comp.connect(half); half.connect(shaper); shaper.connect(ctx.destination);
-  S.ctx = ctx; S.master = master;
-  return ctx;
-}
-function audioBuf(i){
-  const ab = S.ctx.createBuffer(1, S.N, SR);
-  ab.copyToChannel(S.buf[i], 0);
-  return ab;
-}
+// Il mix può arrivare oltre ±1: compressore leggero, poi il limitatore morbido fino a ±2.
+const audio = createAudio({ gain:.75, compressor:true, headroom:2 });
+const audioBuf = i => audio.buffer(S.buf[i]);
 const gainOf = i => audible(i) ? beat().inst[i].mix : 0;
 function startAudio(){
-  const ctx = ensureCtx();
+  const ctx = audio.ensure();
   ctx.resume();
   S.t0 = ctx.currentTime + .08;
   S.nodes = beat().inst.map((_, i) => {
     const g = ctx.createGain();
     g.gain.value = gainOf(i);
-    g.connect(S.master);
+    g.connect(audio.master);
     const src = ctx.createBufferSource();
     src.buffer = audioBuf(i); src.loop = true; src.connect(g); src.start(S.t0);
     return { g, src };
@@ -716,8 +680,8 @@ function startAudio(){
   S.playing = true;
 }
 function stopAudio(){
-  if (!S.ctx) return;
-  const t = S.ctx.currentTime;
+  if (!audio.ctx) return;
+  const t = audio.ctx.currentTime;
   S.nodes.forEach(({ g, src }) => { g.gain.setTargetAtTime(0, t, .012); src.stop(t + .08); });
   S.nodes = [];
   S.playing = false;
@@ -725,7 +689,7 @@ function stopAudio(){
 // Sostituisce il suono di uno strumento senza perdere il tempo
 function swap(i){
   if (!S.playing) return;
-  const ctx = S.ctx, when = ctx.currentTime + .03, loop = S.N / SR;
+  const ctx = audio.ctx, when = ctx.currentTime + .03, loop = S.N / SR;
   const off = (((when - S.t0) % loop) + loop) % loop;
   const src = ctx.createBufferSource();
   src.buffer = audioBuf(i); src.loop = true; src.connect(S.nodes[i].g); src.start(when, off);
@@ -734,7 +698,7 @@ function swap(i){
 }
 function applyGains(){
   if (!S.playing) return;
-  const t = S.ctx.currentTime;
+  const t = audio.ctx.currentTime;
   S.nodes.forEach(({ g }, i) => g.gain.setTargetAtTime(gainOf(i), t, .015));
 }
 function setPlaying(on){
@@ -747,33 +711,6 @@ function setPlaying(on){
 }
 
 /* ------------------------------------------------------------------ disegno */
-function fitCanvas(cv){
-  const r = dpr(), w = Math.max(1, Math.round(cv.clientWidth * r)), h = Math.max(1, Math.round(cv.clientHeight * r));
-  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
-  return [w, h, r];
-}
-// Il volume (inviluppo) di un segnale: per ogni pixel il valore più grande di |y| lì intorno.
-// Niente righe verticali: una forma morbida che si legge come il grafico di una funzione.
-function smoothEnv(get, N, W, radiusSec){
-  const col = new Float32Array(W), out = new Float32Array(W);
-  for (let x = 0; x < W; x++) {
-    const a = Math.floor(x * N / W), b = Math.max(a + 1, Math.floor((x + 1) * N / W));
-    let m = 0;
-    for (let j = a; j < b; j++) { const v = Math.abs(get(j)); if (v > m) m = v; }
-    col[x] = m;
-  }
-  const rad = Math.max(0, Math.ceil(radiusSec * SR / (N / W)));
-  let peak = 0;
-  for (let x = 0; x < W; x++) {
-    let m = 0;
-    for (let q = Math.max(0, x - rad); q <= Math.min(W - 1, x + rad); q++) if (col[q] > m) m = col[q];
-    out[x] = m;
-  }
-  for (let x = 1; x < W - 1; x++) col[x] = (out[x - 1] + 2 * out[x] + out[x + 1]) / 4;
-  col[0] = out[0]; col[W - 1] = out[W - 1];
-  for (let x = 0; x < W; x++) peak = Math.max(peak, col[x]);
-  return { v:col, peak };
-}
 function drawShape(g, env, x0, w, mid, k, color, r, alpha = .45){
   const W = env.length, X = x => x0 + x / (W - 1) * w;
   g.beginPath();
@@ -819,10 +756,10 @@ function drawLane(i){
   const cv = lanes[i]; if (!cv) return;
   const [W, H, r] = fitCanvas(cv), g = cv.getContext('2d');
   const inst = beat().inst[i], V = VOICES[inst.voice], on = audible(i), buf = S.buf[i];
-  if (!envs[i] || envs[i].v.length !== W) envs[i] = smoothEnv(j => buf[j], S.N, W, .012);
+  if (!envs[i] || envs[i].length !== W) envs[i] = smoothEnv(j => buf[j], S.N, W, .012);
   g.clearRect(0, 0, W, H);
   drawGrid(g, W, H, r);
-  drawShape(g, envs[i].v, 0, W, H / 2, (H / 2 - 3 * r) / Math.max(1, envs[i].peak), on ? inst.color : '#4b5079', r, V.melodic ? .35 : .55);
+  drawShape(g, envs[i], 0, W, H / 2, (H / 2 - 3 * r) / Math.max(1, envs[i].peak), on ? inst.color : '#4b5079', r, V.melodic ? .35 : .55);
   const steps = beat().steps;
   if (V.melodic) drawNotes(g, i, W, H, r, on);
   else {
@@ -845,7 +782,7 @@ function drawSum(){
   const env = smoothEnv(j => { let v = 0; for (let i = 0; i < buf.length; i++) if (coef[i]) v += coef[i] * buf[i][j]; return v; }, S.N, W, .012);
   g.clearRect(0, 0, W, H);
   drawGrid(g, W, H, r);
-  drawShape(g, env.v, 0, W, H / 2, (H / 2 - 4 * r) / Math.max(.3, env.peak), '#d9d6ff', r, .5);
+  drawShape(g, env, 0, W, H / 2, (H / 2 - 4 * r) / Math.max(.3, env.peak), '#d9d6ff', r, .5);
 }
 function drawLanes(){ envs = []; beat().inst.forEach((_, i) => drawLane(i)); drawSum(); }
 
@@ -1069,7 +1006,7 @@ function drawOv(){
     g.fillText(fmt(win * q / 4, win < .05 ? 4 : win < .5 ? 3 : 2) + (q === 4 ? ' s' : ''), x, padT + ph + 6 * r);
     if (q) { g.fillStyle = 'rgba(27,31,59,.06)'; g.fillRect(Math.round(x), padT, r, ph); g.fillStyle = '#5a6080'; }
   }
-  drawShape(g, sh.v, padL, pw, mid, k, color, r, .3);
+  drawShape(g, sh, padL, pw, mid, k, color, r, .3);
   if (env) { // la curva del volume, come nella formula
     g.save();
     g.setLineDash([6 * r, 5 * r]); g.lineWidth = 1.6 * r; g.strokeStyle = '#1b1f3b';
@@ -1289,16 +1226,6 @@ document.addEventListener('keydown', e => {
   e.preventDefault();
   setPlaying(!S.playing);
 });
-document.addEventListener('pointerdown', e => {
-  const host = e.target.closest('.btn, .pill');
-  if (!host || host.disabled || reduceMotion) return;
-  const r = host.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2;
-  const sp = document.createElement('span');
-  sp.className = 'rip';
-  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
-  host.appendChild(sp);
-  setTimeout(() => sp.remove(), 600);
-});
 // Ridisegna solo se cambia davvero la larghezza delle tracce o dei grafici
 let resizeTimer = 0, lastW = 0, lastPW = 0;
 new ResizeObserver(() => {
@@ -1314,7 +1241,7 @@ new ResizeObserver(() => {
 function frame(){
   requestAnimationFrame(frame);
   if (!S.playing) return;
-  const ctx = S.ctx, loop = S.N / SR;
+  const ctx = audio.ctx, loop = S.N / SR;
   const t = ctx.currentTime - S.t0 - (ctx.outputLatency || 0);
   if (t < 0) return;
   const x = (t % loop) / loop, pos = Math.floor(x * S.N), b = beat();
@@ -1333,7 +1260,6 @@ if (params.has('debug')) window.__beat = { S, BEATS, VOICES, renderInst, beat, s
 
 const start = BEATS.findIndex(b => b.id === params.get('beat'));
 loadBeat(start >= 0 ? start : 0);
-})();
 </script>
 </body>
 </html>
